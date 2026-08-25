@@ -1,4 +1,5 @@
 import { getIntegrationsStatus } from "@/modules/settings/application/integrations-status-action";
+import { OAuthCallbackToast } from "@/modules/settings/ui/oauth-callback-toast";
 import { IntegrationCard } from "@/modules/settings/ui/integration-card";
 import { INTEGRATIONS_CATALOG } from "@/modules/settings/ui/integrations-catalog";
 import { ActionError } from "@/shared/ui/action-error";
@@ -6,9 +7,11 @@ import { ActionError } from "@/shared/ui/action-error";
 export default async function IntegrationsPage() {
   const result = await getIntegrationsStatus();
   if (!result.ok) return <ActionError message={result.error} />;
+  const today = new Date().toISOString().slice(0, 10);
 
   return (
     <div className="flex flex-col gap-5">
+      <OAuthCallbackToast />
       <div>
         <h1 className="text-2xl font-semibold">Integraciones</h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -22,6 +25,7 @@ export default async function IntegrationsPage() {
             key={meta.integration}
             meta={meta}
             status={result.data[meta.integration]}
+            today={today}
           />
         ))}
       </div>

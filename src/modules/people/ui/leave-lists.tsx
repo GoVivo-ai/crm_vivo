@@ -46,11 +46,14 @@ export function MyLeaveList({ requests }: { requests: LeaveRequestView[] }) {
   );
 }
 
-/** Bandeja de aprobación (management/admin); nadie decide la propia. */
+/** Bandeja de aprobación (management/admin); nadie decide la propia:
+ * las solicitudes del propio aprobador salen sin botones. */
 export function ApprovalsList({
   requests,
+  currentUserId,
 }: {
   requests: LeaveRequestView[];
+  currentUserId: string;
 }) {
   const { submit, pending } = useActionSubmit<unknown>();
 
@@ -72,7 +75,14 @@ export function ApprovalsList({
     <ul className="flex flex-col gap-2">
       {requests.map((r) => (
         <RequestLine key={r.id} request={r}>
-          {r.status === "requested" && (
+          {r.status === "requested" && r.requestedBy === currentUserId ? (
+            <span
+              className="rounded-full bg-secondary px-2 py-0.5 text-xs text-muted-foreground"
+              title="Otra persona debe decidir tu solicitud"
+            >
+              tuya
+            </span>
+          ) : r.status === "requested" ? (
             <span className="flex gap-1.5">
               <Button
                 size="sm"
@@ -90,7 +100,7 @@ export function ApprovalsList({
                 Rechazar
               </Button>
             </span>
-          )}
+          ) : null}
         </RequestLine>
       ))}
     </ul>

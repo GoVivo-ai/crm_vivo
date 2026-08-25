@@ -39,8 +39,8 @@ export default async function AdAccountsPage() {
       </div>
       {adAccounts.length === 0 ? (
         <p className="mt-6 text-sm text-muted-foreground">
-          Sin cuentas publicitarias sincronizadas todavía — corre el sync de
-          Windsor.
+          Sin cuentas publicitarias todavía — conecta Meta Ads en Ajustes →
+          Integraciones.
         </p>
       ) : (
         <AdAccountsTable

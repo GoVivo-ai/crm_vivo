@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { formatRelativeTime, isFreshSync } from "@/shared/ui/format";
 
 type SyncStatusProps = {
-  /** Nombre de la fuente externa, p.ej. "Alegra", "Windsor", "ClickUp". */
+  /** Nombre de la fuente externa, p.ej. "Alegra", "Meta Ads", "ClickUp". */
   source: string;
   /** Fin del último sync exitoso; null = nunca sincronizado. */
   syncedAt: Date | null;

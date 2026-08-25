@@ -130,7 +130,7 @@ export default async function MarketingPage({
         <h2 className="mb-2 text-sm font-semibold">Por plataforma</h2>
         {byPlatform.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            Sin métricas en el periodo — revisa el sync de Windsor o el rango.
+            Sin métricas en el periodo — revisa el sync de Meta Ads o el rango.
           </p>
         ) : (
           <PlatformTable rows={byPlatform} />

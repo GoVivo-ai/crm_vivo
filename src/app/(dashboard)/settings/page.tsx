@@ -1,6 +1,7 @@
 import { getCurrentUser } from "@/modules/identity/application/get-current-user";
 import { listUsers } from "@/modules/identity/application/users-admin-actions";
 import { UsersTable } from "@/modules/identity/ui/users-table";
+import { OAuthCallbackToast } from "@/modules/settings/ui/oauth-callback-toast";
 import { ActionError } from "@/shared/ui/action-error";
 
 export default async function SettingsPage() {
@@ -12,6 +13,8 @@ export default async function SettingsPage() {
 
   return (
     <div className="flex flex-col gap-4">
+      {/* El callback OAuth redirige a /settings — el toast se muestra aquí. */}
+      <OAuthCallbackToast />
       <div>
         <h1 className="text-2xl font-semibold">Usuarios y roles</h1>
         <p className="mt-1 text-sm text-muted-foreground">

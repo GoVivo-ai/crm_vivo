@@ -83,7 +83,10 @@ export default async function LeavePage() {
               Nada pendiente de decisión.
             </p>
           ) : (
-            <ApprovalsList requests={pendingApprovals} />
+            <ApprovalsList
+              requests={pendingApprovals}
+              currentUserId={user?.id ?? ""}
+            />
           )}
         </section>
       )}

@@ -22,9 +22,11 @@ import { useActionSubmit } from "@/shared/ui/use-action-submit";
 type IntegrationCardProps = {
   meta: IntegrationMeta;
   status: IntegrationStatus;
+  /** Hoy YYYY-MM-DD (server), para calcular el vencimiento del token. */
+  today: string;
 };
 
-export function IntegrationCard({ meta, status }: IntegrationCardProps) {
+export function IntegrationCard({ meta, status, today }: IntegrationCardProps) {
   const [open, setOpen] = useState(!status.configured && !meta.oauth);
   const [values, setValues] = useState<Record<string, string>>({});
   const { submit, pending, fieldErrors } = useActionSubmit<unknown>();
@@ -93,8 +95,10 @@ export function IntegrationCard({ meta, status }: IntegrationCardProps) {
   }
 
   function onClear() {
-    if (!window.confirm(`¿Quitar las credenciales guardadas de ${meta.label}?`))
-      return;
+    const question = meta.oauth
+      ? `¿Desconectar ${meta.label}? Podrás volver a conectar cuando quieras.`
+      : `¿Quitar las credenciales guardadas de ${meta.label}?`;
+    if (!window.confirm(question)) return;
     submit(
       () => clearIntegrationCredentials({ integration: meta.integration }),
       { successMessage: "Credenciales eliminadas" },
@@ -126,13 +130,42 @@ export function IntegrationCard({ meta, status }: IntegrationCardProps) {
 
       <IntegrationStatusLine status={status} label={meta.label} />
 
+      {status.connectedAs && (
+        <p className="text-xs text-muted-foreground">
+          Conectado como{" "}
+          <span className="font-medium text-foreground">
+            {status.connectedAs}
+          </span>
+          {status.tokenExpiresAt &&
+            (() => {
+              const days = Math.floor(
+                (Date.parse(status.tokenExpiresAt) - Date.parse(today)) /
+                  86_400_000,
+              );
+              return days >= 0 ? ` · token vence en ${days} d` : "";
+            })()}
+        </p>
+      )}
+
       <div className="mt-auto flex flex-wrap gap-2">
         {meta.oauth ? (
-          // OAuth (directriz: cero tokens manuales). El botón se habilita
-          // cuando backend publique /api/oauth/[provider]/start.
-          <Button size="sm" disabled title="Conexión en habilitación">
-            Conectar con {meta.label}
-          </Button>
+          // OAuth (cero tokens manuales): navegación normal al flujo.
+          status.reconnectRequired ? (
+            <Button
+              variant="destructive"
+              size="sm"
+              render={<a href={`/api/oauth/${meta.integration}/start`} />}
+            >
+              Reconectar con {meta.label}
+            </Button>
+          ) : !status.configured ? (
+            <Button
+              size="sm"
+              render={<a href={`/api/oauth/${meta.integration}/start`} />}
+            >
+              Conectar con {meta.label}
+            </Button>
+          ) : null
         ) : (
           <>
             <Button
@@ -188,7 +221,7 @@ export function IntegrationCard({ meta, status }: IntegrationCardProps) {
             className="text-muted-foreground hover:text-destructive"
             onClick={onClear}
           >
-            Quitar
+            {meta.oauth ? "Desconectar" : "Quitar"}
           </Button>
         )}
       </div>

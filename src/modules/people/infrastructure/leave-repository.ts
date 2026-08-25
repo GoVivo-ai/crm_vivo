@@ -106,7 +106,9 @@ export async function decideLeave(
   return rows[0] ?? null;
 }
 
-/** Días aprobados del año en curso para un perfil. */
+/** Días aprobados del año en curso para un perfil. Aproximación
+ * aceptada (QA): una ausencia que cruza el año cuenta completa en el
+ * año de su fecha de inicio. */
 export async function approvedDaysThisYear(
   employeeProfileId: string,
 ): Promise<number> {

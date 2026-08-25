@@ -20,7 +20,10 @@ export async function listTeamDirectory(): Promise<TeamMember[]> {
       alegraEmployeeId: syncedEmployees.alegraEmployeeId,
       names: syncedEmployees.names,
       lastNames: syncedEmployees.lastNames,
-      identification: syncedEmployees.identification,
+      email: syncedEmployees.email,
+      phone: syncedEmployees.phone,
+      hiredAt: syncedEmployees.hiredAt,
+      birthday: syncedEmployees.birthday,
       position: syncedEmployees.position,
       area: syncedEmployees.area,
       status: syncedEmployees.status,
@@ -36,7 +39,15 @@ export async function listTeamDirectory(): Promise<TeamMember[]> {
   return rows.map((r) => ({
     alegraEmployeeId: r.alegraEmployeeId,
     fullName: fullName(r.names, r.lastNames),
-    identification: r.identification,
+    email: r.email,
+    phone: r.phone,
+    hiredAt: r.hiredAt,
+    birthday: r.birthday
+      ? {
+          day: Number(r.birthday.slice(8, 10)),
+          month: Number(r.birthday.slice(5, 7)),
+        }
+      : null,
     position: r.profile?.position ?? r.position,
     area: r.profile?.area ?? r.area,
     status: r.status,
@@ -48,7 +59,6 @@ export async function listTeamDirectory(): Promise<TeamMember[]> {
           contractEndDate: r.profile.contractEndDate,
           documents: (r.profile.documents ?? []) as EmployeeDocument[],
           annualLeaveDays: r.profile.annualLeaveDays,
-          notes: r.profile.notes,
         }
       : null,
   }));
@@ -67,6 +77,7 @@ export async function findCompensation(
   return {
     alegraEmployeeId: r.alegraEmployeeId,
     fullName: fullName(r.names, r.lastNames),
+    identification: r.identification,
     registeredSalary: r.salary === null ? null : Number(r.salary),
     contract: r.contract,
   };
@@ -95,6 +106,28 @@ export async function upsertProfile(
     })
     .returning();
   return rows[0];
+}
+
+export async function findEmployeeIdentification(
+  alegraEmployeeId: string,
+): Promise<string | null> {
+  const rows = await db
+    .select({ identification: syncedEmployees.identification })
+    .from(syncedEmployees)
+    .where(eq(syncedEmployees.alegraEmployeeId, alegraEmployeeId))
+    .limit(1);
+  return rows[0]?.identification ?? null;
+}
+
+export async function findProfileByAlegraEmployeeId(
+  alegraEmployeeId: string,
+): Promise<ProfileRow | null> {
+  const rows = await db
+    .select()
+    .from(employeeProfiles)
+    .where(eq(employeeProfiles.alegraEmployeeId, alegraEmployeeId))
+    .limit(1);
+  return rows[0] ?? null;
 }
 
 export async function findProfileByUserId(

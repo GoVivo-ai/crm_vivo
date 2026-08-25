@@ -32,6 +32,32 @@ export async function upsertEmployeeProfile(
   });
 }
 
+/** Expediente completo con notes y cédula (people_directory:write —
+ * management/admin). El directorio general NO incluye estos campos. */
+export async function getEmployeeProfileDetail(
+  alegraEmployeeId: string,
+): Promise<ActionResult<import("@/modules/people/domain/types").EmployeeProfileDetail>> {
+  return runAction("people_directory", "write", async () => {
+    const [profile, identification] = await Promise.all([
+      repo.findProfileByAlegraEmployeeId(alegraEmployeeId),
+      repo.findEmployeeIdentification(alegraEmployeeId),
+    ]);
+    return {
+      id: profile?.id ?? null,
+      alegraEmployeeId,
+      identification,
+      userId: profile?.userId ?? null,
+      position: profile?.position ?? null,
+      area: profile?.area ?? null,
+      contractType: profile?.contractType ?? null,
+      contractEndDate: profile?.contractEndDate ?? null,
+      documents: (profile?.documents ?? []) as import("@/modules/people/domain/types").EmployeeDocument[],
+      annualLeaveDays: profile?.annualLeaveDays ?? 15,
+      notes: profile?.notes ?? null,
+    };
+  });
+}
+
 /** Salario registrado en Alegra (people_compensation:read). El dato puede
  * estar desactualizado — la UI lo etiqueta "salario registrado en Alegra"
  * y jamás se usa para series de costo. */

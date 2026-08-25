@@ -10,11 +10,15 @@ export type EmployeeDocument = {
   expiresAt?: string;
 };
 
-/** Directorio (people_directory) — SIN datos de compensación. */
+/** Directorio (people_directory) — SIN compensación y con minimización
+ * de PII: sin cédula y cumpleaños solo día/mes (sin año). */
 export type TeamMember = {
   alegraEmployeeId: string;
   fullName: string;
-  identification: string | null;
+  email: string | null;
+  phone: string | null;
+  hiredAt: string | null;
+  birthday: { day: number; month: number } | null;
   /** Del expediente si existe; si no, el del directorio de Alegra. */
   position: string | null;
   area: string | null;
@@ -26,14 +30,32 @@ export type TeamMember = {
     contractEndDate: string | null;
     documents: EmployeeDocument[];
     annualLeaveDays: number;
-    notes: string | null;
   } | null;
+};
+
+/** Expediente completo (people_directory:write): incluye notes, que se
+ * excluye del directorio por poder contener info sensible de RR.HH. */
+export type EmployeeProfileDetail = {
+  id: string | null; // null si aún no hay expediente creado
+  alegraEmployeeId: string;
+  /** PII — solo visible aquí (people_directory:write) y en compensation. */
+  identification: string | null;
+  userId: string | null;
+  position: string | null;
+  area: string | null;
+  contractType: string | null;
+  contractEndDate: string | null;
+  documents: EmployeeDocument[];
+  annualLeaveDays: number;
+  notes: string | null;
 };
 
 /** Expediente con compensación (people_compensation). */
 export type EmployeeCompensation = {
   alegraEmployeeId: string;
   fullName: string;
+  /** La cédula es necesaria para nómina (people_compensation). */
+  identification: string | null;
   /** Salario del directorio de Alegra — puede estar DESACTUALIZADO; se
    * muestra como "salario registrado en Alegra", nunca alimenta series. */
   registeredSalary: number | null;

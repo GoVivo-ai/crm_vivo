@@ -158,8 +158,11 @@ círculo activo); abajo pulso y avatar 30px. Ver lámina en `Sistema.dc.html`.
 - **Deltas**: chip up `--green-tint`/`--green-ink`, down `--red-tint`/`--red`, con
   flecha SVG 45°.
 - **Kanban**: columnas fondo `#EEF1F6` radio 14; tarjetas blancas radio 12 con borde
-  `--border`; tarjeta destacada = borde+ring verde y glow; slot "+ Nuevo" punteado
-  `#C6CFDD`; chip de días estancado en `--gold` cuando ≥ 10 días.
+  `--border`; el **ring verde + glow queda RESERVADO al estado de arrastre**
+  (DragOverlay) — es afordancia de interacción, no un destacado permanente; un negocio
+  con evento/cierre próximo se señala con su línea meta de calendario (icono + fecha),
+  como en el artboard; slot "+ Nuevo" punteado `#C6CFDD`; chip de días estancado en
+  `--gold` cuando ≥ 10 días.
 - **Alertas/accionables**: fila con tinta (`--red-tint` o `--yellow-tint`) radio 10,
   icono 14–15px del color del texto, **título con VERBO** ("Gestionar cobro a…",
   "Aprobar 2 ausencias") + meta en `--muted` + link de acción a la derecha.
@@ -241,6 +244,13 @@ Regla editorial: **ningún dato sin verbo** — todo problema trae su acción.
 - Cumpleaños/aniversarios: no existen en datos hoy; la franja Equipo muestra hechos
   reales (ausencias por aprobar, contratos por vencer). Se reinstauran cuando el
   módulo People (expediente) los aporte.
+- Registro de sincronizaciones: interino, solo la corrida MÁS RECIENTE por fuente
+  (subtítulo honesto); el objetivo es el historial de 24 h del artboard —
+  `listSyncRuns({limit})` pedido a backend.
+- Vacaciones: la banda verde calcula y etiqueta **"días calendario"** mientras el
+  contrato cuente días corridos; el objetivo es **días hábiles** (L–V y festivos de
+  Colombia, pedido a backend) — jamás etiquetar "hábiles" contando corridos, y el
+  saldo anual debe usar la misma unidad que la banda.
 - Todo dato faltante se etiqueta honesto en la UI; nunca se simula.
 
 ## 11. Notas por pantalla

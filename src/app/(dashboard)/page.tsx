@@ -1,3 +1,5 @@
+import { getClientsSummary } from "@/modules/clients/application/clients-summary-action";
+import { HealthBadge } from "@/modules/clients/ui/health-badge";
 import { getPipelineBoard } from "@/modules/crm/application/deals-actions";
 import { getFinanceDashboard } from "@/modules/finance/application/finance-actions";
 import { getMarketingDashboard } from "@/modules/marketing/application/marketing-actions";
@@ -15,10 +17,11 @@ export default async function DashboardHome() {
   const user = await getCurrentUser();
   const allowed = user ? readableResources(user.role) : [];
 
-  const [board, finance, marketing] = await Promise.all([
+  const [board, finance, marketing, clients] = await Promise.all([
     allowed.includes("crm") ? getPipelineBoard() : null,
     allowed.includes("finance") ? getFinanceDashboard() : null,
     allowed.includes("marketing") ? getMarketingDashboard({}) : null,
+    allowed.includes("clients") ? getClientsSummary() : null,
   ]);
 
   const open =
@@ -123,13 +126,46 @@ export default async function DashboardHome() {
           </HomePanel>
         )}
 
-        {allowed.includes("clients") && (
+        {clients !== null && (
           <HomePanel title="Clientes" href="/clients">
-            <p className="text-sm text-muted-foreground">
-              MRR global y salud de proyectos llegan cuando backend publique
-              el resumen agregado; mientras tanto revisa cada cuenta en su
-              vista 360.
-            </p>
+            {clients.ok ? (
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex flex-col gap-1 rounded-lg border bg-card p-4">
+                  <p className="text-xs text-muted-foreground">MRR</p>
+                  <div className="font-mono text-xl leading-tight">
+                    {Object.entries(clients.data.mrrByCurrency).length === 0
+                      ? "—"
+                      : Object.entries(clients.data.mrrByCurrency).map(
+                          ([currency, amount]) => (
+                            <p key={currency}>
+                              {formatCurrency(amount, currency)}
+                            </p>
+                          ),
+                        )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {clients.data.activeClients} clientes activos
+                  </p>
+                </div>
+                <div className="flex flex-col gap-2 rounded-lg border bg-card p-4">
+                  <p className="text-xs text-muted-foreground">
+                    Salud de proyectos
+                  </p>
+                  {(
+                    ["green", "yellow", "red", "unknown"] as const
+                  ).map((health) => (
+                    <span key={health} className="flex items-center gap-2">
+                      <HealthBadge health={health} />
+                      <span className="ml-auto font-mono text-xs">
+                        {clients.data.projectsByHealth[health]}
+                      </span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">{clients.error}</p>
+            )}
           </HomePanel>
         )}
       </div>

@@ -13,6 +13,7 @@ import {
   countActiveEmployees,
   getAdSpendByAccount,
   getRevenueByAccount,
+  getUnassignedRevenue,
 } from "@/modules/profitability/infrastructure/profitability-repository";
 import { listStaffingOverlappingPeriod } from "@/modules/profitability/infrastructure/staffing-repository";
 
@@ -50,14 +51,21 @@ export async function getProfitabilityDashboard(
   const period = { from, to };
 
   return runAction("profitability", "read", async () => {
-    const [revenue, adSpend, staffing, payments, activeEmployees] =
-      await Promise.all([
-        getRevenueByAccount(period),
-        getAdSpendByAccount(period),
-        listStaffingOverlappingPeriod(period),
-        getPaymentsByEmployeeMonth(period),
-        countActiveEmployees(),
-      ]);
+    const [
+      revenue,
+      adSpend,
+      staffing,
+      payments,
+      activeEmployees,
+      revenueUnassignedCop,
+    ] = await Promise.all([
+      getRevenueByAccount(period),
+      getAdSpendByAccount(period),
+      listStaffingOverlappingPeriod(period),
+      getPaymentsByEmployeeMonth(period),
+      countActiveEmployees(),
+      getUnassignedRevenue(period),
+    ]);
 
     const staffingCostByAccount = new Map<string, number>();
     let totalPayrollCop = 0;
@@ -124,6 +132,7 @@ export async function getProfitabilityDashboard(
       totalPayrollCop,
       totalAssignedPercent,
       unassignedCostCop: Math.round(totalPayrollCop - assignedTotal),
+      revenueUnassignedCop: Math.round(revenueUnassignedCop),
       activeEmployees,
       assumption: "per-employee-cost" as const,
       accounts,

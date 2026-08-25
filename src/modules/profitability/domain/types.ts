@@ -45,6 +45,9 @@ export type ProfitabilityDashboard = {
   totalAssignedPercent: number;
   /** Nómina del periodo NO asignada a cuentas (compañía) — visible en UI. */
   unassignedCostCop: number;
+  /** Ingresos del periodo sin cuenta CRM asignada (facturas solo con
+   * clientName) — KPI simétrico al costo sin asignar. */
+  revenueUnassignedCop: number;
   /** Empleados activos del directorio (informativo). */
   activeEmployees: number;
   /** Método del costo, para la nota de la UI: pagos reales por persona. */

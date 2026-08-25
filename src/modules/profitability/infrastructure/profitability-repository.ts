@@ -39,6 +39,28 @@ export async function getRevenueByAccount(range: {
   return rows.map((r) => ({ ...r, revenueCop: Number(r.revenueCop) }));
 }
 
+/** Ingresos del periodo SIN cuenta CRM asignada (facturas solo con
+ * clientName) — bucket simétrico al costo sin asignar. */
+export async function getUnassignedRevenue(range: {
+  from: string;
+  to: string;
+}): Promise<number> {
+  const [row] = await db
+    .select({
+      total: sql<string>`coalesce(sum(${invoices.total} * coalesce(${invoices.exchangeRate}, 1)), 0)`,
+    })
+    .from(invoices)
+    .where(
+      and(
+        sql`${invoices.accountId} is null`,
+        ne(invoices.status, "void"),
+        gte(invoices.issueDate, range.from),
+        lte(invoices.issueDate, range.to),
+      ),
+    );
+  return Number(row?.total ?? 0);
+}
+
 /** Empleados activos del directorio (informativo en el dashboard). */
 export async function countActiveEmployees(): Promise<number> {
   const [row] = await db

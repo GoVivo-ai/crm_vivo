@@ -21,7 +21,7 @@ import {
 } from "@/shared/ui/format";
 
 const config = {
-  finalBalance: { label: "Saldo en bancos", color: "#175e73" },
+  finalBalance: { label: "Saldo en bancos", color: "var(--chart-2)" },
 } satisfies ChartConfig;
 
 function dayLabel(date: string): string {

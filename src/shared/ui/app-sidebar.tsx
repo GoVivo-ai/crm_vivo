@@ -9,6 +9,7 @@ import {
   Settings2,
   type LucideIcon,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -184,12 +185,25 @@ export function AppSidebar({ allowed }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <div className="flex items-center gap-2 px-2 py-1.5">
-          <span className="grid size-7 shrink-0 place-items-center rounded-md bg-sidebar-primary font-[family-name:var(--font-display)] text-sm font-bold text-sidebar-primary-foreground">
-            V
-          </span>
-          <span className="font-[family-name:var(--font-display)] text-base font-semibold tracking-tight group-data-[collapsible=icon]:hidden">
-            ERP VIVO
+        {/* Logo oficial blanco sobre navy (brand book); en modo icono, isotipo. */}
+        <div className="flex items-center gap-2 px-2 py-2">
+          <Image
+            src="/brand/logomark-white.png"
+            alt=""
+            width={30}
+            height={22}
+            className="hidden shrink-0 group-data-[collapsible=icon]:block"
+          />
+          <Image
+            src="/brand/logo-vivo-white.png"
+            alt="VIVO"
+            width={78}
+            height={32}
+            priority
+            className="group-data-[collapsible=icon]:hidden"
+          />
+          <span className="mb-1 self-end font-[family-name:var(--font-display)] text-[11px] font-bold tracking-widest text-sidebar-foreground/70 uppercase group-data-[collapsible=icon]:hidden">
+            ERP
           </span>
         </div>
       </SidebarHeader>

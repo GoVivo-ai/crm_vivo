@@ -25,10 +25,10 @@ const config = {
   netIncome: { label: "Resultado neto", color: "var(--health-ok)" },
 } satisfies ChartConfig;
 
-// Par de polaridad validado con el script del skill dataviz (PASS; el WARN
-// de CVD queda cubierto por codificación secundaria: signo = posición
-// respecto a la línea de cero + tooltip contable).
-const POSITIVE = "#0e7a4e";
+// Par de polaridad de la paleta VIVO, validado con el script del skill
+// dataviz (ALL PASS; el signo además se codifica por posición respecto a
+// la línea de cero + tooltip contable).
+const POSITIVE = "#069b66";
 const NEGATIVE = "#b3261e";
 
 function dayLabel(date: string): string {

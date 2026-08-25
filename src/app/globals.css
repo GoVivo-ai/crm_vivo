@@ -56,90 +56,93 @@
 }
 
 /*
- * Identidad "sala de control": papel #FBFBF8 + tinta verde-oscura #1A2420.
- * El sidebar es el único bloque oscuro de la UI. Un acento por módulo,
- * usado solo en rieles, chips y micro-detalles — nunca como fondo.
+ * Línea gráfica oficial VIVO (Brand Guidelines): navy #011640, verde
+ * #04D98B, amarillo #F2E205, blanco. El sidebar navy es el único bloque
+ * oscuro (logo blanco sobre navy, como manda el brand book); el verde es
+ * el acento de energía (focus/activo). Acentos por módulo derivados de la
+ * paleta y validados con el skill dataviz (ALL PASS, luz):
+ * crm #069B66 · clients #1E5FBF · finance #8C7A0A · marketing #0790A8.
  */
 :root {
-  --background: #fbfbf8;
-  --foreground: #1a2420;
+  --background: #f6f7f9;
+  --foreground: #0a1e3f;
   --card: #ffffff;
-  --card-foreground: #1a2420;
+  --card-foreground: #0a1e3f;
   --popover: #ffffff;
-  --popover-foreground: #1a2420;
-  --primary: #1a2420;
-  --primary-foreground: #f4f5f1;
-  --secondary: #f0f0ea;
-  --secondary-foreground: #1a2420;
-  --muted: #f0f0ea;
-  --muted-foreground: #5d675f;
-  --accent: #eef1ea;
-  --accent-foreground: #1a2420;
+  --popover-foreground: #0a1e3f;
+  --primary: #011640;
+  --primary-foreground: #f4f7fc;
+  --secondary: #ecf0f5;
+  --secondary-foreground: #0a1e3f;
+  --muted: #ecf0f5;
+  --muted-foreground: #5a6b85;
+  --accent: #e6f5ee;
+  --accent-foreground: #0a1e3f;
   --destructive: #b3261e;
-  --border: #e3e3da;
-  --input: #e3e3da;
-  --ring: #0e7a4e;
-  --chart-1: #0e7a4e;
-  --chart-2: #175e73;
-  --chart-3: #8a6a16;
-  --chart-4: #8c3fa8;
-  --chart-5: #5d675f;
-  --radius: 0.375rem;
-  --sidebar: #1a2420;
-  --sidebar-foreground: #dfe4dd;
-  --sidebar-primary: #0e7a4e;
-  --sidebar-primary-foreground: #f4f5f1;
-  --sidebar-accent: #26332c;
+  --border: #e2e6ec;
+  --input: #e2e6ec;
+  --ring: #04d98b;
+  --chart-1: #069b66;
+  --chart-2: #1e5fbf;
+  --chart-3: #8c7a0a;
+  --chart-4: #0790a8;
+  --chart-5: #5a6b85;
+  --radius: 0.625rem;
+  --sidebar: #011640;
+  --sidebar-foreground: #dde5f2;
+  --sidebar-primary: #04d98b;
+  --sidebar-primary-foreground: #011640;
+  --sidebar-accent: #12294f;
   --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #2c3a32;
-  --sidebar-ring: #0e7a4e;
-  --module-crm: #0e7a4e;
-  --module-clients: #175e73;
-  --module-finance: #8a6a16;
-  --module-marketing: #8c3fa8;
-  --health-ok: #0e7a4e;
+  --sidebar-border: #1c3357;
+  --sidebar-ring: #04d98b;
+  --module-crm: #069b66;
+  --module-clients: #1e5fbf;
+  --module-finance: #8c7a0a;
+  --module-marketing: #0790a8;
+  --health-ok: #069b66;
   --health-warn: #a3690b;
   --health-critical: #b3261e;
 }
 
-/* Dark mode diferido a v2 — tokens espejo mínimos para no bloquearlo. */
+/* Dark mode diferido a v2 — espejo navy de los tokens de marca. */
 .dark {
-  --background: #121915;
-  --foreground: #e7eae4;
-  --card: #1a2420;
-  --card-foreground: #e7eae4;
-  --popover: #1a2420;
-  --popover-foreground: #e7eae4;
-  --primary: #e7eae4;
-  --primary-foreground: #1a2420;
-  --secondary: #26332c;
-  --secondary-foreground: #e7eae4;
-  --muted: #26332c;
-  --muted-foreground: #9aa79d;
-  --accent: #26332c;
-  --accent-foreground: #e7eae4;
+  --background: #050f24;
+  --foreground: #e2e9f5;
+  --card: #0b1b38;
+  --card-foreground: #e2e9f5;
+  --popover: #0b1b38;
+  --popover-foreground: #e2e9f5;
+  --primary: #e2e9f5;
+  --primary-foreground: #011640;
+  --secondary: #12294f;
+  --secondary-foreground: #e2e9f5;
+  --muted: #12294f;
+  --muted-foreground: #8ea1bf;
+  --accent: #12294f;
+  --accent-foreground: #e2e9f5;
   --destructive: #d9564e;
   --border: #ffffff1a;
   --input: #ffffff26;
-  --ring: #34a06f;
-  --chart-1: #34a06f;
-  --chart-2: #3f8ba3;
-  --chart-3: #bfa04a;
-  --chart-4: #b06cc9;
-  --chart-5: #9aa79d;
-  --sidebar: #121915;
-  --sidebar-foreground: #dfe4dd;
-  --sidebar-primary: #34a06f;
-  --sidebar-primary-foreground: #121915;
-  --sidebar-accent: #26332c;
+  --ring: #04d98b;
+  --chart-1: #23c78e;
+  --chart-2: #5e93e8;
+  --chart-3: #c4ad3a;
+  --chart-4: #3ab6cf;
+  --chart-5: #8ea1bf;
+  --sidebar: #050f24;
+  --sidebar-foreground: #dde5f2;
+  --sidebar-primary: #04d98b;
+  --sidebar-primary-foreground: #011640;
+  --sidebar-accent: #12294f;
   --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #2c3a32;
-  --sidebar-ring: #34a06f;
-  --module-crm: #34a06f;
-  --module-clients: #3f8ba3;
-  --module-finance: #bfa04a;
-  --module-marketing: #b06cc9;
-  --health-ok: #34a06f;
+  --sidebar-border: #1c3357;
+  --sidebar-ring: #04d98b;
+  --module-crm: #23c78e;
+  --module-clients: #5e93e8;
+  --module-finance: #c4ad3a;
+  --module-marketing: #3ab6cf;
+  --health-ok: #23c78e;
   --health-warn: #d3963a;
   --health-critical: #d9564e;
 }
@@ -158,7 +161,8 @@
   h2,
   h3 {
     font-family: var(--font-display), var(--font-sans), sans-serif;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
+    font-weight: 700;
   }
 }
 

@@ -1,22 +1,21 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
-import {
-  Bricolage_Grotesque,
-  IBM_Plex_Mono,
-  IBM_Plex_Sans,
-} from "next/font/google";
+import { IBM_Plex_Mono, Nunito, Nunito_Sans } from "next/font/google";
 import "./globals.css";
 
-const display = Bricolage_Grotesque({
+// Tipografías oficiales de la marca VIVO: Nunito (display) + Nunito Sans
+// (texto). El brand book no define mono; IBM Plex Mono queda como utilidad
+// para cifras por sus numerales tabulares.
+const display = Nunito({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["600", "700", "800"],
 });
 
-const sans = IBM_Plex_Sans({
+const sans = Nunito_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "600", "700"],
 });
 
 const mono = IBM_Plex_Mono({

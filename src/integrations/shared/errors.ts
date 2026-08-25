@@ -4,7 +4,7 @@ import { describeStatus } from "@/integrations/shared/test-connection";
 function serviceFromUrl(url: string): string {
   if (url.includes("alegra.com")) return "Alegra";
   if (url.includes("clickup.com")) return "ClickUp";
-  if (url.includes("windsor.ai")) return "Windsor.ai";
+  if (url.includes("facebook.com")) return "Meta Ads";
   return "el servicio externo";
 }
 

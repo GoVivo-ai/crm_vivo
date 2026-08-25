@@ -9,7 +9,7 @@ import {
 
 /**
  * Reduce una URL a origin+path para mensajes de error: NUNCA query string
- * ni headers — la api_key de Windsor viaja como query param y el Basic
+ * ni headers — el access_token de Meta viaja como query param y el Basic
  * Auth de Alegra en Authorization; ninguno debe llegar a logs, sync_runs
  * ni respuestas HTTP.
  */

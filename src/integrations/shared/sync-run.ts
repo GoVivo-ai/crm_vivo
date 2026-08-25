@@ -3,7 +3,7 @@ import { db } from "@/shared/database/db";
 import { syncRuns } from "@/shared/database/sync-runs.schema";
 import { toReadableSyncError } from "@/integrations/shared/errors";
 
-type SyncSource = "alegra" | "clickup" | "windsor";
+type SyncSource = "alegra" | "clickup" | "meta_ads";
 
 export type SyncStats = Record<string, unknown>;
 

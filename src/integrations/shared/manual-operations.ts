@@ -3,15 +3,15 @@ import type {
   ClickupCredentials,
   Integration,
   IntegrationPayload,
-  WindsorCredentials,
+  MetaAdsCredentials,
 } from "@/modules/settings/domain/types";
 import { testAlegraConnection } from "@/integrations/alegra/test-connection";
 import { testClickUpConnection } from "@/integrations/clickup/test-connection";
-import { testWindsorConnection } from "@/integrations/windsor/test-connection";
+import { testMetaConnection } from "@/integrations/meta/test-connection";
 import { syncAlegra } from "@/integrations/alegra/sync-alegra";
 import { syncAlegraErp } from "@/integrations/alegra/sync-alegra-erp";
 import { syncClickUp } from "@/integrations/clickup/sync-clickup";
-import { syncWindsor } from "@/integrations/windsor/sync-windsor";
+import { syncMeta } from "@/integrations/meta/sync-meta";
 import { toReadableSyncError } from "@/integrations/shared/errors";
 
 /**
@@ -33,8 +33,8 @@ export async function testConnection(
     const result =
       integration === "alegra"
         ? await testAlegraConnection(payload as AlegraCredentials)
-        : integration === "windsor"
-          ? await testWindsorConnection(payload as WindsorCredentials)
+        : integration === "meta_ads"
+          ? await testMetaConnection(payload as MetaAdsCredentials)
           : await testClickUpConnection(payload as ClickupCredentials);
     return { ok: result.ok, error: result.ok ? null : result.message };
   } catch (error) {
@@ -52,7 +52,7 @@ export async function runManualSync(
     if (integration === "alegra") {
       if (scope === "erp") await syncAlegraErp();
       else await syncAlegra();
-    } else if (integration === "windsor") await syncWindsor();
+    } else if (integration === "meta_ads") await syncMeta();
     else await syncClickUp();
     return { ok: true, error: null };
   } catch (error) {

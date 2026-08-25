@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { EmployeeDetail } from "@/modules/people/domain/types";
 import { Badge, FileCard } from "./bits";
-import { computeChecklist } from "./helpers";
+import { computeChecklist, formatMonthYear } from "./helpers";
 import { SectionLomo } from "./section-lomo";
 
 /** Sube un documento del checklist: nombre precargado con el ítem
@@ -14,10 +14,13 @@ import { SectionLomo } from "./section-lomo";
 function UploadDoc({
   detail,
   presetName,
+  today,
   label = "Subir →",
 }: {
   detail: EmployeeDetail;
   presetName: string;
+  /** Fecha del server: queda como uploadedAt del documento. */
+  today: string;
   label?: string;
 }) {
   return (
@@ -31,6 +34,7 @@ function UploadDoc({
           {
             name: (form.get("name") as string).trim(),
             url: (form.get("url") as string).trim(),
+            uploadedAt: today,
             ...((form.get("expiresAt") as string)
               ? { expiresAt: form.get("expiresAt") as string }
               : {}),
@@ -59,9 +63,11 @@ function UploadDoc({
 export function ChecklistCard({
   detail,
   canWrite,
+  today,
 }: {
   detail: EmployeeDetail;
   canWrite: boolean;
+  today: string;
 }) {
   const { items, done, total } = computeChecklist(detail.documents);
   const complete = done === total;
@@ -117,8 +123,13 @@ export function ChecklistCard({
                 item.label
               )}
             </span>
+            {item.doc?.uploadedAt && (
+              <span className="text-[11px] font-semibold text-[#8B99B0]">
+                {formatMonthYear(item.doc.uploadedAt)}
+              </span>
+            )}
             {item.doc === null && canWrite && (
-              <UploadDoc detail={detail} presetName={item.label} />
+              <UploadDoc detail={detail} presetName={item.label} today={today} />
             )}
           </li>
         ))}

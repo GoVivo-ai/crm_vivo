@@ -9,6 +9,7 @@ import {
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { TeamMember } from "@/modules/people/domain/types";
+import { formatDayMonth } from "@/modules/people/ui/file/helpers";
 import { MemberStatusBadge } from "@/modules/people/ui/labels";
 
 type DirectoryTableProps = {
@@ -53,9 +54,18 @@ export function DirectoryTable({ members, today }: DirectoryTableProps) {
                 >
                   {member.fullName}
                 </Link>
-                {(member.email || member.phone) && (
+                {(member.email || member.phone || member.birthDayMonth) && (
                   <p className="truncate text-xs text-muted-foreground">
-                    {[member.email, member.phone].filter(Boolean).join(" · ")}
+                    {[
+                      member.email,
+                      member.phone,
+                      // Cumpleaños SIN año (minimización PII, §14).
+                      member.birthDayMonth
+                        ? `Cumple ${formatDayMonth(member.birthDayMonth)}`
+                        : null,
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
                   </p>
                 )}
               </TableCell>

@@ -27,6 +27,17 @@ export function formatIsoDate(iso: string): string {
   return `${d} ${MONTHS_ES[m - 1] ?? m} ${y}`;
 }
 
+/** ISO → "sep 2024" (fecha de subida en la checklist). */
+export function formatMonthYear(iso: string): string {
+  const [y, m] = iso.split("-").map(Number);
+  return `${MONTHS_ES[m - 1] ?? m} ${y}`;
+}
+
+/** {day, month} → "14 mar" — cumpleaños sin año (minimización PII). */
+export function formatDayMonth(b: { day: number; month: number }): string {
+  return `${b.day} ${MONTHS_ES[b.month - 1] ?? b.month}`;
+}
+
 export function daysUntil(iso: string, today: string): number {
   return Math.floor((Date.parse(iso) - Date.parse(today)) / 86_400_000);
 }

@@ -14,7 +14,10 @@ import { ContractualCard } from "@/modules/people/ui/file/contractual-card";
 import { DocumentsCard } from "@/modules/people/ui/file/documents-card";
 import { FileHeader } from "@/modules/people/ui/file/file-header";
 import { FileTabs, type FileTab } from "@/modules/people/ui/file/file-tabs";
-import { computeChecklist } from "@/modules/people/ui/file/helpers";
+import {
+  computeChecklist,
+  formatDayMonth,
+} from "@/modules/people/ui/file/helpers";
 import { LeaveCard } from "@/modules/people/ui/file/leave-card";
 import { NotesCard } from "@/modules/people/ui/file/notes-card";
 import { PersonalCard } from "@/modules/people/ui/file/personal-card";
@@ -73,7 +76,14 @@ export default async function EmployeeFilePage({
               <MemberStatusBadge active={member.active} />
             </div>
             <p className="mt-1 truncate text-[12.5px] font-semibold text-muted-foreground">
-              {[member.position, member.area, member.email]
+              {[
+                member.position,
+                member.area,
+                member.email,
+                member.birthDayMonth
+                  ? `Cumple ${formatDayMonth(member.birthDayMonth)}`
+                  : null,
+              ]
                 .filter(Boolean)
                 .join(" · ") || "—"}
             </p>
@@ -110,7 +120,7 @@ export default async function EmployeeFilePage({
     />
   );
   const checklistCard = (
-    <ChecklistCard detail={detail} canWrite={canWrite} />
+    <ChecklistCard detail={detail} canWrite={canWrite} today={today} />
   );
   const leaveCard = (
     <LeaveCard
@@ -154,7 +164,7 @@ export default async function EmployeeFilePage({
       key: "docs",
       label: "Documentos",
       panel: grid(
-        <DocumentsCard detail={detail} canWrite={canWrite} />,
+        <DocumentsCard detail={detail} canWrite={canWrite} today={today} />,
         checklistCard,
       ),
     },

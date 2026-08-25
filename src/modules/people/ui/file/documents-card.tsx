@@ -5,16 +5,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { EmployeeDetail } from "@/modules/people/domain/types";
 import { FileCard } from "./bits";
-import { formatIsoDate } from "./helpers";
+import { formatIsoDate, formatMonthYear } from "./helpers";
 import { SectionLomo } from "./section-lomo";
 
 /** Tab Documentos (§14): todo lo subido, con vencimiento si lo tiene. */
 export function DocumentsCard({
   detail,
   canWrite,
+  today,
 }: {
   detail: EmployeeDetail;
   canWrite: boolean;
+  today: string;
 }) {
   return (
     <FileCard
@@ -31,6 +33,7 @@ export function DocumentsCard({
                 {
                   name: (form.get("name") as string).trim(),
                   url: (form.get("url") as string).trim(),
+                  uploadedAt: today,
                   ...((form.get("expiresAt") as string)
                     ? { expiresAt: form.get("expiresAt") as string }
                     : {}),
@@ -75,9 +78,14 @@ export function DocumentsCard({
               >
                 {doc.name}
               </a>
+              {doc.uploadedAt && (
+                <span className="text-[11px] font-semibold text-[#8B99B0]">
+                  {formatMonthYear(doc.uploadedAt)}
+                </span>
+              )}
               {doc.expiresAt && (
                 <span className="text-[11px] font-semibold text-[#8B99B0]">
-                  vence {formatIsoDate(doc.expiresAt)}
+                  · vence {formatIsoDate(doc.expiresAt)}
                 </span>
               )}
             </li>

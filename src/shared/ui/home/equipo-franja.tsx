@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { TeamMember } from "@/modules/people/domain/types";
+import { formatDayMonth } from "@/modules/people/ui/file/helpers";
 import { Franja, type Veredicto } from "@/shared/ui/home/franja";
 import { formatAccountingMoney } from "@/shared/ui/format";
 
@@ -24,6 +25,19 @@ export function EquipoFranja({
       m.contractEndDate !== null &&
       (Date.parse(m.contractEndDate) - Date.parse(today)) / 86_400_000 <= 60,
   );
+
+  // Próximo cumpleaños (sin año — minimización PII): el más cercano
+  // hacia adelante, contando el cruce de año.
+  const [, tm, td] = today.split("-").map(Number);
+  const todayKey = tm * 100 + td;
+  const nextBirthday = active
+    .filter((m) => m.birthDayMonth !== null)
+    .map((m) => {
+      const b = m.birthDayMonth!;
+      const key = b.month * 100 + b.day;
+      return { m, b, order: key >= todayKey ? key : key + 1300 };
+    })
+    .sort((a, b) => a.order - b.order)[0];
 
   const verdict: Veredicto =
     members.length === 0
@@ -102,6 +116,13 @@ export function EquipoFranja({
         {(pendingLeaveCount ?? 0) === 0 && expiring.length === 0 && (
           <p className="text-[11.5px] font-semibold text-muted-foreground">
             Sin pendientes de gestión hoy.
+          </p>
+        )}
+        {nextBirthday && (
+          <p className="text-[11.5px] font-semibold text-muted-foreground">
+            {nextBirthday.b.month === tm && nextBirthday.b.day === td
+              ? `Hoy cumple años ${nextBirthday.m.fullName}.`
+              : `Próximo cumpleaños: ${nextBirthday.m.fullName} · ${formatDayMonth(nextBirthday.b)}`}
           </p>
         )}
       </div>

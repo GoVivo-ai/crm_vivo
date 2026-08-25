@@ -1,6 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { listAccounts } from "@/modules/crm/application/accounts-actions";
+import { listAccountOptionsForInvoicing } from "@/modules/finance/application/account-options-action";
 import { RequiresWrite, hasWrite } from "@/shared/ui/requires-write";
 import { listInvoices } from "@/modules/finance/application/invoices-actions";
 import { InvoiceForm } from "@/modules/finance/ui/invoice-form";
@@ -21,15 +21,13 @@ export default async function InvoicesPage({
 
   const [invoicesResult, accountsResult, canWrite] = await Promise.all([
     listInvoices(),
-    listAccounts(),
+    listAccountOptionsForInvoicing(),
     hasWrite("finance"),
   ]);
   if (!invoicesResult.ok)
     return <ActionError message={invoicesResult.error} />;
 
-  const accounts = accountsResult.ok
-    ? accountsResult.data.map(({ id, name }) => ({ id, name }))
-    : [];
+  const accounts = accountsResult.ok ? accountsResult.data : [];
   const all = invoicesResult.data;
   const counts = {
     open: all.filter((i) => i.status === "open").length,

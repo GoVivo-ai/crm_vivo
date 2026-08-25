@@ -30,6 +30,7 @@ export function ConfirmDialog({
   open: controlledOpen,
   onOpenChange,
   objectName,
+  eyebrow = "Irreversible",
 }: {
   /** Elemento que abre el dialog; omítelo en modo controlado. */
   trigger?: React.ReactElement;
@@ -46,6 +47,8 @@ export function ConfirmDialog({
   pending?: boolean;
   /** El objeto en peligro, nombrado en el lomo ("FV-2041"). */
   objectName?: string;
+  /** "Irreversible" para borrar cosas reales; "Sin guardar" para borradores. */
+  eyebrow?: string;
   /** Contenido extra (p.ej. nota de rechazo) entre el cuerpo y las acciones. */
   children?: React.ReactNode;
 }) {
@@ -65,7 +68,7 @@ export function ConfirmDialog({
           module="Confirmar"
           title="Acción destructiva"
           tone="red"
-          eyebrowBottom="Irreversible"
+          eyebrowBottom={eyebrow}
           bottomHighlight={objectName ?? " "}
         />
         <div className="flex min-w-0 flex-col gap-3 p-6">

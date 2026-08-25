@@ -20,6 +20,7 @@ export function DiscardGuardDialog({
       body="Lo que escribiste en este formulario se perderá."
       confirmLabel="Descartar cambios"
       cancelLabel="Seguir editando"
+      eyebrow="Sin guardar"
       onConfirm={onDiscard}
     />
   );

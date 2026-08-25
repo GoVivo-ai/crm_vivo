@@ -6,6 +6,7 @@ import { getSyncStatus } from "@/modules/finance/application/finance-actions";
 import type { SyncSource } from "@/modules/finance/domain/types";
 import { getCurrentUser } from "@/modules/identity/application/get-current-user";
 import {
+  can,
   readableResources,
   type Role,
 } from "@/modules/identity/domain/permissions";
@@ -14,6 +15,16 @@ import {
   AppSidebar,
   type SidebarSync,
 } from "@/shared/ui/app-sidebar";
+import type { SpotlightType } from "@/shared/ui/spotlight/parser";
+import { SpotlightProvider } from "@/shared/ui/spotlight/spotlight-provider";
+
+/** Tipos del Spotlight (§12.6) según permisos de escritura del rol. */
+const SPOTLIGHT_RESOURCES: [SpotlightType, Parameters<typeof can>[1]][] = [
+  ["invoice", "finance"],
+  ["expense", "purchases"],
+  ["payroll", "people_compensation"],
+  ["transaction", "treasury"],
+];
 
 const ROLE_LABELS: Record<Role, string> = {
   admin: "Admin",
@@ -88,7 +99,13 @@ export default async function DashboardLayout({ children }: LayoutProps<"/">) {
     .join("")
     .toUpperCase();
 
+  const spotlightAllowed = SPOTLIGHT_RESOURCES.filter(([, resource]) =>
+    can(user.role, resource, "write"),
+  ).map(([type]) => type);
+  const today = new Date().toISOString().slice(0, 10);
+
   return (
+    <SpotlightProvider allowed={spotlightAllowed} today={today}>
     <SidebarProvider
       style={
         {
@@ -126,5 +143,6 @@ export default async function DashboardLayout({ children }: LayoutProps<"/">) {
         }}
       />
     </SidebarProvider>
+    </SpotlightProvider>
   );
 }

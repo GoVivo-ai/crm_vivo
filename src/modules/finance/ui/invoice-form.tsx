@@ -27,7 +27,12 @@ import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
 import { useDirtyGuard } from "@/shared/ui/use-dirty-guard";
 
-type Option = { id: string; name: string };
+type Option = {
+  id: string;
+  name: string;
+  /** Fees mensuales activos por moneda (contexto vivo); {} = sin servicios. */
+  mrrByCurrency?: Record<string, number>;
+};
 
 type InvoiceFormProps = {
   /** Con invoice = edición (solo registros manuales). */
@@ -97,12 +102,20 @@ export function InvoiceForm({
   }
 
   const totalNum = Number(totalStr);
+  const selectedAccount = accounts.find((a) => a.id === accountId);
+  const mrrEntries = Object.entries(selectedAccount?.mrrByCurrency ?? {});
   const lomoContext = {
     amount:
       totalStr !== "" && Number.isFinite(totalNum) && totalNum > 0
         ? formatCurrency(totalNum, currency)
         : null,
-    entity: accounts.find((a) => a.id === accountId)?.name ?? null,
+    entity: selectedAccount?.name ?? null,
+    fact:
+      mrrEntries.length > 0
+        ? `MRR: ${mrrEntries
+            .map(([code, amount]) => formatCurrency(amount, code))
+            .join(" · ")}`
+        : null,
   };
 
   return (

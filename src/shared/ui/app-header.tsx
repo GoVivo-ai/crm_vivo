@@ -1,9 +1,12 @@
 "use client";
 
+import { Plus } from "lucide-react";
 import { Fragment } from "react";
 import { usePathname } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useSpotlight } from "@/shared/ui/spotlight/spotlight-provider";
 import { UserMenu } from "@/shared/ui/user-menu";
 
 const SEGMENT_LABELS: Record<string, string> = {
@@ -48,6 +51,7 @@ export function AppHeader({
   initials,
 }: AppHeaderProps) {
   const crumbs = breadcrumb(usePathname());
+  const spotlight = useSpotlight();
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-3 border-b bg-background px-4">
@@ -70,6 +74,15 @@ export function AppHeader({
         ))}
       </nav>
       <div className="ml-auto flex items-center gap-3">
+        {spotlight.enabled && (
+          <Button size="sm" onClick={spotlight.openSpotlight}>
+            <Plus className="size-4" />
+            Registrar
+            <span className="ml-0.5 hidden rounded-md bg-[#011640]/15 px-1.5 py-px text-[10.5px] font-bold sm:inline">
+              ⌘K
+            </span>
+          </Button>
+        )}
         <div className="hidden text-right sm:block">
           <p className="text-sm leading-tight font-medium">{userName}</p>
           <p className="text-xs leading-tight text-muted-foreground">

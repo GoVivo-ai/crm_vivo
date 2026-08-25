@@ -66,6 +66,8 @@ export function CaptureDialogContent({
 const TILE_TONES = {
   green: "bg-[rgba(4,217,139,0.18)] text-[#04D98B]",
   red: "bg-[rgba(201,58,58,0.30)] text-[#F08A8A]",
+  // Área Equipo (§14): tile en tinta navy sobre el lomo.
+  team: "bg-[#E7EBF3] text-[#011640]",
 } as const;
 
 export function CaptureLomo({
@@ -83,8 +85,8 @@ export function CaptureLomo({
   /** Título corto: "Nueva factura". */
   title: string;
   context?: LomoContext;
-  /** red = confirmación destructiva (§12.4). */
-  tone?: "green" | "red";
+  /** red = confirmación destructiva (§12.4); team = Lomos del área Equipo. */
+  tone?: "green" | "red" | "team";
   /** Eyebrow inferior ("Contexto vivo" / "Irreversible"). */
   eyebrowBottom?: string;
   /** Texto destacado inferior en tono (p.ej. el objeto en peligro). */

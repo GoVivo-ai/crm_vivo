@@ -54,11 +54,7 @@ export default async function PeoplePage() {
         />
       ) : (
         <div className="overflow-x-auto rounded-lg border bg-card">
-          <DirectoryTable
-            members={directory.data}
-            canWrite={canWrite}
-            today={today}
-          />
+          <DirectoryTable members={directory.data} today={today} />
         </div>
       )}
 

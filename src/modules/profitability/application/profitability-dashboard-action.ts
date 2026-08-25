@@ -10,6 +10,7 @@ import type {
 import { profitabilityPeriodSchema } from "@/modules/profitability/domain/validation";
 import { getPayrollCostForRange } from "@/modules/people/infrastructure/payroll-cost-repository";
 import {
+  countActiveEmployees,
   getAdSpendByAccount,
   getRevenueByAccount,
 } from "@/modules/profitability/infrastructure/profitability-repository";
@@ -98,8 +99,10 @@ export async function getProfitabilityDashboard(
       (acc, s) => acc + s.dedicationPercent,
       0,
     );
-    const adSpendMap = new Map(adSpend.map((a) => [a.accountId, a.adSpendCop]));
-    const accountIds = new Set([
+    const adSpendMap = new Map<string, number>(
+      adSpend.map((a) => [a.accountId, a.adSpendCop] as [string, number]),
+    );
+    const accountIds = new Set<string>([
       ...revenue.map((r) => r.accountId),
       ...staffingCostByAccount.keys(),
     ]);

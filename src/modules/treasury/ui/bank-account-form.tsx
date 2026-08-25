@@ -1,7 +1,7 @@
 "use client";
 
 import { Landmark } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
@@ -19,15 +19,26 @@ import {
 import type { BankAccountView } from "@/modules/treasury/domain/types";
 import { CurrencyFields } from "@/shared/ui/currency-fields";
 import { FieldError } from "@/shared/ui/field-error";
-import { NativeSelect } from "@/shared/ui/native-select";
+import { Segmented } from "@/shared/ui/segmented";
+import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
+import { useDirtyGuard } from "@/shared/ui/use-dirty-guard";
 
 /** Alta/edición de cuenta manual — el saldo se actualiza guardando aquí. */
 export function BankAccountForm({ account }: { account?: BankAccountView }) {
   const [open, setOpen] = useState(false);
   const [currency, setCurrency] = useState(account?.currencyCode ?? "COP");
+  const [type, setType] = useState(account?.type ?? "bank");
+  const formRef = useRef<HTMLFormElement>(null);
   const { submit, pending, fieldErrors } = useActionSubmit<unknown>();
   const editing = account !== undefined;
+
+  const guard = useDirtyGuard({
+    open,
+    setOpen,
+    formRef,
+    extraState: { currency, type },
+  });
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -35,7 +46,7 @@ export function BankAccountForm({ account }: { account?: BankAccountView }) {
     const rawRate = form.get("exchangeRate") as string | null;
     const input = {
       name: form.get("name"),
-      type: (form.get("type") as string) || null,
+      type,
       currencyCode: currency,
       balance: Number(form.get("balance")),
       exchangeRate: rawRate ? Number(rawRate) : null,
@@ -52,7 +63,8 @@ export function BankAccountForm({ account }: { account?: BankAccountView }) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <>
+    <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
       <DialogTrigger
         render={<Button variant={editing ? "outline" : "default"} size="sm" />}
       >
@@ -65,7 +77,7 @@ export function BankAccountForm({ account }: { account?: BankAccountView }) {
           title={editing ? `Editar · ${account.name}` : "Nueva cuenta bancaria"}
           subtitle="Bancos · Tesorería"
         />
-        <form onSubmit={onSubmit}>
+        <form ref={formRef} onSubmit={onSubmit}>
           <CaptureDialogBody>
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
@@ -74,16 +86,17 @@ export function BankAccountForm({ account }: { account?: BankAccountView }) {
               <FieldError errors={fieldErrors.name} />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="type">Tipo</Label>
-              <NativeSelect
-                id="type"
-                name="type"
-                defaultValue={account?.type ?? "bank"}
-              >
-                <option value="bank">Banco</option>
-                <option value="cash">Caja</option>
-                <option value="credit-card">Tarjeta de crédito</option>
-              </NativeSelect>
+              <Label>Tipo</Label>
+              <Segmented
+                ariaLabel="Tipo de cuenta"
+                value={type}
+                onChange={setType}
+                options={[
+                  { value: "bank", label: "Banco" },
+                  { value: "cash", label: "Caja" },
+                  { value: "credit-card", label: "Tarjeta" },
+                ]}
+              />
             </div>
           </div>
           <div className="grid grid-cols-3 gap-3">
@@ -120,5 +133,11 @@ export function BankAccountForm({ account }: { account?: BankAccountView }) {
         </form>
       </CaptureDialogContent>
     </Dialog>
+    <DiscardGuardDialog
+      open={guard.discardOpen}
+      onOpenChange={guard.setDiscardOpen}
+      onDiscard={guard.discard}
+    />
+    </>
   );
 }

@@ -13,10 +13,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createPayrollPayment } from "@/modules/people/application/team-actions";
+import { Combobox } from "@/shared/ui/combobox";
 import { CurrencyFields } from "@/shared/ui/currency-fields";
 import { FieldError } from "@/shared/ui/field-error";
-import { NativeSelect } from "@/shared/ui/native-select";
+import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
+import { useDirtyGuard } from "@/shared/ui/use-dirty-guard";
 
 type Option = { id: string; name: string };
 
@@ -24,11 +26,21 @@ type Option = { id: string; name: string };
 export function PayrollPaymentForm({ employees }: { employees: Option[] }) {
   const [open, setOpen] = useState(false);
   const [currency, setCurrency] = useState("COP");
+  const [employeeId, setEmployeeId] = useState<string | null>(
+    employees[0]?.id ?? null,
+  );
   const { submit, pending, fieldErrors } = useActionSubmit<unknown>();
   const today = new Date().toISOString().slice(0, 10);
   const currentPeriod = today.slice(0, 7);
   const formRef = useRef<HTMLFormElement>(null);
   const keepOpenRef = useRef(false);
+
+  const guard = useDirtyGuard({
+    open,
+    setOpen,
+    formRef,
+    extraState: { currency, employeeId },
+  });
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -37,7 +49,7 @@ export function PayrollPaymentForm({ employees }: { employees: Option[] }) {
     submit(
       () =>
         createPayrollPayment({
-          employeeId: form.get("employeeId"),
+          employeeId,
           period: form.get("period"),
           amount: Number(form.get("amount")),
           currencyCode: currency,
@@ -60,7 +72,8 @@ export function PayrollPaymentForm({ employees }: { employees: Option[] }) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <>
+    <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
       <DialogTrigger render={<Button size="sm" />}>+ Pago de nómina</DialogTrigger>
       <CaptureDialogContent>
         <CaptureDialogHeader
@@ -77,14 +90,15 @@ export function PayrollPaymentForm({ employees }: { employees: Option[] }) {
           <form ref={formRef} onSubmit={onSubmit}>
             <CaptureDialogBody>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="employeeId">Persona</Label>
-              <NativeSelect id="employeeId" name="employeeId" required>
-                {employees.map((e) => (
-                  <option key={e.id} value={e.id}>
-                    {e.name}
-                  </option>
-                ))}
-              </NativeSelect>
+              <Label>Persona</Label>
+              <Combobox
+                ariaLabel="Persona del equipo"
+                options={employees}
+                value={employeeId}
+                onValueChange={setEmployeeId}
+                placeholder="Buscar persona…"
+                required
+              />
               <FieldError errors={fieldErrors.employeeId} />
             </div>
             <div className="grid grid-cols-3 gap-3">
@@ -148,5 +162,11 @@ export function PayrollPaymentForm({ employees }: { employees: Option[] }) {
         )}
       </CaptureDialogContent>
     </Dialog>
+    <DiscardGuardDialog
+      open={guard.discardOpen}
+      onOpenChange={guard.setDiscardOpen}
+      onDiscard={guard.discard}
+    />
+    </>
   );
 }

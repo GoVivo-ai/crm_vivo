@@ -13,10 +13,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createBankTransaction } from "@/modules/treasury/application/treasury-actions";
+import { Combobox } from "@/shared/ui/combobox";
 import { FieldError } from "@/shared/ui/field-error";
-import { NativeSelect } from "@/shared/ui/native-select";
 import { Segmented } from "@/shared/ui/segmented";
+import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
+import { useDirtyGuard } from "@/shared/ui/use-dirty-guard";
 
 type Option = { id: string; name: string };
 
@@ -24,10 +26,20 @@ type Option = { id: string; name: string };
 export function TransactionForm({ accounts }: { accounts: Option[] }) {
   const [open, setOpen] = useState(false);
   const [direction, setDirection] = useState<"in" | "out">("in");
+  const [bankAccountId, setBankAccountId] = useState<string | null>(
+    accounts[0]?.id ?? null,
+  );
   const { submit, pending, fieldErrors } = useActionSubmit<unknown>();
   const today = new Date().toISOString().slice(0, 10);
   const formRef = useRef<HTMLFormElement>(null);
   const keepOpenRef = useRef(false);
+
+  const guard = useDirtyGuard({
+    open,
+    setOpen,
+    formRef,
+    extraState: { direction, bankAccountId },
+  });
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -35,7 +47,7 @@ export function TransactionForm({ accounts }: { accounts: Option[] }) {
     submit(
       () =>
         createBankTransaction({
-          bankAccountId: form.get("bankAccountId"),
+          bankAccountId,
           date: form.get("date"),
           amount: Number(form.get("amount")),
           direction,
@@ -56,7 +68,8 @@ export function TransactionForm({ accounts }: { accounts: Option[] }) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <>
+    <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
       <DialogTrigger render={<Button size="sm" />}>+ Movimiento</DialogTrigger>
       <CaptureDialogContent>
         <CaptureDialogHeader
@@ -73,14 +86,15 @@ export function TransactionForm({ accounts }: { accounts: Option[] }) {
           <form ref={formRef} onSubmit={onSubmit}>
             <CaptureDialogBody>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="bankAccountId">Cuenta</Label>
-              <NativeSelect id="bankAccountId" name="bankAccountId" required>
-                {accounts.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.name}
-                  </option>
-                ))}
-              </NativeSelect>
+              <Label>Cuenta</Label>
+              <Combobox
+                ariaLabel="Cuenta bancaria"
+                options={accounts}
+                value={bankAccountId}
+                onValueChange={setBankAccountId}
+                placeholder="Buscar cuenta…"
+                required
+              />
               <FieldError errors={fieldErrors.bankAccountId} />
             </div>
             <div className="grid grid-cols-3 gap-3">
@@ -142,5 +156,11 @@ export function TransactionForm({ accounts }: { accounts: Option[] }) {
         )}
       </CaptureDialogContent>
     </Dialog>
+    <DiscardGuardDialog
+      open={guard.discardOpen}
+      onOpenChange={guard.setDiscardOpen}
+      onDiscard={guard.discard}
+    />
+    </>
   );
 }

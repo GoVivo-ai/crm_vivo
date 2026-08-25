@@ -3,9 +3,13 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FieldError } from "@/shared/ui/field-error";
-import { NativeSelect } from "@/shared/ui/native-select";
+import { Segmented } from "@/shared/ui/segmented";
 
-const CURRENCIES = ["COP", "USD", "EUR"];
+const CURRENCIES = [
+  { value: "COP", label: "COP" },
+  { value: "USD", label: "USD" },
+  { value: "EUR", label: "EUR" },
+];
 
 type CurrencyFieldsProps = {
   currency: string;
@@ -28,19 +32,14 @@ export function CurrencyFields({
   return (
     <>
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="currencyCode">Moneda</Label>
-        <NativeSelect
-          id="currencyCode"
-          name="currencyCode"
+        <Label>Moneda</Label>
+        {/* 3 opciones cortas y excluyentes → segmented (regla §12.3). */}
+        <Segmented
+          ariaLabel="Moneda del documento"
           value={currency}
-          onChange={(e) => onCurrencyChange(e.target.value)}
-        >
-          {CURRENCIES.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </NativeSelect>
+          onChange={onCurrencyChange}
+          options={CURRENCIES}
+        />
       </div>
       {currency !== "COP" && (
         <div className="flex flex-col gap-1.5">

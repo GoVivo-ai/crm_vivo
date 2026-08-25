@@ -1,10 +1,10 @@
 "use client";
 
-import { UserButton } from "@clerk/nextjs";
 import { Fragment } from "react";
 import { usePathname } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { UserMenu } from "@/shared/ui/user-menu";
 
 const SEGMENT_LABELS: Record<string, string> = {
   crm: "CRM",
@@ -36,10 +36,17 @@ function breadcrumb(pathname: string): string[] {
 
 type AppHeaderProps = {
   userName: string;
+  userEmail: string;
   roleLabel: string;
+  initials: string;
 };
 
-export function AppHeader({ userName, roleLabel }: AppHeaderProps) {
+export function AppHeader({
+  userName,
+  userEmail,
+  roleLabel,
+  initials,
+}: AppHeaderProps) {
   const crumbs = breadcrumb(usePathname());
 
   return (
@@ -69,7 +76,12 @@ export function AppHeader({ userName, roleLabel }: AppHeaderProps) {
             {roleLabel}
           </p>
         </div>
-        <UserButton />
+        <UserMenu
+          name={userName}
+          email={userEmail}
+          roleLabel={roleLabel}
+          initials={initials}
+        />
       </div>
     </header>
   );

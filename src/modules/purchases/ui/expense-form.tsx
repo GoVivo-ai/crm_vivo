@@ -19,20 +19,31 @@ import {
 import type { Expense } from "@/modules/purchases/domain/types";
 import { CurrencyFields } from "@/shared/ui/currency-fields";
 import { FieldError } from "@/shared/ui/field-error";
-import { NativeSelect } from "@/shared/ui/native-select";
 import { Segmented } from "@/shared/ui/segmented";
+import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
+import { useDirtyGuard } from "@/shared/ui/use-dirty-guard";
 
 /** Registro/edición de gasto: direct = ya pagado (default), bill = a crédito. */
 export function ExpenseForm({ expense }: { expense?: Expense }) {
   const [open, setOpen] = useState(false);
   const [kind, setKind] = useState<"bill" | "direct">(expense?.kind ?? "direct");
   const [currency, setCurrency] = useState(expense?.currencyCode ?? "COP");
+  const [status, setStatus] = useState<"open" | "paid" | "void">(
+    expense?.status ?? "open",
+  );
   const { submit, pending, fieldErrors } = useActionSubmit<Expense>();
   const editing = expense !== undefined;
   const today = new Date().toISOString().slice(0, 10);
   const formRef = useRef<HTMLFormElement>(null);
   const keepOpenRef = useRef(false);
+
+  const guard = useDirtyGuard({
+    open,
+    setOpen,
+    formRef,
+    extraState: { kind, currency, status },
+  });
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -45,7 +56,7 @@ export function ExpenseForm({ expense }: { expense?: Expense }) {
       costCenter: (form.get("costCenter") as string) || null,
       txnDate: form.get("txnDate"),
       dueDate: (form.get("dueDate") as string) || null,
-      status: kind === "direct" ? "paid" : form.get("status"),
+      status: kind === "direct" ? "paid" : status,
       total: Number(form.get("total")),
       currencyCode: currency,
       exchangeRate: rawRate ? Number(rawRate) : null,
@@ -68,7 +79,8 @@ export function ExpenseForm({ expense }: { expense?: Expense }) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <>
+    <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
       <DialogTrigger
         render={<Button variant={editing ? "outline" : "default"} size="sm" />}
       >
@@ -153,16 +165,17 @@ export function ExpenseForm({ expense }: { expense?: Expense }) {
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="status">Estado</Label>
-                  <NativeSelect
-                    id="status"
-                    name="status"
-                    defaultValue={expense?.status ?? "open"}
-                  >
-                    <option value="open">Por pagar</option>
-                    <option value="paid">Pagada</option>
-                    <option value="void">Anulada</option>
-                  </NativeSelect>
+                  <Label>Estado</Label>
+                  <Segmented
+                    ariaLabel="Estado del gasto"
+                    value={status}
+                    onChange={setStatus}
+                    options={[
+                      { value: "open", label: "Por pagar" },
+                      { value: "paid", label: "Pagada" },
+                      { value: "void", label: "Anulada" },
+                    ]}
+                  />
                 </div>
               </>
             )}
@@ -203,5 +216,11 @@ export function ExpenseForm({ expense }: { expense?: Expense }) {
         </form>
       </CaptureDialogContent>
     </Dialog>
+    <DiscardGuardDialog
+      open={guard.discardOpen}
+      onOpenChange={guard.setDiscardOpen}
+      onDiscard={guard.discard}
+    />
+    </>
   );
 }

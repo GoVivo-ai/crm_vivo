@@ -110,7 +110,9 @@ export default async function DashboardLayout({ children }: LayoutProps<"/">) {
       <SidebarInset>
         <AppHeader
           userName={name}
+          userEmail={user.email}
           roleLabel={ROLE_LABELS[user.role]}
+          initials={initials || "V"}
         />
         <main className="flex-1 p-6">{children}</main>
       </SidebarInset>

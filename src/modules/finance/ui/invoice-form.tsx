@@ -17,10 +17,13 @@ import {
   updateInvoice,
 } from "@/modules/finance/application/invoices-actions";
 import type { Invoice } from "@/modules/finance/domain/types";
+import { Combobox } from "@/shared/ui/combobox";
 import { CurrencyFields } from "@/shared/ui/currency-fields";
 import { FieldError } from "@/shared/ui/field-error";
-import { NativeSelect } from "@/shared/ui/native-select";
+import { Segmented } from "@/shared/ui/segmented";
+import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
+import { useDirtyGuard } from "@/shared/ui/use-dirty-guard";
 
 type Option = { id: string; name: string };
 
@@ -39,22 +42,35 @@ export function InvoiceForm({
 }: InvoiceFormProps) {
   const [open, setOpen] = useState(false);
   const [currency, setCurrency] = useState(invoice?.currencyCode ?? "COP");
+  const [accountId, setAccountId] = useState<string | null>(
+    invoice?.accountId ?? null,
+  );
+  const [status, setStatus] = useState<"open" | "paid" | "void">(
+    invoice?.status ?? "open",
+  );
   const { submit, pending, fieldErrors } = useActionSubmit<Invoice>();
   const today = new Date().toISOString().slice(0, 10);
   const formRef = useRef<HTMLFormElement>(null);
   const keepOpenRef = useRef(false);
+
+  const guard = useDirtyGuard({
+    open,
+    setOpen,
+    formRef,
+    extraState: { currency, accountId, status },
+  });
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const rawRate = form.get("exchangeRate") as string | null;
     const input = {
-      accountId: (form.get("accountId") as string) || null,
+      accountId,
       clientName: (form.get("clientName") as string) || null,
       number: (form.get("number") as string) || null,
       issueDate: form.get("issueDate"),
       dueDate: (form.get("dueDate") as string) || null,
-      status: form.get("status"),
+      status,
       total: Number(form.get("total")),
       totalPaid: Number(form.get("totalPaid") || 0),
       currencyCode: currency,
@@ -78,7 +94,8 @@ export function InvoiceForm({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <>
+    <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
       <DialogTrigger
         render={<Button variant={invoice ? "outline" : "default"} size="sm" />}
       >
@@ -95,19 +112,14 @@ export function InvoiceForm({
           <CaptureDialogBody>
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="accountId">Cliente (CRM)</Label>
-              <NativeSelect
-                id="accountId"
-                name="accountId"
-                defaultValue={invoice?.accountId ?? ""}
-              >
-                <option value="">— sin vincular —</option>
-                {accounts.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.name}
-                  </option>
-                ))}
-              </NativeSelect>
+              <Label>Cliente (CRM)</Label>
+              <Combobox
+                ariaLabel="Cliente CRM"
+                options={accounts}
+                value={accountId}
+                onValueChange={setAccountId}
+                placeholder="Buscar cuenta…"
+              />
               <FieldError errors={fieldErrors.accountId} />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -174,16 +186,17 @@ export function InvoiceForm({
               <FieldError errors={fieldErrors.totalPaid} />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="status">Estado</Label>
-              <NativeSelect
-                id="status"
-                name="status"
-                defaultValue={invoice?.status ?? "open"}
-              >
-                <option value="open">Abierta</option>
-                <option value="paid">Pagada</option>
-                <option value="void">Anulada</option>
-              </NativeSelect>
+              <Label>Estado</Label>
+              <Segmented
+                ariaLabel="Estado de la factura"
+                value={status}
+                onChange={setStatus}
+                options={[
+                  { value: "open", label: "Abierta" },
+                  { value: "paid", label: "Pagada" },
+                  { value: "void", label: "Anulada" },
+                ]}
+              />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -210,5 +223,11 @@ export function InvoiceForm({
         </form>
       </CaptureDialogContent>
     </Dialog>
+    <DiscardGuardDialog
+      open={guard.discardOpen}
+      onOpenChange={guard.setDiscardOpen}
+      onDiscard={guard.discard}
+    />
+    </>
   );
 }

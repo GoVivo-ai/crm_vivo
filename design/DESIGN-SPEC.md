@@ -244,13 +244,14 @@ Regla editorial: **ningún dato sin verbo** — todo problema trae su acción.
 - Cumpleaños/aniversarios: no existen en datos hoy; la franja Equipo muestra hechos
   reales (ausencias por aprobar, contratos por vencer). Se reinstauran cuando el
   módulo People (expediente) los aporte.
-- Registro de sincronizaciones: interino, solo la corrida MÁS RECIENTE por fuente
-  (subtítulo honesto); el objetivo es el historial de 24 h del artboard —
-  `listSyncRuns({limit})` pedido a backend.
-- Vacaciones: la banda verde calcula y etiqueta **"días calendario"** mientras el
-  contrato cuente días corridos; el objetivo es **días hábiles** (L–V y festivos de
-  Colombia, pedido a backend) — jamás etiquetar "hábiles" contando corridos, y el
-  saldo anual debe usar la misma unidad que la banda.
+- Registro de sincronizaciones (resuelto): historial vía `listSyncRuns` — las 20
+  corridas más recientes con Fuente/Estado/Inicio/Duración/Filas/Detalle.
+- Vacaciones (resuelto): unidad y label vienen JUNTOS del contrato
+  (`LEAVE_DAY_UNIT` = "días hábiles (Colombia)") en saldo y solicitudes. La banda
+  verde en vivo estima en el cliente contando L–V y lo declara: "{N} días L–V · los
+  festivos se descuentan al enviar" (solo el server conoce festivos/ley Emiliani);
+  el conteo definitivo aparece en la solicitud creada. La banda nunca promete la
+  cifra final.
 - Todo dato faltante se etiqueta honesto en la UI; nunca se simula.
 
 ## 11. Notas por pantalla

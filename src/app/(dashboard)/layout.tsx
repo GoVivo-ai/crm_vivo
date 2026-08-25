@@ -1,3 +1,4 @@
+import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
@@ -21,7 +22,12 @@ export default async function DashboardLayout({
   children,
 }: LayoutProps<"/">) {
   const user = await getCurrentUser();
-  if (!user) redirect("/sign-in");
+  if (!user) {
+    // Autenticado en Clerk pero inactivo/ausente en BD → pantalla de
+    // activación pendiente; sin sesión → sign-in. Evita el loop de redirect.
+    const { userId } = await auth();
+    redirect(userId ? "/pending" : "/sign-in");
+  }
 
   return (
     <SidebarProvider>

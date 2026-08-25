@@ -1,0 +1,193 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&display=swap">
+  <style>
+    :root{
+      --navy:#011640;--ink:#0A1E3F;--muted:#5A6B85;--faint:#8B99B0;
+      --border:#E3E8F0;--line:#EDF0F5;--bg:#F6F7F9;--card:#FFFFFF;
+      --green:#04D98B;--green-ink:#069B66;--green-tint:#E6F9F1;
+      --yellow:#F2E205;--gold:#8C7A0A;--yellow-tint:#FBF7D9;
+      --blue:#1E5FBF;--blue-tint:#E8F0FB;--teal:#0790A8;
+      --red:#C93A3A;--red-tint:#FAEAEA;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Nunito Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+    a{color:var(--green-ink)}a:hover{color:#045C3D}
+    .app{display:flex;width:1440px;min-height:1024px;background:var(--bg)}
+    .sb{width:236px;flex-shrink:0;color:#fff;display:flex;flex-direction:column;padding:22px 14px 16px;background:radial-gradient(420px 300px at -60px -60px,rgba(4,217,139,.18),transparent 70%),radial-gradient(420px 340px at 120% 108%,rgba(30,95,191,.22),transparent 72%),var(--navy);border-right:1px solid rgba(255,255,255,.06)}
+    .sb-logo{display:flex;align-items:center;gap:10px;padding:0 10px 16px}
+    .sb-tag{font:800 9.5px 'Nunito Sans',sans-serif;letter-spacing:.14em;color:var(--green);border:1px solid rgba(4,217,139,.5);border-radius:999px;padding:3px 8px}
+    .sb-group{display:flex;align-items:center;gap:8px;font:800 9.5px/1 'Nunito Sans',sans-serif;letter-spacing:.16em;color:rgba(255,255,255,.48);padding:20px 12px 9px;text-transform:uppercase}
+    .sb-group::before{content:"";width:12px;height:2px;border-radius:2px;background:linear-gradient(90deg,#04D98B,#F2E205);flex-shrink:0}
+    .sb-item{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:999px;font:600 13.5px 'Nunito Sans',sans-serif;color:rgba(255,255,255,.72);margin-bottom:3px}
+    .sb-item svg{flex-shrink:0;opacity:.8}
+    .sb-item .odot{display:none;margin-left:auto;width:12px;height:12px;border-radius:99px;background:linear-gradient(135deg,#04D98B,#F2E205);align-items:center;justify-content:center;flex-shrink:0}
+    .sb-item .odot::after{content:"";width:5px;height:5px;border-radius:99px;background:#fff}
+    .sb-item.on{background:#fff;color:var(--navy);font-weight:800;box-shadow:0 10px 24px -10px rgba(4,217,139,.65)}
+    .sb-item.on svg{color:#069B66;opacity:1}
+    .sb-item.on .odot{display:flex}
+    .sb-sync{margin-top:auto;display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(255,255,255,.04);margin-bottom:8px}
+    .sb-pulse{width:8px;height:8px;border-radius:99px;background:var(--green);flex-shrink:0;animation:sbpulse 2.4s ease-out infinite}
+    @keyframes sbpulse{0%{box-shadow:0 0 0 0 rgba(4,217,139,.45)}70%{box-shadow:0 0 0 7px rgba(4,217,139,0)}100%{box-shadow:0 0 0 0 rgba(4,217,139,0)}}
+    .sb-user{display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,.06);border-radius:14px;border:1px solid rgba(255,255,255,.08)}
+    .avatar{width:32px;height:32px;border-radius:999px;background:linear-gradient(135deg,#04D98B,#F2E205);color:var(--navy);display:flex;align-items:center;justify-content:center;font:800 12px 'Nunito',sans-serif;flex-shrink:0}
+    .main{flex:1;display:flex;flex-direction:column;min-width:0}
+    .top{height:64px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 28px;flex-shrink:0}
+    .top h1{font:800 18px 'Nunito',sans-serif;margin:0;color:var(--navy)}
+    .crumb{font:600 12px 'Nunito Sans',sans-serif;color:var(--faint)}
+    .search{margin-left:auto;display:flex;align-items:center;gap:8px;width:250px;height:36px;border:1px solid var(--border);border-radius:999px;padding:0 14px;color:var(--faint);font:600 12.5px 'Nunito Sans',sans-serif;background:var(--bg)}
+    .btn{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 16px;border-radius:999px;font:800 13px 'Nunito Sans',sans-serif;border:1px solid transparent}
+    .btn.pri{background:var(--green);color:var(--navy)}
+    .btn.ghost{border-color:var(--border);color:var(--ink);background:#fff}
+    .bell{position:relative;width:36px;height:36px;border:1px solid var(--border);border-radius:999px;display:flex;align-items:center;justify-content:center;color:var(--muted);background:#fff;flex-shrink:0}
+    .dot{position:absolute;top:7px;right:8px;width:7px;height:7px;border-radius:99px;background:var(--green);border:1.5px solid #fff}
+    .content{padding:24px 28px 32px;display:flex;flex-direction:column;gap:20px}
+    .card{background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:0 1px 2px rgba(1,22,64,.04)}
+    .card-h{display:flex;align-items:center;gap:10px;padding:18px 20px 0}
+    .card-h h2{font:800 15px 'Nunito',sans-serif;color:var(--navy);margin:0}
+    .lbl{font:700 10.5px 'Nunito Sans',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+    .num{font:800 26px 'Nunito',sans-serif;color:var(--navy);font-variant-numeric:tabular-nums}
+    .delta{display:inline-flex;align-items:center;gap:4px;font:800 11.5px 'Nunito Sans',sans-serif;border-radius:999px;padding:3px 9px}
+    .delta.up{color:var(--green-ink);background:var(--green-tint)}
+    .delta.dn{color:var(--red);background:var(--red-tint)}
+    .tbl{width:100%;border-collapse:collapse;font:600 13px 'Nunito Sans',sans-serif}
+    .tbl th{font:700 10.5px 'Nunito Sans',sans-serif;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);text-align:left;padding:10px 20px;border-bottom:1px solid var(--border)}
+    .tbl td{padding:12px 20px;border-bottom:1px solid var(--line);vertical-align:middle}
+    .tbl tr:last-child td{border-bottom:0}
+    .r{text-align:right;font-variant-numeric:tabular-nums}
+    .badge{display:inline-flex;align-items:center;gap:5px;font:800 11px 'Nunito Sans',sans-serif;border-radius:999px;padding:4px 10px}
+    .b-ok{color:var(--green-ink);background:var(--green-tint)}
+    .b-warn{color:var(--gold);background:var(--yellow-tint)}
+    .b-bad{color:var(--red);background:var(--red-tint)}
+    .b-info{color:var(--blue);background:var(--blue-tint)}
+    .b-mut{color:var(--muted);background:#EEF1F6}
+    .leg{display:inline-flex;align-items:center;gap:6px;font:700 11.5px 'Nunito Sans',sans-serif;color:var(--muted)}
+    .leg i{width:9px;height:9px;border-radius:3px;display:inline-block}
+  </style>
+</helmet>
+
+<div class="app">
+  <aside class="sb">
+    <div class="sb-logo"><img src="logo-vivo-white.png" alt="VIVO" style="height:28px"><span class="sb-tag">ERP</span></div>
+    <div class="sb-group">Panorama</div>
+    <div class="sb-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg>Inicio 360<span class="odot"></span></div>
+    <div class="sb-group">Comercial</div>
+    <div class="sb-item on"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h3v16H5z"></path><path d="M10.5 4h3v10h-3z"></path><path d="M16 4h3v13h-3z"></path></svg>CRM<span class="odot"></span></div>
+    <div class="sb-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"></path></svg>Clientes<span class="odot"></span></div>
+    <div class="sb-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4h4l11 6V4L7 10H3z"></path></svg>Marketing<span class="odot"></span></div>
+    <div class="sb-group">Dinero</div>
+    <div class="sb-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"></rect><circle cx="12" cy="12" r="2.5"></circle></svg>Finanzas<span class="odot"></span></div>
+    <div class="sb-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 4l9 5.5"></path><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8"></path><path d="M3 20h18"></path></svg>Tesorería<span class="odot"></span></div>
+    <div class="sb-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path><path d="M15 7h6v6"></path></svg>Rentabilidad<span class="odot"></span></div>
+    <div class="sb-group">Personas</div>
+    <div class="sb-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c.8-3.4 3.4-5 6.5-5s5.7 1.6 6.5 5"></path><circle cx="17.5" cy="9" r="2.5"></circle><path d="M16 15.2c2.7.2 4.6 1.7 5.3 4.3"></path></svg>Equipo<span class="odot"></span></div>
+    <div style="margin-top:14px"></div>
+    <div class="sb-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h10M18 8h2M4 16h4M12 16h8"></path><circle cx="16" cy="8" r="2"></circle><circle cx="10" cy="16" r="2"></circle></svg>Ajustes<span class="odot"></span></div>
+    <div class="sb-sync">
+      <span class="sb-pulse"></span>
+      <div style="min-width:0">
+        <div style="font:800 11.5px 'Nunito Sans',sans-serif;color:#fff">Todo sincronizado</div>
+        <div style="font:600 10.5px 'Nunito Sans',sans-serif;color:rgba(255,255,255,.5)">QBO · Meta · ClickUp · 6:00 a. m.</div>
+      </div>
+    </div>
+    <div class="sb-user">
+      <div class="avatar">VS</div>
+      <div style="min-width:0;flex:1">
+        <div style="font:800 12.5px 'Nunito Sans',sans-serif;color:#fff">Victor Sandoval</div>
+        <div style="font:600 10.5px 'Nunito Sans',sans-serif;color:rgba(255,255,255,.5)">victor@govivo.ai</div>
+      </div>
+      <span style="font:800 9.5px 'Nunito Sans',sans-serif;letter-spacing:.08em;color:var(--green);background:rgba(4,217,139,.16);border-radius:999px;padding:3px 8px;flex-shrink:0">ADMIN</span>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="top">
+      <h1>CRM · Pipeline</h1>
+      <span class="crumb">11 negocios · $64,0 M ponderado</span>
+      <div class="search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6"></circle><path d="M20 20l-4-4"></path></svg>Buscar cliente, factura, persona…</div>
+      <div class="bell"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"></path><path d="M10 19a2 2 0 0 0 4 0"></path></svg><span class="dot"></span></div>
+      <div class="btn pri"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Registrar</div>
+    </div>
+
+    <div class="content">
+      <style>
+        .tabbar{display:flex;border-bottom:1px solid var(--border);gap:22px;padding:0 2px}
+        .tab{padding:0 2px 10px;font:700 13px 'Nunito Sans',sans-serif;color:var(--muted)}
+        .tab.on{color:var(--navy);font-weight:800;background:linear-gradient(90deg,#04D98B,#F2E205) bottom/100% 3px no-repeat}
+        .kwrap{display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));gap:14px;align-items:start}
+        .kcol{background:#EEF1F6;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px}
+        .kcol-h{display:flex;align-items:center;gap:8px;padding:2px 4px 4px}
+        .kcol-h b{font:800 12.5px 'Nunito Sans',sans-serif;color:var(--navy)}
+        .kcount{font:800 10.5px 'Nunito Sans',sans-serif;color:var(--muted);background:#fff;border-radius:999px;padding:2px 8px}
+        .ksum{margin-left:auto;font:800 11.5px 'Nunito Sans',sans-serif;color:var(--muted);font-variant-numeric:tabular-nums}
+        .kcard{background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 14px;box-shadow:0 1px 2px rgba(1,22,64,.05);display:flex;flex-direction:column;gap:8px}
+        .kcard b{font:800 13px 'Nunito Sans',sans-serif;color:var(--ink)}
+        .kmeta{display:flex;align-items:center;gap:8px;font:600 11.5px 'Nunito Sans',sans-serif;color:var(--muted)}
+        .kval{font:800 14px 'Nunito',sans-serif;color:var(--navy);font-variant-numeric:tabular-nums}
+        .kfoot{display:flex;align-items:center;gap:8px;border-top:1px solid var(--line);padding-top:8px}
+        .mini{width:22px;height:22px;border-radius:999px;display:flex;align-items:center;justify-content:center;font:800 9.5px 'Nunito',sans-serif;flex-shrink:0}
+        .days{margin-left:auto;font:700 10.5px 'Nunito Sans',sans-serif;color:var(--faint)}
+        .days.slow{color:var(--gold)}
+      </style>
+
+      <div class="tabbar">
+        <div class="tab on">Pipeline</div>
+        <div class="tab">Contactos</div>
+        <div class="tab">Cuentas</div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="btn ghost" style="height:32px;font-size:12px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"></path></svg>Filtros</div>
+        <span class="badge b-mut">Responsable: todos</span>
+        <span class="badge b-mut">Cierre: Q3 2026</span>
+        <span style="margin-left:auto;font:700 12px 'Nunito Sans',sans-serif;color:var(--muted)">Ordenado por valor</span>
+      </div>
+
+      <div class="kwrap">
+        <div class="kcol">
+          <div class="kcol-h"><b>Prospecto</b><span class="kcount">3</span><span class="ksum">$14,2 M</span></div>
+          <div class="kcard"><b>Ferretería Uno · pauta digital</b><div class="kval">$6.500.000 /mes</div><div class="kfoot"><span class="mini" style="background:var(--blue-tint);color:var(--blue)">DM</span><span class="kmeta">Daniel Mora</span><span class="days">3 d</span></div></div>
+          <div class="kcard"><b>EduPro · SEO + contenido</b><div class="kval">$4.200.000 /mes</div><div class="kfoot"><span class="mini" style="background:var(--green-tint);color:var(--green-ink)">LP</span><span class="kmeta">Laura Pinzón</span><span class="days">6 d</span></div></div>
+          <div class="kcard"><b>Hotel Mirador · web</b><div class="kval">$3.500.000</div><div class="kfoot"><span class="mini" style="background:var(--blue-tint);color:var(--blue)">DM</span><span class="kmeta">Daniel Mora</span><span class="days slow">14 d</span></div></div>
+        </div>
+        <div class="kcol">
+          <div class="kcol-h"><b>Calificado</b><span class="kcount">3</span><span class="ksum">$18,6 M</span></div>
+          <div class="kcard"><b>Banca Nova · CRM ampliación</b><div class="kval">$8.400.000 /mes</div><div class="kfoot"><span class="mini" style="background:var(--green-tint);color:var(--green-ink)">VS</span><span class="kmeta">Victor Sandoval</span><span class="days">2 d</span></div></div>
+          <div class="kcard"><b>TexLima · e-commerce</b><div class="kval">$5.900.000</div><div class="kfoot"><span class="mini" style="background:var(--yellow-tint);color:var(--gold)">JC</span><span class="kmeta">Julián Castro</span><span class="days">5 d</span></div></div>
+          <div class="kcard"><b>Clínica Vital · landing + pauta</b><div class="kval">$4.300.000 /mes</div><div class="kfoot"><span class="mini" style="background:var(--green-tint);color:var(--green-ink)">LP</span><span class="kmeta">Laura Pinzón</span><span class="days">8 d</span></div></div>
+        </div>
+        <div class="kcol">
+          <div class="kcol-h"><b>Propuesta</b><span class="kcount">3</span><span class="ksum">$21,0 M</span></div>
+          <div class="kcard" style="border-color:var(--green);box-shadow:0 0 0 1px var(--green), 0 6px 16px -8px rgba(4,217,139,.4)"><b>Grupo Andino · media anual</b><div class="kval">$12.800.000 /mes</div><div class="kmeta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="5" width="16" height="16" rx="2"></rect><path d="M8 3v4M16 3v4M4 10h16"></path></svg>Presentación viernes 28</div><div class="kfoot"><span class="mini" style="background:var(--green-tint);color:var(--green-ink)">VS</span><span class="kmeta">Victor Sandoval</span><span class="days">1 d</span></div></div>
+          <div class="kcard"><b>Café Sierra · rebranding</b><div class="kval">$5.200.000</div><div class="kfoot"><span class="mini" style="background:var(--yellow-tint);color:var(--gold)">JC</span><span class="kmeta">Julián Castro</span><span class="days">4 d</span></div></div>
+          <div class="kcard"><b>Constructora Meta · pauta</b><div class="kval">$3.000.000 /mes</div><div class="kfoot"><span class="mini" style="background:var(--blue-tint);color:var(--blue)">DM</span><span class="kmeta">Daniel Mora</span><span class="days slow">11 d</span></div></div>
+        </div>
+        <div class="kcol">
+          <div class="kcol-h"><b>Negociación</b><span class="kcount">2</span><span class="ksum">$10,2 M</span></div>
+          <div class="kcard"><b>Farmacia Cruz · pauta + CRM</b><div class="kval">$6.200.000 /mes</div><div class="kmeta">Cierre estimado: 5 sep</div><div class="kfoot"><span class="mini" style="background:var(--green-tint);color:var(--green-ink)">VS</span><span class="kmeta">Victor Sandoval</span><span class="days">2 d</span></div></div>
+          <div class="kcard"><b>Logística Sur · web + SEO</b><div class="kval">$4.000.000</div><div class="kmeta">Contrato en revisión legal</div><div class="kfoot"><span class="mini" style="background:var(--green-tint);color:var(--green-ink)">LP</span><span class="kmeta">Laura Pinzón</span><span class="days">7 d</span></div></div>
+          <div style="border:1.5px dashed #C6CFDD;border-radius:12px;padding:11px;text-align:center;font:800 12px 'Nunito Sans',sans-serif;color:var(--faint)">+ Nuevo negocio</div>
+        </div>
+      </div>
+
+      <div class="card" style="display:flex;align-items:center;gap:24px;padding:14px 20px">
+        <span class="lbl">Este mes</span>
+        <span style="font:700 12.5px 'Nunito Sans',sans-serif;color:var(--muted)">Ganados: <b style="color:var(--green-ink)">3 · $9,1 M</b></span>
+        <span style="font:700 12.5px 'Nunito Sans',sans-serif;color:var(--muted)">Perdidos: <b style="color:var(--red)">1 · $2,4 M</b></span>
+        <span style="font:700 12.5px 'Nunito Sans',sans-serif;color:var(--muted)">Tasa de conversión: <b style="color:var(--navy)">27%</b></span>
+        <span style="margin-left:auto;font:700 12px 'Nunito Sans',sans-serif;color:var(--green-ink)">Ver informe comercial →</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

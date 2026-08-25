@@ -1,0 +1,89 @@
+{"title":"Ajustes · Integraciones","crumb":"Conexiones OAuth y sincronización de datos","active":"Ajustes"}
+      <style>
+        .int{padding:20px 22px;display:flex;flex-direction:column;gap:14px}
+        .int-h{display:flex;align-items:center;gap:12px}
+        .int-logo{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font:800 13px 'Nunito',sans-serif;flex-shrink:0}
+        .int-meta{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:12px}
+        .int-row{display:flex;justify-content:space-between;font:600 12px 'Nunito Sans',sans-serif;color:var(--muted)}
+        .int-row b{color:var(--ink);font-weight:700}
+      </style>
+
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font:600 13px 'Nunito Sans',sans-serif;color:var(--muted)">Cada plataforma se conecta con su botón OAuth: sin pegar tokens. Los datos sincronizan cada 6 horas o al pedirlo.</span>
+        <span class="badge b-ok" style="margin-left:auto">3 de 3 conectadas</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:16px">
+        <!-- QuickBooks -->
+        <div class="card int">
+          <div class="int-h">
+            <div class="int-logo" style="background:#E8F0FB;color:#1E5FBF">QB</div>
+            <div style="min-width:0"><div style="font:800 15px 'Nunito',sans-serif;color:var(--navy)">QuickBooks Online</div><div style="font:600 11.5px 'Nunito Sans',sans-serif;color:var(--muted)">Facturas · gastos · bancos · nómina</div></div>
+            <span class="badge b-ok" style="margin-left:auto">Conectada</span>
+          </div>
+          <div class="int-meta">
+            <div class="int-row"><span>Cuenta</span><b>GoVivo SAS · sandbox</b></div>
+            <div class="int-row"><span>Última sincronización</span><b>Hoy, 6:00 a. m. · 214 filas</b></div>
+            <div class="int-row"><span>Próxima</span><b>Hoy, 12:00 m.</b></div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <div class="btn ghost" style="height:32px;font-size:12px;flex:1;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.3"></path><path d="M21 3v6h-6"></path></svg>Sincronizar ahora</div>
+            <div class="btn ghost" style="height:32px;font-size:12px;color:var(--red);border-color:var(--border)">Desconectar</div>
+          </div>
+        </div>
+        <!-- Meta Ads -->
+        <div class="card int">
+          <div class="int-h">
+            <div class="int-logo" style="background:#E8F0FB;color:#1E5FBF">M</div>
+            <div style="min-width:0"><div style="font:800 15px 'Nunito',sans-serif;color:var(--navy)">Meta Ads</div><div style="font:600 11.5px 'Nunito Sans',sans-serif;color:var(--muted)">Inversión y resultados de pauta</div></div>
+            <span class="badge b-ok" style="margin-left:auto">Conectada</span>
+          </div>
+          <div class="int-meta">
+            <div class="int-row"><span>Cuenta publicitaria</span><b>GoVivo Agencia · act_29…41</b></div>
+            <div class="int-row"><span>Última sincronización</span><b>Hoy, 6:00 a. m. · 96 filas</b></div>
+            <div class="int-row"><span>Token</span><b>Renueva automático</b></div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <div class="btn ghost" style="height:32px;font-size:12px;flex:1;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.3"></path><path d="M21 3v6h-6"></path></svg>Sincronizar ahora</div>
+            <div class="btn ghost" style="height:32px;font-size:12px;color:var(--red);border-color:var(--border)">Desconectar</div>
+          </div>
+        </div>
+        <!-- ClickUp -->
+        <div class="card int">
+          <div class="int-h">
+            <div class="int-logo" style="background:var(--green-tint);color:var(--green-ink)">CU</div>
+            <div style="min-width:0"><div style="font:800 15px 'Nunito',sans-serif;color:var(--navy)">ClickUp</div><div style="font:600 11.5px 'Nunito Sans',sans-serif;color:var(--muted)">Proyectos y tareas por cliente</div></div>
+            <span class="badge b-warn" style="margin-left:auto">Con avisos</span>
+          </div>
+          <div class="int-meta">
+            <div class="int-row"><span>Workspace</span><b>GoVivo · 6 espacios</b></div>
+            <div class="int-row"><span>Última sincronización</span><b>Hace 2 h · 1 lista sin mapear</b></div>
+            <div class="int-row"><span>Mapeo cliente ↔ carpeta</span><b style="color:var(--gold)">Revisar 1 pendiente</b></div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <div class="btn ghost" style="height:32px;font-size:12px;flex:1;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.3"></path><path d="M21 3v6h-6"></path></svg>Sincronizar ahora</div>
+            <div class="btn ghost" style="height:32px;font-size:12px;color:var(--red);border-color:var(--border)">Desconectar</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Disponibles -->
+      <div class="card" style="padding:16px 22px;display:flex;align-items:center;gap:14px;border-style:dashed">
+        <div class="int-logo" style="background:#EEF1F6;color:var(--faint);width:36px;height:36px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div>
+        <div style="flex:1"><div style="font:800 13.5px 'Nunito Sans',sans-serif;color:var(--ink)">Google Workspace</div><div style="font:600 11.5px 'Nunito Sans',sans-serif;color:var(--muted)">Calendario y correo del equipo · disponible próximamente</div></div>
+        <div class="btn ghost" style="height:32px;font-size:12px;color:var(--faint)">Conectar</div>
+      </div>
+
+      <!-- Registro de sincronizaciones -->
+      <div class="card">
+        <div class="card-h"><h2>Registro de sincronizaciones</h2><span class="crumb">últimas 24 horas</span></div>
+        <table class="tbl" style="margin-top:8px">
+          <thead><tr><th>Fuente</th><th>Inicio</th><th class="r">Duración</th><th class="r">Filas</th><th>Resultado</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:800">QuickBooks · facturas y gastos</td><td style="color:var(--muted)">Hoy 6:00 a. m.</td><td class="r">42 s</td><td class="r">214</td><td><span class="badge b-ok">OK</span></td></tr>
+            <tr><td style="font-weight:800">Meta Ads · insights</td><td style="color:var(--muted)">Hoy 6:00 a. m.</td><td class="r">18 s</td><td class="r">96</td><td><span class="badge b-ok">OK</span></td></tr>
+            <tr><td style="font-weight:800">ClickUp · proyectos</td><td style="color:var(--muted)">Hoy 10:15 a. m.</td><td class="r">31 s</td><td class="r">148</td><td><span class="badge b-warn">1 lista sin mapear</span></td></tr>
+            <tr><td style="font-weight:800">QuickBooks · bancos</td><td style="color:var(--muted)">Ayer 6:00 p. m.</td><td class="r">12 s</td><td class="r">37</td><td><span class="badge b-ok">OK</span></td></tr>
+          </tbody>
+        </table>
+      </div>

@@ -1,0 +1,25 @@
+{
+  "pages": [
+    { "id": "pantallas", "name": "Pantallas" },
+    { "id": "sistema", "name": "Sistema visual" }
+  ],
+  "artboards": [
+    { "file": "SignIn.dc.html", "title": "Sign-in", "x": 0, "y": 0, "w": 1440, "h": 900, "page": "pantallas" },
+    { "file": "Main.dc.html", "title": "Home 360", "x": 1560, "y": 0, "w": 1440, "h": 1024, "page": "pantallas" },
+    { "file": "PipelineCRM.dc.html", "title": "CRM · Pipeline", "x": 0, "y": 1170, "w": 1440, "h": 1024, "page": "pantallas" },
+    { "file": "Cuenta360.dc.html", "title": "Cuenta 360", "x": 1560, "y": 1170, "w": 1440, "h": 1150, "page": "pantallas" },
+    { "file": "Finanzas.dc.html", "title": "Finanzas", "x": 0, "y": 2470, "w": 1440, "h": 1024, "page": "pantallas" },
+    { "file": "Tesoreria.dc.html", "title": "Tesorería", "x": 1560, "y": 2470, "w": 1440, "h": 1150, "page": "pantallas" },
+    { "file": "Rentabilidad.dc.html", "title": "Rentabilidad", "x": 0, "y": 3770, "w": 1440, "h": 1024, "page": "pantallas" },
+    { "file": "Equipo.dc.html", "title": "Equipo · Directorio", "x": 1560, "y": 3770, "w": 1440, "h": 1024, "page": "pantallas" },
+    { "file": "Vacaciones.dc.html", "title": "Vacaciones", "x": 0, "y": 4940, "w": 1440, "h": 1024, "page": "pantallas" },
+    { "file": "Integraciones.dc.html", "title": "Integraciones", "x": 1560, "y": 4940, "w": 1440, "h": 1024, "page": "pantallas" },
+    { "file": "Registrar.dc.html", "title": "Captura rápida", "x": 0, "y": 6110, "w": 1440, "h": 1120, "page": "pantallas" },
+    { "file": "Sistema.dc.html", "title": "Sistema visual", "x": 0, "y": 0, "w": 1440, "h": 1920, "page": "sistema" }
+  ],
+  "annotations": [
+    { "id": "direccion", "x": 0, "y": -440, "w": 460, "page": "pantallas", "text": "ERP VIVO — dirección de diseño\nMarca oficial: navy #011640 + verde energía #04D98B + amarillo puntual, Nunito/Nunito Sans. Sidebar navy (único bloque oscuro), contenido claro y denso, botones píldora como el logo, gradiente verde→amarillo como firma (1 vez por pantalla).\n\nTodas las cifras y nombres son datos de ejemplo. Edita lo que quieras aquí mismo y guarda; la página \"Sistema visual\" es la guía para frontend." },
+    { "id": "nota-registrar", "x": 1560, "y": 6110, "w": 320, "page": "pantallas", "text": "Los formularios de captura rápida se abren como modal centrado sobre cualquier módulo (fondo navy al 40%). Aquí se muestran los tres principales lado a lado." }
+  ],
+  "launch": { "view": "canvas", "page": "pantallas" }
+}

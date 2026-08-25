@@ -1,0 +1,117 @@
+{"title":"Clientes · Banca Nova","crumb":"Vista 360 de la cuenta","active":"Clientes"}
+      <style>
+        .tab{padding:0 2px 10px;font:700 13px 'Nunito Sans',sans-serif;color:var(--muted)}
+        .tab.on{color:var(--navy);font-weight:800;background:linear-gradient(90deg,#04D98B,#F2E205) bottom/100% 3px no-repeat}
+        .stat{display:flex;flex-direction:column;gap:5px}
+        .plist{display:flex;flex-direction:column}
+        .prow{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--line)}
+        .prow:last-child{border-bottom:0}
+        .pbar{height:6px;border-radius:99px;background:#EEF1F6;flex:1;max-width:160px;overflow:hidden}
+      </style>
+
+      <!-- Cabecera de cuenta -->
+      <div class="card" style="padding:20px 24px;display:flex;align-items:center;gap:18px">
+        <div style="width:52px;height:52px;border-radius:14px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font:800 17px 'Nunito',sans-serif;flex-shrink:0">BN</div>
+        <div style="min-width:0">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font:800 20px 'Nunito',sans-serif;color:var(--navy)">Banca Nova S.A.</span>
+            <span class="badge b-ok">Cuenta sana</span>
+          </div>
+          <div style="font:600 12.5px 'Nunito Sans',sans-serif;color:var(--muted);margin-top:3px">NIT 900.482.116-3 · Bogotá · Cliente desde mar 2024 · Vinculada a QuickBooks</div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:28px;align-items:center">
+          <div class="stat"><span class="lbl">MRR</span><span style="font:800 22px 'Nunito',sans-serif;color:var(--navy)">$18,2 M</span></div>
+          <div class="stat"><span class="lbl">Cartera pendiente</span><span style="font:800 22px 'Nunito',sans-serif;color:var(--navy)">$18,2 M</span></div>
+          <div class="stat"><span class="lbl">Margen</span><span style="font:800 22px 'Nunito',sans-serif;color:var(--green-ink)">38%</span></div>
+          <div class="btn ghost">Editar</div>
+          <div class="btn pri"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Registrar</div>
+        </div>
+      </div>
+
+      <div style="display:flex;border-bottom:1px solid var(--border);gap:22px;padding:0 2px">
+        <div class="tab on">Resumen</div>
+        <div class="tab">Servicios</div>
+        <div class="tab">Proyectos</div>
+        <div class="tab">Facturación</div>
+        <div class="tab">Documentos</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:16px">
+        <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+          <!-- Servicios activos -->
+          <div class="card">
+            <div class="card-h"><h2>Servicios activos</h2><span class="crumb">3 recurrentes · $18,2 M /mes</span></div>
+            <table class="tbl" style="margin-top:8px">
+              <thead><tr><th>Servicio</th><th>Responsable</th><th class="r">Tarifa mensual</th><th>Desde</th><th>Estado</th></tr></thead>
+              <tbody>
+                <tr><td style="font-weight:800">Pauta digital (Meta + Google)</td><td style="color:var(--muted)">Daniel Mora</td><td class="r" style="font-weight:800">$9.800.000</td><td style="color:var(--muted)">Mar 2024</td><td><span class="badge b-ok">Activo</span></td></tr>
+                <tr><td style="font-weight:800">CRM y automatización</td><td style="color:var(--muted)">Laura Pinzón</td><td class="r" style="font-weight:800">$5.400.000</td><td style="color:var(--muted)">Ene 2025</td><td><span class="badge b-ok">Activo</span></td></tr>
+                <tr><td style="font-weight:800">Contenido y social</td><td style="color:var(--muted)">Julián Castro</td><td class="r" style="font-weight:800">$3.000.000</td><td style="color:var(--muted)">Jun 2025</td><td><span class="badge b-ok">Activo</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- Proyectos ClickUp -->
+          <div class="card">
+            <div class="card-h"><h2>Proyectos</h2><span class="badge b-mut">Sincronizado con ClickUp · hace 2 h</span></div>
+            <div class="plist" style="margin-top:6px">
+              <div class="prow">
+                <div style="flex:1;min-width:0"><div style="font:800 13px 'Nunito Sans',sans-serif">Campaña lanzamiento tarjeta digital</div><div style="font:600 11.5px 'Nunito Sans',sans-serif;color:var(--muted)">Vence 12 sep · 24/31 tareas</div></div>
+                <div class="pbar"><div style="width:77%;height:100%;background:var(--green)"></div></div>
+                <span class="badge b-ok">En curso</span>
+              </div>
+              <div class="prow">
+                <div style="flex:1;min-width:0"><div style="font:800 13px 'Nunito Sans',sans-serif">Migración CRM a HubSpot</div><div style="font:600 11.5px 'Nunito Sans',sans-serif;color:var(--muted)">Vence 30 sep · 9/22 tareas</div></div>
+                <div class="pbar"><div style="width:41%;height:100%;background:var(--gold)"></div></div>
+                <span class="badge b-warn">Atención</span>
+              </div>
+              <div class="prow">
+                <div style="flex:1;min-width:0"><div style="font:800 13px 'Nunito Sans',sans-serif">Informe trimestral Q3</div><div style="font:600 11.5px 'Nunito Sans',sans-serif;color:var(--muted)">Vence 3 oct · 2/12 tareas</div></div>
+                <div class="pbar"><div style="width:17%;height:100%;background:var(--blue)"></div></div>
+                <span class="badge b-info">Planeado</span>
+              </div>
+            </div>
+          </div>
+          <!-- Facturas recientes -->
+          <div class="card">
+            <div class="card-h"><h2>Facturación reciente</h2><span style="margin-left:auto;font:700 12px 'Nunito Sans',sans-serif;color:var(--green-ink)">Ver todas →</span></div>
+            <table class="tbl" style="margin-top:8px">
+              <thead><tr><th>Factura</th><th>Emitida</th><th>Vence</th><th class="r">Monto</th><th>Fuente</th><th>Estado</th></tr></thead>
+              <tbody>
+                <tr><td style="font-weight:800">FV-2038</td><td style="color:var(--muted)">01 ago</td><td style="color:var(--muted)">31 ago</td><td class="r" style="font-weight:800">$18.200.000</td><td><span class="badge b-mut">QuickBooks</span></td><td><span class="badge b-warn">Pendiente</span></td></tr>
+                <tr><td style="font-weight:800">FV-1994</td><td style="color:var(--muted)">01 jul</td><td style="color:var(--muted)">31 jul</td><td class="r" style="font-weight:800">$18.200.000</td><td><span class="badge b-mut">QuickBooks</span></td><td><span class="badge b-ok">Pagada</span></td></tr>
+                <tr><td style="font-weight:800">FV-1961</td><td style="color:var(--muted)">15 jun</td><td style="color:var(--muted)">15 jul</td><td class="r" style="font-weight:800">$4.600.000</td><td><span class="badge b-mut">Manual</span></td><td><span class="badge b-ok">Pagada</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+          <!-- Equipo asignado -->
+          <div class="card">
+            <div class="card-h"><h2>Equipo asignado</h2><span class="crumb">1,6 personas dedicadas</span></div>
+            <div style="padding:12px 20px 16px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;align-items:center;gap:11px"><div class="avatar" style="background:var(--blue-tint);color:var(--blue)">DM</div><div style="flex:1"><div style="font:800 12.5px 'Nunito Sans',sans-serif">Daniel Mora</div><div style="font:600 11.5px 'Nunito Sans',sans-serif;color:var(--muted)">Paid Media Lead</div></div><span class="badge b-mut">60%</span></div>
+              <div style="display:flex;align-items:center;gap:11px"><div class="avatar" style="background:var(--green-tint);color:var(--green-ink)">LP</div><div style="flex:1"><div style="font:800 12.5px 'Nunito Sans',sans-serif">Laura Pinzón</div><div style="font:600 11.5px 'Nunito Sans',sans-serif;color:var(--muted)">CRM Specialist</div></div><span class="badge b-mut">50%</span></div>
+              <div style="display:flex;align-items:center;gap:11px"><div class="avatar" style="background:var(--yellow-tint);color:var(--gold)">JC</div><div style="flex:1"><div style="font:800 12.5px 'Nunito Sans',sans-serif">Julián Castro</div><div style="font:600 11.5px 'Nunito Sans',sans-serif;color:var(--muted)">Content Lead</div></div><span class="badge b-mut">50%</span></div>
+            </div>
+          </div>
+          <!-- Pauta -->
+          <div class="card">
+            <div class="card-h"><h2>Pauta del mes</h2><span class="badge b-mut">Meta Ads</span></div>
+            <div style="padding:14px 20px 18px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;justify-content:space-between"><span class="lbl">Inversión agosto</span><span style="font:800 15px 'Nunito',sans-serif;color:var(--navy)">$22,4 M</span></div>
+              <div style="display:flex;justify-content:space-between"><span class="lbl">Leads generados</span><span style="font:800 15px 'Nunito',sans-serif;color:var(--navy)">1.284</span></div>
+              <div style="display:flex;justify-content:space-between"><span class="lbl">Costo por lead</span><span style="font:800 15px 'Nunito',sans-serif;color:var(--green-ink)">$17.400</span></div>
+            </div>
+          </div>
+          <!-- Actividad -->
+          <div class="card">
+            <div class="card-h"><h2>Actividad</h2></div>
+            <div style="padding:12px 20px 18px;display:flex;flex-direction:column;gap:0">
+              <div style="display:flex;gap:12px;padding:8px 0"><div style="width:8px;height:8px;border-radius:99px;background:var(--green);margin-top:5px;flex-shrink:0"></div><div><div style="font:700 12.5px 'Nunito Sans',sans-serif">Pago recibido FV-1994</div><div style="font:600 11px 'Nunito Sans',sans-serif;color:var(--faint)">Hoy, 9:12 a. m.</div></div></div>
+              <div style="display:flex;gap:12px;padding:8px 0"><div style="width:8px;height:8px;border-radius:99px;background:var(--blue);margin-top:5px;flex-shrink:0"></div><div><div style="font:700 12.5px 'Nunito Sans',sans-serif">Reunión mensual agendada</div><div style="font:600 11px 'Nunito Sans',sans-serif;color:var(--faint)">Ayer, 4:30 p. m.</div></div></div>
+              <div style="display:flex;gap:12px;padding:8px 0"><div style="width:8px;height:8px;border-radius:99px;background:var(--gold);margin-top:5px;flex-shrink:0"></div><div><div style="font:700 12.5px 'Nunito Sans',sans-serif">Nota: interesados en SEO local</div><div style="font:600 11px 'Nunito Sans',sans-serif;color:var(--faint)">21 ago · Victor S.</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>

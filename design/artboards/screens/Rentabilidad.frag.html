@@ -1,0 +1,72 @@
+{"title":"Rentabilidad por cliente","crumb":"Agosto 2026 · ingresos − pauta propia − personal asignado","active":"Rentabilidad"}
+      <style>
+        .mbar{display:flex;align-items:center;gap:12px;padding:8px 0}
+        .mbar .n{width:150px;font:700 12.5px 'Nunito Sans',sans-serif;flex-shrink:0}
+        .mbar .t{flex:1;height:16px;position:relative;background:#EEF1F6;border-radius:4px;overflow:hidden}
+        .mbar .v{width:56px;text-align:right;font:800 12.5px 'Nunito Sans',sans-serif;font-variant-numeric:tabular-nums;flex-shrink:0}
+        .trend{font:800 11.5px 'Nunito Sans',sans-serif;display:inline-flex;align-items:center;gap:3px}
+      </style>
+
+      <!-- KPI row -->
+      <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:16px">
+        <div class="card" style="padding:18px 20px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#04D98B,#F2E205)"></div>
+          <div class="lbl">Margen promedio</div>
+          <div class="num" style="margin:6px 0 8px;font-size:36px">23,8%</div>
+          <span class="delta up"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"></path></svg>+0,8 pp vs jul</span>
+        </div>
+        <div class="card" style="padding:18px 20px">
+          <div class="lbl">Mejor margen</div>
+          <div class="num" style="margin:6px 0 8px;font-size:20px">Banca Nova</div>
+          <span class="badge b-ok">38% · $6,9 M</span>
+        </div>
+        <div class="card" style="padding:18px 20px">
+          <div class="lbl">En pérdida</div>
+          <div class="num" style="margin:6px 0 8px;font-size:20px">Café Sierra</div>
+          <span class="badge b-bad">−6% · −$0,6 M</span>
+        </div>
+        <div class="card" style="padding:18px 20px">
+          <div class="lbl">Costo de personal asignado</div>
+          <div class="num" style="margin:6px 0 8px">$32,5 M</div>
+          <span class="badge b-mut">84% de la nómina</span>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:16px">
+        <!-- Barras de margen -->
+        <div class="card">
+          <div class="card-h"><h2>Margen por cliente</h2><span class="crumb">% agosto</span></div>
+          <div style="padding:10px 20px 18px">
+            <div class="mbar"><span class="n">Banca Nova</span><div class="t"><div style="width:95%;height:100%;background:#069B66;border-radius:4px"></div></div><span class="v" style="color:#069B66">38%</span></div>
+            <div class="mbar"><span class="n">TexLima</span><div class="t"><div style="width:85%;height:100%;background:#069B66;border-radius:4px"></div></div><span class="v" style="color:#069B66">34%</span></div>
+            <div class="mbar"><span class="n">Grupo Andino</span><div class="t"><div style="width:78%;height:100%;background:#069B66;border-radius:4px"></div></div><span class="v" style="color:#069B66">31%</span></div>
+            <div class="mbar"><span class="n">AgroCampo</span><div class="t"><div style="width:65%;height:100%;background:#069B66;border-radius:4px"></div></div><span class="v" style="color:#069B66">26%</span></div>
+            <div class="mbar"><span class="n">Clínica Vital</span><div class="t"><div style="width:45%;height:100%;background:#8C7A0A;border-radius:4px"></div></div><span class="v" style="color:#8C7A0A">18%</span></div>
+            <div class="mbar"><span class="n">Constructora Meta</span><div class="t"><div style="width:28%;height:100%;background:#8C7A0A;border-radius:4px"></div></div><span class="v" style="color:#8C7A0A">11%</span></div>
+            <div class="mbar"><span class="n">Café Sierra</span><div class="t"><div style="width:15%;height:100%;background:#C93A3A;border-radius:4px"></div></div><span class="v" style="color:#C93A3A">−6%</span></div>
+            <div style="border-top:1px solid var(--line);margin-top:10px;padding-top:10px;font:600 11.5px 'Nunito Sans',sans-serif;color:var(--faint)">Verde ≥ 25% · ocre 10–25% · rojo &lt; 10% o pérdida</div>
+          </div>
+        </div>
+
+        <!-- Ranking -->
+        <div class="card">
+          <div class="card-h"><h2>Ranking de rentabilidad</h2><div class="btn ghost" style="margin-left:auto;height:30px;font-size:12px">Editar asignación de personal</div></div>
+          <table class="tbl" style="margin-top:8px">
+            <thead><tr><th>Cliente</th><th class="r">Ingresos</th><th class="r">Costos directos</th><th class="r">Personal</th><th class="r">Margen</th><th>Tendencia</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:800">1 · Banca Nova</td><td class="r">$18,2 M</td><td class="r">$4,1 M</td><td class="r">$7,2 M</td><td class="r" style="font-weight:800;color:var(--green-ink)">38%</td><td><span class="trend" style="color:var(--green-ink)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path><path d="M15 7h6v6"></path></svg>Sube</span></td></tr>
+              <tr><td style="font-weight:800">2 · TexLima</td><td class="r">$7,4 M</td><td class="r">$1,6 M</td><td class="r">$3,3 M</td><td class="r" style="font-weight:800;color:var(--green-ink)">34%</td><td><span class="trend" style="color:var(--muted)">Estable</span></td></tr>
+              <tr><td style="font-weight:800">3 · Grupo Andino</td><td class="r">$14,6 M</td><td class="r">$3,8 M</td><td class="r">$6,3 M</td><td class="r" style="font-weight:800;color:var(--green-ink)">31%</td><td><span class="trend" style="color:var(--green-ink)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path><path d="M15 7h6v6"></path></svg>Sube</span></td></tr>
+              <tr><td style="font-weight:800">4 · AgroCampo</td><td class="r">$5,8 M</td><td class="r">$1,4 M</td><td class="r">$2,9 M</td><td class="r" style="font-weight:800;color:var(--green-ink)">26%</td><td><span class="trend" style="color:var(--muted)">Estable</span></td></tr>
+              <tr><td style="font-weight:800">5 · Clínica Vital</td><td class="r">$11,9 M</td><td class="r">$4,6 M</td><td class="r">$5,2 M</td><td class="r" style="font-weight:800;color:var(--gold)">18%</td><td><span class="trend" style="color:var(--red)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l6 6 4-4 8 8"></path><path d="M15 17h6v-6"></path></svg>Baja</span></td></tr>
+              <tr><td style="font-weight:800">6 · Constructora Meta</td><td class="r">$6,2 M</td><td class="r">$2,4 M</td><td class="r">$3,1 M</td><td class="r" style="font-weight:800;color:var(--gold)">11%</td><td><span class="trend" style="color:var(--muted)">Estable</span></td></tr>
+              <tr style="background:var(--red-tint)"><td style="font-weight:800">7 · Café Sierra</td><td class="r">$9,8 M</td><td class="r">$5,9 M</td><td class="r">$4,5 M</td><td class="r" style="font-weight:800;color:var(--red)">−6%</td><td><span class="trend" style="color:var(--red)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l6 6 4-4 8 8"></path><path d="M15 17h6v-6"></path></svg>Baja</span></td></tr>
+            </tbody>
+          </table>
+          <div style="border-top:1px solid var(--border);padding:13px 20px;display:flex;align-items:center;gap:10px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C93A3A" stroke-width="2" stroke-linecap="round"><path d="M12 8v5M12 16.5v.5"></path><circle cx="12" cy="12" r="9"></circle></svg>
+            <span style="font:600 12px 'Nunito Sans',sans-serif;color:var(--muted)">Café Sierra lleva 2 meses en pérdida: revisar alcance del retainer o renegociar tarifa.</span>
+            <span style="margin-left:auto;font:700 12px 'Nunito Sans',sans-serif;color:var(--green-ink)">Abrir cuenta →</span>
+          </div>
+        </div>
+      </div>

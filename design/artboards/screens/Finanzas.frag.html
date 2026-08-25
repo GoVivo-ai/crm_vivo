@@ -1,0 +1,94 @@
+{"title":"Finanzas","crumb":"Agosto 2026 · COP","active":"Finanzas"}
+      <style>
+        .tab{padding:0 2px 10px;font:700 13px 'Nunito Sans',sans-serif;color:var(--muted)}
+        .tab.on{color:var(--navy);font-weight:800;background:linear-gradient(90deg,#04D98B,#F2E205) bottom/100% 3px no-repeat}
+        .hbar{display:flex;align-items:center;gap:12px;padding:7px 0}
+        .hbar .n{width:150px;font:700 12.5px 'Nunito Sans',sans-serif;color:var(--ink);flex-shrink:0}
+        .hbar .t{flex:1;height:14px;border-radius:4px;background:#EEF1F6;overflow:hidden;display:flex}
+        .hbar .v{width:86px;text-align:right;font:800 12px 'Nunito Sans',sans-serif;color:var(--muted);font-variant-numeric:tabular-nums;flex-shrink:0}
+      </style>
+
+      <div style="display:flex;border-bottom:1px solid var(--border);gap:22px;padding:0 2px">
+        <div class="tab on">Resumen</div>
+        <div class="tab">Facturas</div>
+        <div class="tab">Gastos</div>
+        <div class="tab">P&amp;L</div>
+        <div class="tab">Flujo de caja</div>
+      </div>
+
+      <!-- KPI row -->
+      <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:16px">
+        <div class="card" style="padding:18px 20px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#04D98B,#F2E205)"></div>
+          <div class="lbl">Ingresos del mes</div>
+          <div class="num" style="margin:6px 0 8px;font-size:36px">$86,4 M</div>
+          <span class="delta up"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"></path></svg>+4,2% vs jul</span>
+        </div>
+        <div class="card" style="padding:18px 20px">
+          <div class="lbl">Gastos del mes</div>
+          <div class="num" style="margin:6px 0 8px">$59,0 M</div>
+          <span class="delta dn"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"></path></svg>+2,6% vs jul</span>
+        </div>
+        <div class="card" style="padding:18px 20px">
+          <div class="lbl">Resultado operativo</div>
+          <div class="num" style="margin:6px 0 8px;color:var(--green-ink)">$27,4 M</div>
+          <span class="badge b-ok">Margen 31,8%</span>
+        </div>
+        <div class="card" style="padding:18px 20px">
+          <div class="lbl">Cartera por cobrar</div>
+          <div class="num" style="margin:6px 0 8px">$41,2 M</div>
+          <span class="badge b-bad">$8,4 M vencida &gt; 60 d</span>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:16px">
+        <!-- Facturas -->
+        <div class="card">
+          <div class="card-h">
+            <h2>Facturas de ingreso</h2>
+            <span class="crumb">agosto</span>
+            <div style="margin-left:auto;display:flex;gap:8px">
+              <span class="badge b-mut">Todas</span>
+              <span class="badge b-warn">Pendientes 6</span>
+              <span class="badge b-bad">Vencidas 2</span>
+            </div>
+          </div>
+          <table class="tbl" style="margin-top:8px">
+            <thead><tr><th>Factura</th><th>Cliente</th><th>Vence</th><th class="r">Monto</th><th>Fuente</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:800">FV-2041</td><td>Grupo Andino</td><td style="color:var(--muted)">30 ago</td><td class="r" style="font-weight:800">$14.600.000</td><td><span class="badge b-mut">QuickBooks</span></td><td><span class="badge b-warn">Pendiente</span></td></tr>
+              <tr><td style="font-weight:800">FV-2038</td><td>Banca Nova</td><td style="color:var(--muted)">31 ago</td><td class="r" style="font-weight:800">$18.200.000</td><td><span class="badge b-mut">QuickBooks</span></td><td><span class="badge b-warn">Pendiente</span></td></tr>
+              <tr><td style="font-weight:800">FV-2035</td><td>Clínica Vital</td><td style="color:var(--muted)">28 ago</td><td class="r" style="font-weight:800">$11.900.000</td><td><span class="badge b-mut">Manual</span></td><td><span class="badge b-ok">Pagada</span></td></tr>
+              <tr><td style="font-weight:800">FV-2019</td><td>Constructora Meta</td><td style="color:var(--red);font-weight:700">25 jun</td><td class="r" style="font-weight:800">$8.400.000</td><td><span class="badge b-mut">Manual</span></td><td><span class="badge b-bad">Vencida</span></td></tr>
+              <tr><td style="font-weight:800">FV-2027</td><td>TexLima</td><td style="color:var(--muted)">22 ago</td><td class="r" style="font-weight:800">$7.400.000</td><td><span class="badge b-mut">QuickBooks</span></td><td><span class="badge b-ok">Pagada</span></td></tr>
+              <tr><td style="font-weight:800">FV-2031</td><td>Café Sierra</td><td style="color:var(--red);font-weight:700">10 ago</td><td class="r" style="font-weight:800">$4.900.000</td><td><span class="badge b-mut">Manual</span></td><td><span class="badge b-bad">Vencida</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+          <!-- Gastos por centro de costo -->
+          <div class="card">
+            <div class="card-h"><h2>Gastos por centro de costo</h2><span class="crumb">agosto</span></div>
+            <div style="padding:12px 20px 16px">
+              <div class="hbar"><span class="n">Nómina</span><div class="t"><div style="width:65%;background:#1E5FBF;border-radius:4px"></div></div><span class="v">$38,6 M</span></div>
+              <div class="hbar"><span class="n">Servicios recurrentes</span><div class="t"><div style="width:19%;background:#1E5FBF;border-radius:4px"></div></div><span class="v">$11,2 M</span></div>
+              <div class="hbar"><span class="n">Gastos administrativos</span><div class="t"><div style="width:11%;background:#1E5FBF;border-radius:4px"></div></div><span class="v">$6,4 M</span></div>
+              <div class="hbar"><span class="n">Herramientas y software</span><div class="t"><div style="width:5%;background:#1E5FBF;border-radius:4px"></div></div><span class="v">$2,8 M</span></div>
+              <div style="border-top:1px solid var(--line);margin-top:8px;padding-top:10px;display:flex;justify-content:space-between"><span class="lbl">Total gastos</span><span style="font:800 14px 'Nunito',sans-serif;color:var(--navy)">$59,0 M</span></div>
+            </div>
+          </div>
+          <!-- P&L compacto -->
+          <div class="card">
+            <div class="card-h"><h2>P&amp;L del trimestre</h2><span class="badge b-mut">Calculado por el ERP</span></div>
+            <table class="tbl" style="margin-top:8px">
+              <thead><tr><th>Concepto</th><th class="r">Jun</th><th class="r">Jul</th><th class="r">Ago</th></tr></thead>
+              <tbody>
+                <tr><td style="font-weight:700">Ingresos</td><td class="r">$81,0 M</td><td class="r">$82,9 M</td><td class="r" style="font-weight:800">$86,4 M</td></tr>
+                <tr><td style="font-weight:700">Gastos</td><td class="r">$56,0 M</td><td class="r">$57,5 M</td><td class="r" style="font-weight:800">$59,0 M</td></tr>
+                <tr><td style="font-weight:800;color:var(--green-ink)">Resultado</td><td class="r" style="font-weight:800;color:var(--green-ink)">$25,0 M</td><td class="r" style="font-weight:800;color:var(--green-ink)">$25,4 M</td><td class="r" style="font-weight:800;color:var(--green-ink)">$27,4 M</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>

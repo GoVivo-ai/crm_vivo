@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&display=swap">
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Nunito Sans',system-ui,sans-serif;color:#0A1E3F;background:#F6F7F9;-webkit-font-smoothing:antialiased}
+    a{color:#069B66}a:hover{color:#045C3D}
+    .sec{background:#fff;border:1px solid #E3E8F0;border-radius:14px;padding:22px 24px}
+    .sec h2{font:800 15px 'Nunito',sans-serif;color:#011640;margin:0 0 14px}
+    .cap{font:700 10.5px 'Nunito Sans',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#8B99B0}
+    .sw{display:flex;flex-direction:column;gap:8px}
+    .sw .c{height:64px;border-radius:12px;border:1px solid rgba(1,22,64,.08)}
+    .sw b{font:800 12.5px 'Nunito Sans',sans-serif}
+    .sw span{font:600 11px 'Nunito Sans',sans-serif;color:#5A6B85}
+    .badge{display:inline-flex;align-items:center;gap:5px;font:800 11px 'Nunito Sans',sans-serif;border-radius:999px;padding:4px 10px}
+    .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  </style>
+</helmet>
+
+<div style="width:1440px;min-height:1860px;padding:40px 44px;display:flex;flex-direction:column;gap:20px;background:#F6F7F9">
+  <!-- Encabezado -->
+  <div style="display:flex;align-items:center;gap:16px">
+    <img src="logo-vivo-blue.png" alt="VIVO" style="height:36px;width:auto">
+    <div>
+      <div style="font:800 22px 'Nunito',sans-serif;color:#011640">Sistema visual · ERP VIVO</div>
+      <div style="font:600 13px 'Nunito Sans',sans-serif;color:#5A6B85">Tokens y componentes para que frontend implemente cada pantalla igual al diseño.</div>
+    </div>
+    <div style="margin-left:auto;height:4px;width:220px;border-radius:99px;background:linear-gradient(90deg,#04D98B,#F2E205)"></div>
+  </div>
+
+  <!-- Paleta -->
+  <div class="sec">
+    <h2>Color</h2>
+    <div style="display:grid;grid-template-columns:repeat(6, minmax(0, 1fr));gap:14px">
+      <div class="sw"><div class="c" style="background:#011640"></div><b>Navy · marca</b><span>#011640 · sidebar, títulos, primario</span></div>
+      <div class="sw"><div class="c" style="background:#04D98B"></div><b>Verde energía</b><span>#04D98B · CTA, activo, positivo</span></div>
+      <div class="sw"><div class="c" style="background:#F2E205"></div><b>Amarillo</b><span>#F2E205 · realce puntual, nunca texto</span></div>
+      <div class="sw"><div class="c" style="background:#0A1E3F"></div><b>Tinta</b><span>#0A1E3F · texto principal</span></div>
+      <div class="sw"><div class="c" style="background:#F6F7F9;border-color:#E3E8F0"></div><b>Fondo</b><span>#F6F7F9 · lienzo de la app</span></div>
+      <div class="sw"><div class="c" style="background:linear-gradient(90deg,#04D98B,#F2E205)"></div><b>Gradiente firma</b><span>verde→amarillo · barra de 3-4 px, tabs activos, tarjeta héroe</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(6, minmax(0, 1fr));gap:14px;margin-top:16px">
+      <div class="sw"><div class="c" style="height:40px;background:#069B66"></div><b>Verde texto</b><span>#069B66 · cifras positivas (AA)</span></div>
+      <div class="sw"><div class="c" style="height:40px;background:#8C7A0A"></div><b>Ocre texto</b><span>#8C7A0A · advertencias</span></div>
+      <div class="sw"><div class="c" style="height:40px;background:#C93A3A"></div><b>Rojo</b><span>#C93A3A · vencido, pérdida</span></div>
+      <div class="sw"><div class="c" style="height:40px;background:#1E5FBF"></div><b>Azul</b><span>#1E5FBF · informativo, serie 2</span></div>
+      <div class="sw"><div class="c" style="height:40px;background:#5A6B85"></div><b>Texto secundario</b><span>#5A6B85 · metadatos</span></div>
+      <div class="sw"><div class="c" style="height:40px;background:#E3E8F0"></div><b>Borde</b><span>#E3E8F0 · cards y tablas (línea interna #EDF0F5 · punteado #C6CFDD)</span></div>
+    </div>
+    <div style="font:600 12px 'Nunito Sans',sans-serif;color:#5A6B85;margin-top:14px">Gráficas (paleta categórica validada, en este orden fijo): <b style="color:#069B66">#069B66</b> · <b style="color:#1E5FBF">#1E5FBF</b> · <b style="color:#8C7A0A">#8C7A0A</b> · <b style="color:#0790A8">#0790A8</b>. Tintas de estado: verde #E6F9F1 · amarillo #FBF7D9 · rojo #FAEAEA · azul #E8F0FB.</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:20px">
+    <!-- Tipografía -->
+    <div class="sec">
+      <h2>Tipografía</h2>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div><span class="cap">Display · Nunito 800</span><div style="font:800 28px 'Nunito',sans-serif;color:#011640">$112.800.000</div><div style="font:600 11.5px 'Nunito Sans',sans-serif;color:#8B99B0">Cifras grandes y títulos de página · tabular-nums siempre en números</div></div>
+        <div><span class="cap">Título de card · Nunito 800 · 15px</span><div style="font:800 15px 'Nunito',sans-serif;color:#011640">Rentabilidad por cliente</div></div>
+        <div><span class="cap">Cuerpo · Nunito Sans 600 · 13px</span><div style="font:600 13px 'Nunito Sans',sans-serif">Las tablas y el texto de trabajo usan Nunito Sans; el dato protagonista va en 800.</div></div>
+        <div><span class="cap">Etiqueta · Nunito Sans 700 · 10,5px · mayúsculas · tracking .1em</span><div style="font:700 10.5px 'Nunito Sans',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#8B99B0">Cartera por cobrar</div></div>
+      </div>
+    </div>
+    <!-- Geometría -->
+    <div class="sec">
+      <h2>Geometría y superficies</h2>
+      <div style="display:flex;flex-direction:column;gap:12px;font:600 12.5px 'Nunito Sans',sans-serif;color:#5A6B85">
+        <div class="row"><div style="width:80px;height:44px;border:1px solid #E3E8F0;border-radius:14px;background:#fff;flex-shrink:0"></div>Cards: radio 14 · borde #E3E8F0 · sombra 0 1px 2px rgba(1,22,64,.04)</div>
+        <div class="row"><div style="width:80px;height:36px;border-radius:999px;background:#04D98B;flex-shrink:0"></div>Botones y chips: píldora (radio 999) — eco de la redondez del logo</div>
+        <div class="row"><div style="width:80px;height:36px;border:1px solid #E3E8F0;border-radius:10px;background:#fff;flex-shrink:0"></div>Inputs y controles: radio 10 · alto 38–44 · foco = borde #04D98B + halo rgba(4,217,139,.15)</div>
+        <div class="row"><div style="width:80px;height:24px;border-radius:6px;background:#EEF1F6;flex-shrink:0"></div>Rellenos neutros (kanban, barras vacías): #EEF1F6</div>
+        <div>Espaciado: contenido 24–28px de padding · gap 16–20 entre cards · filas de tabla 44px · sidebar 236px · topbar 64px.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:20px">
+    <!-- Componentes -->
+    <div class="sec">
+      <h2>Componentes clave</h2>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="row">
+          <div style="display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 16px;border-radius:999px;font:800 13px 'Nunito Sans',sans-serif;background:#04D98B;color:#011640"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Registrar</div>
+          <div style="display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:999px;font:800 13px 'Nunito Sans',sans-serif;border:1px solid #E3E8F0;background:#fff">Secundario</div>
+          <div style="display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:999px;font:800 13px 'Nunito Sans',sans-serif;background:#011640;color:#fff">Navy (solo 1 por vista)</div>
+        </div>
+        <div class="row">
+          <span class="badge" style="color:#069B66;background:#E6F9F1">Pagada</span>
+          <span class="badge" style="color:#8C7A0A;background:#FBF7D9">Pendiente</span>
+          <span class="badge" style="color:#C93A3A;background:#FAEAEA">Vencida</span>
+          <span class="badge" style="color:#1E5FBF;background:#E8F0FB">Informativo</span>
+          <span class="badge" style="color:#5A6B85;background:#EEF1F6">QuickBooks</span>
+        </div>
+        <div style="border-bottom:1px solid #E3E8F0;display:flex;gap:22px">
+          <div style="padding:0 2px 10px;font:800 13px 'Nunito Sans',sans-serif;color:#011640;background:linear-gradient(90deg,#04D98B,#F2E205) bottom/100% 3px no-repeat">Tab activo</div>
+          <div style="padding:0 2px 10px;font:700 13px 'Nunito Sans',sans-serif;color:#5A6B85">Tab inactivo</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:32px;height:32px;border-radius:999px;background:linear-gradient(135deg,#04D98B,#F2E205);color:#011640;display:flex;align-items:center;justify-content:center;font:800 12px 'Nunito',sans-serif">VS</div>
+          <span style="font:600 12.5px 'Nunito Sans',sans-serif;color:#5A6B85">Avatar propio con gradiente de marca; los demás usan tintas de estado + inicial.</span>
+        </div>
+      </div>
+    </div>
+    <!-- Reglas -->
+    <div class="sec">
+      <h2>Reglas de uso</h2>
+      <div style="display:flex;flex-direction:column;gap:10px;font:600 12.5px 'Nunito Sans',sans-serif;color:#0A1E3F">
+        <div class="row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#069B66" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M20 6 9 17l-5-5"></path></svg>El sidebar navy es el único bloque oscuro de la interfaz; logo blanco sobre navy, como manda el brand book.</div>
+        <div class="row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#069B66" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M20 6 9 17l-5-5"></path></svg>El gradiente firma aparece 1 vez por pantalla (tarjeta héroe o tab activo), nunca como fondo grande.</div>
+        <div class="row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#069B66" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M20 6 9 17l-5-5"></path></svg>El amarillo #F2E205 jamás lleva texto encima ni se usa como texto; para texto de advertencia se usa #8C7A0A.</div>
+        <div class="row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#069B66" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M20 6 9 17l-5-5"></path></svg>Números siempre alineados a la derecha y en tabular-nums; moneda con formato es-CO ($14.600.000, US$ 4.980).</div>
+        <div class="row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#069B66" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M20 6 9 17l-5-5"></path></svg>Iconos: trazo 1,8–2 px, rejilla 16/24, nunca emoji.</div>
+        <div class="row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#069B66" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M20 6 9 17l-5-5"></path></svg>Todo dato sincronizado lleva su chip de fuente (QuickBooks / Meta / ClickUp / Manual); lo manual es editable, lo sincronizado es de solo lectura.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar: anatomía -->
+  <div class="sec">
+    <h2>Sidebar · anatomía y estados</h2>
+    <div style="display:flex;gap:28px;align-items:flex-start">
+      <!-- Expandido -->
+      <div style="flex-shrink:0">
+        <div class="cap" style="display:block;margin-bottom:8px">Expandido · 236px</div>
+        <div style="width:236px;border-radius:14px;padding:18px 14px 14px;background:radial-gradient(300px 220px at -50px -50px,rgba(4,217,139,.18),transparent 70%),radial-gradient(300px 240px at 120% 108%,rgba(30,95,191,.22),transparent 72%),#011640;display:flex;flex-direction:column;gap:0">
+          <div style="display:flex;align-items:center;gap:10px;padding:0 10px 14px"><img src="logo-vivo-white.png" alt="VIVO" style="height:22px;width:auto"><span style="font:800 9px 'Nunito Sans',sans-serif;letter-spacing:.14em;color:#04D98B;border:1px solid rgba(4,217,139,.5);border-radius:999px;padding:2px 7px">ERP</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font:800 9.5px 'Nunito Sans',sans-serif;letter-spacing:.16em;color:rgba(255,255,255,.48);padding:6px 12px 9px;text-transform:uppercase"><span style="width:12px;height:2px;border-radius:2px;background:linear-gradient(90deg,#04D98B,#F2E205)"></span>Dinero</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:999px;font:600 13px 'Nunito Sans',sans-serif;color:rgba(255,255,255,.72)">Finanzas</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:999px;font:800 13px 'Nunito Sans',sans-serif;color:#011640;background:#fff;box-shadow:0 10px 24px -10px rgba(4,217,139,.65);margin:3px 0">Tesorería<span style="margin-left:auto;width:12px;height:12px;border-radius:99px;background:linear-gradient(135deg,#04D98B,#F2E205);display:flex;align-items:center;justify-content:center"><span style="width:5px;height:5px;border-radius:99px;background:#fff"></span></span></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:999px;font:600 13px 'Nunito Sans',sans-serif;color:rgba(255,255,255,.72)">Rentabilidad</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(255,255,255,.04);margin-top:16px">
+            <span style="width:8px;height:8px;border-radius:99px;background:#04D98B;box-shadow:0 0 0 4px rgba(4,217,139,.18)"></span>
+            <div><div style="font:800 11px 'Nunito Sans',sans-serif;color:#fff">Todo sincronizado</div><div style="font:600 10px 'Nunito Sans',sans-serif;color:rgba(255,255,255,.5)">QBO · Meta · ClickUp · 6:00</div></div>
+          </div>
+        </div>
+      </div>
+      <!-- Colapsado -->
+      <div style="flex-shrink:0">
+        <div class="cap" style="display:block;margin-bottom:8px">Colapsado · 68px</div>
+        <div style="width:68px;border-radius:14px;padding:16px 0 14px;background:radial-gradient(160px 140px at -30px -30px,rgba(4,217,139,.18),transparent 70%),#011640;display:flex;flex-direction:column;align-items:center;gap:8px">
+          <img src="logomark-white.png" alt="vo" style="height:20px;width:auto;margin-bottom:8px">
+          <div style="width:40px;height:40px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.72)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"></rect><circle cx="12" cy="12" r="2.5"></circle></svg></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div style="width:40px;height:40px;border-radius:999px;background:#fff;display:flex;align-items:center;justify-content:center;color:#069B66;box-shadow:0 8px 18px -8px rgba(4,217,139,.65)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 4l9 5.5"></path><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8"></path><path d="M3 20h18"></path></svg></div>
+            <span style="width:8px;height:8px;border-radius:99px;background:linear-gradient(135deg,#04D98B,#F2E205);display:flex;align-items:center;justify-content:center"><span style="width:3px;height:3px;border-radius:99px;background:#011640"></span></span>
+          </div>
+          <div style="width:40px;height:40px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.72)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path><path d="M15 7h6v6"></path></svg></div>
+          <div style="margin-top:14px;width:30px;height:30px;border-radius:999px;background:linear-gradient(135deg,#04D98B,#F2E205);color:#011640;display:flex;align-items:center;justify-content:center;font:800 11px 'Nunito',sans-serif">VS</div>
+        </div>
+      </div>
+      <!-- Reglas -->
+      <div style="font:600 12.5px 'Nunito Sans',sans-serif;color:#5A6B85;line-height:1.7;min-width:0">
+        <b style="color:#011640">La píldora encendida.</b> El módulo activo se invierte: píldora blanca, texto navy 800, icono en verde #069B66 y glow verde (0 10px 24px -10px rgba(4,217,139,.65)). Al cambiar de módulo la píldora se <b style="color:#011640">desliza</b> al nuevo ítem (transform 220ms ease-out) y el anillo entra con scale 0→1.<br><br>
+        <b style="color:#011640">El anillo "o".</b> El indicador de posición es el "o" del logo: anillo gradiente verde→amarillo de 12px al final del ítem activo (y bajo el icono en modo colapsado). Es el único lugar donde el gradiente firma vive dentro del sidebar.<br><br>
+        <b style="color:#011640">Grupos.</b> Cada área abre con guion gradiente de 12×2px + label Nunito Sans 800 9,5px, tracking .16em, blanco al 48%. El menú se filtra por rol (RBAC).<br><br>
+        <b style="color:#011640">Fondo con aura.</b> Navy #011640 con dos auras radiales (verde arriba-izquierda al 18%, azul abajo-derecha al 22%) — profundidad sin romper el bloque de marca. Borde derecho blanco al 6%.<br><br>
+        <b style="color:#011640">Zona viva.</b> Abajo: pulso de sincronización global (punto verde con onda cada 2,4s + fuentes y hora) y la tarjeta de usuario con avatar gradiente y chip de rol en verde.<br><br>
+        <b style="color:#011640">Hover.</b> Ítem inactivo: fondo blanco al 8%, texto al 100%, icono a opacidad 1 (120ms). Nada de subrayados ni rieles laterales.
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

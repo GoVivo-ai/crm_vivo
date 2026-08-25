@@ -1,0 +1,93 @@
+{"title":"Equipo · Vacaciones","crumb":"Solicitud de ausencia · vista del colaborador","active":"Equipo"}
+      <style>
+        .fld{display:flex;flex-direction:column;gap:6px}
+        .fld label{font:700 12px 'Nunito Sans',sans-serif;color:var(--ink)}
+        .in{height:40px;border:1px solid var(--border);border-radius:10px;padding:0 14px;font:600 13px 'Nunito Sans',sans-serif;color:var(--ink);background:#fff;display:flex;align-items:center;gap:8px}
+        .in.ph{color:var(--faint)}
+        .seg{display:flex;background:#EEF1F6;border-radius:999px;padding:3px;gap:2px;width:fit-content}
+        .seg span{padding:6px 14px;border-radius:999px;font:700 12px 'Nunito Sans',sans-serif;color:var(--muted)}
+        .seg span.on{background:#fff;color:var(--navy);font-weight:800;box-shadow:0 1px 2px rgba(1,22,64,.12)}
+      </style>
+
+      <div style="display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:16px;align-items:start">
+        <!-- Formulario -->
+        <div class="card" style="padding:24px">
+          <div style="font:800 17px 'Nunito',sans-serif;color:var(--navy)">Nueva solicitud de ausencia</div>
+          <div style="font:600 12.5px 'Nunito Sans',sans-serif;color:var(--muted);margin:4px 0 20px">La aprueba una persona de management distinta a ti. Recibirás la respuesta aquí y por correo.</div>
+
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <div class="fld">
+              <label>Tipo de ausencia</label>
+              <div class="seg"><span class="on">Vacaciones</span><span>Día personal</span><span>Incapacidad</span><span>Otro</span></div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:14px">
+              <div class="fld">
+                <label>Desde</label>
+                <div class="in"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B99B0" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="5" width="16" height="16" rx="2"></rect><path d="M8 3v4M16 3v4M4 10h16"></path></svg>Lun 7 sep 2026</div>
+              </div>
+              <div class="fld">
+                <label>Hasta</label>
+                <div class="in"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B99B0" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="5" width="16" height="16" rx="2"></rect><path d="M8 3v4M16 3v4M4 10h16"></path></svg>Vie 11 sep 2026</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;background:var(--green-tint);border-radius:10px;padding:12px 14px">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#069B66" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+              <span style="font:700 12.5px 'Nunito Sans',sans-serif;color:var(--green-ink)">5 días hábiles · te quedarían 7 de 15 este año</span>
+            </div>
+            <div class="fld">
+              <label>Nota para quien aprueba <span style="color:var(--faint);font-weight:600">(opcional)</span></label>
+              <div class="in ph" style="height:76px;align-items:flex-start;padding-top:11px">Ej.: viaje familiar, dejo las campañas programadas…</div>
+            </div>
+            <div class="fld">
+              <label>Cobertura durante la ausencia</label>
+              <div class="in" style="justify-content:space-between"><span style="display:flex;align-items:center;gap:8px"><span class="avatar" style="width:22px;height:22px;font-size:9px;background:var(--yellow-tint);color:var(--gold)">JC</span>Julián Castro</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B99B0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></div>
+            </div>
+            <div style="display:flex;gap:10px;padding-top:4px">
+              <div class="btn pri">Enviar solicitud</div>
+              <div class="btn ghost">Cancelar</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+          <!-- Saldo -->
+          <div class="card" style="padding:20px 22px;position:relative;overflow:hidden">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#04D98B,#F2E205)"></div>
+            <div class="lbl">Tu saldo 2026</div>
+            <div style="display:flex;align-items:baseline;gap:6px;margin:8px 0 12px">
+              <span style="font:800 34px 'Nunito',sans-serif;color:var(--navy)">12</span>
+              <span style="font:700 14px 'Nunito Sans',sans-serif;color:var(--muted)">de 15 días disponibles</span>
+            </div>
+            <div style="height:10px;border-radius:99px;background:#EEF1F6;overflow:hidden;display:flex;gap:2px">
+              <div style="width:20%;background:var(--navy)"></div>
+              <div style="width:33%;background:var(--yellow)"></div>
+              <div style="flex:1;background:var(--green)"></div>
+            </div>
+            <div style="display:flex;gap:14px;margin-top:10px">
+              <span class="leg"><i style="background:var(--navy)"></i>Tomados 3</span>
+              <span class="leg"><i style="background:var(--yellow)"></i>Solicitados 5</span>
+              <span class="leg"><i style="background:var(--green)"></i>Libres 7</span>
+            </div>
+          </div>
+          <!-- Historial -->
+          <div class="card">
+            <div class="card-h"><h2>Tus solicitudes</h2></div>
+            <table class="tbl" style="margin-top:6px">
+              <thead><tr><th>Rango</th><th class="r">Días</th><th>Estado</th></tr></thead>
+              <tbody>
+                <tr><td style="font-weight:700">7–11 sep 2026</td><td class="r">5</td><td><span class="badge b-warn">Pendiente</span></td></tr>
+                <tr><td style="font-weight:700">14–16 abr 2026</td><td class="r">3</td><td><span class="badge b-ok">Aprobada · D. Mora</span></td></tr>
+                <tr><td style="font-weight:700">2 ene 2026</td><td class="r">1</td><td><span class="badge b-ok">Aprobada · V. Sandoval</span></td></tr>
+                <tr><td style="font-weight:700">26–27 dic 2025</td><td class="r">2</td><td><span class="badge b-bad">Rechazada</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- Equipo ausente en esas fechas -->
+          <div class="card">
+            <div class="card-h"><h2>Quién más está fuera</h2><span class="crumb">7–11 sep</span></div>
+            <div style="padding:10px 20px 16px;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;gap:10px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#069B66" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg><span style="font:600 12px 'Nunito Sans',sans-serif;color:var(--muted)">Nadie de tu equipo estará ausente esos días.</span></div>
+            </div>
+          </div>
+        </div>
+      </div>

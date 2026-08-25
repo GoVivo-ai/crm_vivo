@@ -1,0 +1,105 @@
+{"title":"Equipo","crumb":"14 personas activas · 4 áreas","active":"Equipo"}
+      <style>
+        .tab{padding:0 2px 10px;font:700 13px 'Nunito Sans',sans-serif;color:var(--muted)}
+        .tab.on{color:var(--navy);font-weight:800;background:linear-gradient(90deg,#04D98B,#F2E205) bottom/100% 3px no-repeat}
+        .arow{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+        .arow:last-child{border-bottom:0}
+      </style>
+
+      <div style="display:flex;border-bottom:1px solid var(--border);gap:22px;padding:0 2px">
+        <div class="tab on">Directorio</div>
+        <div class="tab">Ausencias</div>
+        <div class="tab">Compensación</div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="badge" style="background:var(--navy);color:#fff">Todas las áreas</span>
+        <span class="badge b-mut">Cuentas</span>
+        <span class="badge b-mut">Creativo</span>
+        <span class="badge b-mut">Administración</span>
+        <div class="btn ghost" style="margin-left:auto;height:32px;font-size:12px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Nueva persona</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:minmax(0,3fr) minmax(0,1fr);gap:16px">
+        <!-- Directorio -->
+        <div class="card">
+          <table class="tbl">
+            <thead><tr><th>Persona</th><th>Cargo</th><th>Área</th><th>Ingreso</th><th>Contrato</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px"><div class="avatar" style="width:30px;height:30px;font-size:11px">VS</div><div><div style="font-weight:800">Victor Sandoval</div><div style="font:600 11px 'Nunito Sans',sans-serif;color:var(--faint)">victor@govivo.ai</div></div></div></td>
+                <td>CTO</td><td style="color:var(--muted)">Dirección</td><td style="color:var(--muted)">Mar 2024</td><td><span class="badge b-mut">Indefinido</span></td><td><span class="badge b-ok">Activo</span></td>
+              </tr>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px"><div class="avatar" style="width:30px;height:30px;font-size:11px;background:var(--blue-tint);color:var(--blue)">DM</div><div><div style="font-weight:800">Daniel Mora</div><div style="font:600 11px 'Nunito Sans',sans-serif;color:var(--faint)">daniel@govivo.ai</div></div></div></td>
+                <td>Paid Media Lead</td><td style="color:var(--muted)">Cuentas</td><td style="color:var(--muted)">Jun 2024</td><td><span class="badge b-mut">Indefinido</span></td><td><span class="badge b-ok">Activo</span></td>
+              </tr>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px"><div class="avatar" style="width:30px;height:30px;font-size:11px;background:var(--green-tint);color:var(--green-ink)">LP</div><div><div style="font-weight:800">Laura Pinzón</div><div style="font:600 11px 'Nunito Sans',sans-serif;color:var(--faint)">laura@govivo.ai</div></div></div></td>
+                <td>CRM Specialist</td><td style="color:var(--muted)">Cuentas</td><td style="color:var(--muted)">Sep 2024</td><td><span class="badge b-warn">Fijo · vence 15 sep</span></td><td><span class="badge b-ok">Activo</span></td>
+              </tr>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px"><div class="avatar" style="width:30px;height:30px;font-size:11px;background:var(--yellow-tint);color:var(--gold)">JC</div><div><div style="font-weight:800">Julián Castro</div><div style="font:600 11px 'Nunito Sans',sans-serif;color:var(--faint)">julian@govivo.ai</div></div></div></td>
+                <td>Content Lead</td><td style="color:var(--muted)">Creativo</td><td style="color:var(--muted)">Ene 2025</td><td><span class="badge b-mut">Indefinido</span></td><td><span class="badge b-ok">Activo</span></td>
+              </tr>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px"><div class="avatar" style="width:30px;height:30px;font-size:11px;background:var(--blue-tint);color:var(--blue)">MR</div><div><div style="font-weight:800">Mariana Ruiz</div><div style="font:600 11px 'Nunito Sans',sans-serif;color:var(--faint)">mariana@govivo.ai</div></div></div></td>
+                <td>Diseñadora sr.</td><td style="color:var(--muted)">Creativo</td><td style="color:var(--muted)">Feb 2025</td><td><span class="badge b-mut">Indefinido</span></td><td><span class="badge b-info">Vacaciones</span></td>
+              </tr>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px"><div class="avatar" style="width:30px;height:30px;font-size:11px;background:var(--green-tint);color:var(--green-ink)">AC</div><div><div style="font-weight:800">Andrés Cortés</div><div style="font:600 11px 'Nunito Sans',sans-serif;color:var(--faint)">andres@govivo.ai</div></div></div></td>
+                <td>Analista financiero</td><td style="color:var(--muted)">Administración</td><td style="color:var(--muted)">Abr 2025</td><td><span class="badge b-mut">Indefinido</span></td><td><span class="badge b-ok">Activo</span></td>
+              </tr>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px"><div class="avatar" style="width:30px;height:30px;font-size:11px;background:var(--yellow-tint);color:var(--gold)">SP</div><div><div style="font-weight:800">Sofía Prada</div><div style="font:600 11px 'Nunito Sans',sans-serif;color:var(--faint)">sofia@govivo.ai</div></div></div></td>
+                <td>Community mgr.</td><td style="color:var(--muted)">Creativo</td><td style="color:var(--muted)">Jun 2025</td><td><span class="badge b-warn">Fijo · vence 30 nov</span></td><td><span class="badge b-ok">Activo</span></td>
+              </tr>
+              <tr>
+                <td><div style="display:flex;align-items:center;gap:10px"><div class="avatar" style="width:30px;height:30px;font-size:11px;background:var(--blue-tint);color:var(--blue)">FG</div><div><div style="font-weight:800">Felipe Gómez</div><div style="font:600 11px 'Nunito Sans',sans-serif;color:var(--faint)">felipe@govivo.ai</div></div></div></td>
+                <td>Desarrollador</td><td style="color:var(--muted)">Cuentas</td><td style="color:var(--muted)">Jul 2026</td><td><span class="badge b-mut">Indefinido</span></td><td><span class="badge b-ok">Activo</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="border-top:1px solid var(--border);padding:12px 20px;font:600 12px 'Nunito Sans',sans-serif;color:var(--faint)">Mostrando 8 de 14 personas</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+          <!-- Ausencias -->
+          <div class="card">
+            <div class="card-h"><h2>Ausencias esta semana</h2></div>
+            <div style="padding:6px 20px 14px">
+              <div class="arow">
+                <div class="avatar" style="width:28px;height:28px;font-size:10px;background:var(--blue-tint);color:var(--blue)">MR</div>
+                <div style="flex:1"><div style="font:800 12px 'Nunito Sans',sans-serif">Mariana Ruiz</div><div style="font:600 11px 'Nunito Sans',sans-serif;color:var(--muted)">Vacaciones · 18–29 ago</div></div>
+              </div>
+              <div class="arow">
+                <div class="avatar" style="width:28px;height:28px;font-size:10px;background:var(--green-tint);color:var(--green-ink)">AC</div>
+                <div style="flex:1"><div style="font:800 12px 'Nunito Sans',sans-serif">Andrés Cortés</div><div style="font:600 11px 'Nunito Sans',sans-serif;color:var(--muted)">Cita médica · vie 28 ago</div></div>
+              </div>
+            </div>
+          </div>
+          <!-- Solicitudes pendientes -->
+          <div class="card" style="border-color:rgba(4,217,139,.5)">
+            <div class="card-h"><h2>Por aprobar</h2><span class="badge b-ok" style="margin-left:auto">2</span></div>
+            <div style="padding:6px 20px 14px">
+              <div class="arow">
+                <div style="flex:1"><div style="font:800 12px 'Nunito Sans',sans-serif">Sofía Prada</div><div style="font:600 11px 'Nunito Sans',sans-serif;color:var(--muted)">Vacaciones · 14–18 sep · 5 días</div></div>
+                <span class="badge b-warn">Pendiente</span>
+              </div>
+              <div class="arow">
+                <div style="flex:1"><div style="font:800 12px 'Nunito Sans',sans-serif">Felipe Gómez</div><div style="font:600 11px 'Nunito Sans',sans-serif;color:var(--muted)">Día personal · 1 sep</div></div>
+                <span class="badge b-warn">Pendiente</span>
+              </div>
+              <div style="padding-top:10px;font:700 12px 'Nunito Sans',sans-serif;color:var(--green-ink)">Revisar solicitudes →</div>
+            </div>
+          </div>
+          <!-- Fechas -->
+          <div class="card">
+            <div class="card-h"><h2>Fechas del equipo</h2></div>
+            <div style="padding:6px 20px 14px">
+              <div class="arow"><div style="flex:1"><div style="font:800 12px 'Nunito Sans',sans-serif">Julián Castro</div><div style="font:600 11px 'Nunito Sans',sans-serif;color:var(--muted)">Cumpleaños · jue 27 ago</div></div></div>
+              <div class="arow"><div style="flex:1"><div style="font:800 12px 'Nunito Sans',sans-serif">Daniel Mora</div><div style="font:600 11px 'Nunito Sans',sans-serif;color:var(--muted)">2 años en VIVO · 3 sep</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>

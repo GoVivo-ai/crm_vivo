@@ -1,0 +1,68 @@
+{"title":"CRM · Pipeline","crumb":"11 negocios · $64,0 M ponderado","active":"CRM"}
+      <style>
+        .tabbar{display:flex;border-bottom:1px solid var(--border);gap:22px;padding:0 2px}
+        .tab{padding:0 2px 10px;font:700 13px 'Nunito Sans',sans-serif;color:var(--muted)}
+        .tab.on{color:var(--navy);font-weight:800;background:linear-gradient(90deg,#04D98B,#F2E205) bottom/100% 3px no-repeat}
+        .kwrap{display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));gap:14px;align-items:start}
+        .kcol{background:#EEF1F6;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px}
+        .kcol-h{display:flex;align-items:center;gap:8px;padding:2px 4px 4px}
+        .kcol-h b{font:800 12.5px 'Nunito Sans',sans-serif;color:var(--navy)}
+        .kcount{font:800 10.5px 'Nunito Sans',sans-serif;color:var(--muted);background:#fff;border-radius:999px;padding:2px 8px}
+        .ksum{margin-left:auto;font:800 11.5px 'Nunito Sans',sans-serif;color:var(--muted);font-variant-numeric:tabular-nums}
+        .kcard{background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 14px;box-shadow:0 1px 2px rgba(1,22,64,.05);display:flex;flex-direction:column;gap:8px}
+        .kcard b{font:800 13px 'Nunito Sans',sans-serif;color:var(--ink)}
+        .kmeta{display:flex;align-items:center;gap:8px;font:600 11.5px 'Nunito Sans',sans-serif;color:var(--muted)}
+        .kval{font:800 14px 'Nunito',sans-serif;color:var(--navy);font-variant-numeric:tabular-nums}
+        .kfoot{display:flex;align-items:center;gap:8px;border-top:1px solid var(--line);padding-top:8px}
+        .mini{width:22px;height:22px;border-radius:999px;display:flex;align-items:center;justify-content:center;font:800 9.5px 'Nunito',sans-serif;flex-shrink:0}
+        .days{margin-left:auto;font:700 10.5px 'Nunito Sans',sans-serif;color:var(--faint)}
+        .days.slow{color:var(--gold)}
+      </style>
+
+      <div class="tabbar">
+        <div class="tab on">Pipeline</div>
+        <div class="tab">Contactos</div>
+        <div class="tab">Cuentas</div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="btn ghost" style="height:32px;font-size:12px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"></path></svg>Filtros</div>
+        <span class="badge b-mut">Responsable: todos</span>
+        <span class="badge b-mut">Cierre: Q3 2026</span>
+        <span style="margin-left:auto;font:700 12px 'Nunito Sans',sans-serif;color:var(--muted)">Ordenado por valor</span>
+      </div>
+
+      <div class="kwrap">
+        <div class="kcol">
+          <div class="kcol-h"><b>Prospecto</b><span class="kcount">3</span><span class="ksum">$14,2 M</span></div>
+          <div class="kcard"><b>Ferretería Uno · pauta digital</b><div class="kval">$6.500.000 /mes</div><div class="kfoot"><span class="mini" style="background:var(--blue-tint);color:var(--blue)">DM</span><span class="kmeta">Daniel Mora</span><span class="days">3 d</span></div></div>
+          <div class="kcard"><b>EduPro · SEO + contenido</b><div class="kval">$4.200.000 /mes</div><div class="kfoot"><span class="mini" style="background:var(--green-tint);color:var(--green-ink)">LP</span><span class="kmeta">Laura Pinzón</span><span class="days">6 d</span></div></div>
+          <div class="kcard"><b>Hotel Mirador · web</b><div class="kval">$3.500.000</div><div class="kfoot"><span class="mini" style="background:var(--blue-tint);color:var(--blue)">DM</span><span class="kmeta">Daniel Mora</span><span class="days slow">14 d</span></div></div>
+        </div>
+        <div class="kcol">
+          <div class="kcol-h"><b>Calificado</b><span class="kcount">3</span><span class="ksum">$18,6 M</span></div>
+          <div class="kcard"><b>Banca Nova · CRM ampliación</b><div class="kval">$8.400.000 /mes</div><div class="kfoot"><span class="mini" style="background:var(--green-tint);color:var(--green-ink)">VS</span><span class="kmeta">Victor Sandoval</span><span class="days">2 d</span></div></div>
+          <div class="kcard"><b>TexLima · e-commerce</b><div class="kval">$5.900.000</div><div class="kfoot"><span class="mini" style="background:var(--yellow-tint);color:var(--gold)">JC</span><span class="kmeta">Julián Castro</span><span class="days">5 d</span></div></div>
+          <div class="kcard"><b>Clínica Vital · landing + pauta</b><div class="kval">$4.300.000 /mes</div><div class="kfoot"><span class="mini" style="background:var(--green-tint);color:var(--green-ink)">LP</span><span class="kmeta">Laura Pinzón</span><span class="days">8 d</span></div></div>
+        </div>
+        <div class="kcol">
+          <div class="kcol-h"><b>Propuesta</b><span class="kcount">3</span><span class="ksum">$21,0 M</span></div>
+          <div class="kcard" style="border-color:var(--green);box-shadow:0 0 0 1px var(--green), 0 6px 16px -8px rgba(4,217,139,.4)"><b>Grupo Andino · media anual</b><div class="kval">$12.800.000 /mes</div><div class="kmeta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="5" width="16" height="16" rx="2"></rect><path d="M8 3v4M16 3v4M4 10h16"></path></svg>Presentación viernes 28</div><div class="kfoot"><span class="mini" style="background:var(--green-tint);color:var(--green-ink)">VS</span><span class="kmeta">Victor Sandoval</span><span class="days">1 d</span></div></div>
+          <div class="kcard"><b>Café Sierra · rebranding</b><div class="kval">$5.200.000</div><div class="kfoot"><span class="mini" style="background:var(--yellow-tint);color:var(--gold)">JC</span><span class="kmeta">Julián Castro</span><span class="days">4 d</span></div></div>
+          <div class="kcard"><b>Constructora Meta · pauta</b><div class="kval">$3.000.000 /mes</div><div class="kfoot"><span class="mini" style="background:var(--blue-tint);color:var(--blue)">DM</span><span class="kmeta">Daniel Mora</span><span class="days slow">11 d</span></div></div>
+        </div>
+        <div class="kcol">
+          <div class="kcol-h"><b>Negociación</b><span class="kcount">2</span><span class="ksum">$10,2 M</span></div>
+          <div class="kcard"><b>Farmacia Cruz · pauta + CRM</b><div class="kval">$6.200.000 /mes</div><div class="kmeta">Cierre estimado: 5 sep</div><div class="kfoot"><span class="mini" style="background:var(--green-tint);color:var(--green-ink)">VS</span><span class="kmeta">Victor Sandoval</span><span class="days">2 d</span></div></div>
+          <div class="kcard"><b>Logística Sur · web + SEO</b><div class="kval">$4.000.000</div><div class="kmeta">Contrato en revisión legal</div><div class="kfoot"><span class="mini" style="background:var(--green-tint);color:var(--green-ink)">LP</span><span class="kmeta">Laura Pinzón</span><span class="days">7 d</span></div></div>
+          <div style="border:1.5px dashed #C6CFDD;border-radius:12px;padding:11px;text-align:center;font:800 12px 'Nunito Sans',sans-serif;color:var(--faint)">+ Nuevo negocio</div>
+        </div>
+      </div>
+
+      <div class="card" style="display:flex;align-items:center;gap:24px;padding:14px 20px">
+        <span class="lbl">Este mes</span>
+        <span style="font:700 12.5px 'Nunito Sans',sans-serif;color:var(--muted)">Ganados: <b style="color:var(--green-ink)">3 · $9,1 M</b></span>
+        <span style="font:700 12.5px 'Nunito Sans',sans-serif;color:var(--muted)">Perdidos: <b style="color:var(--red)">1 · $2,4 M</b></span>
+        <span style="font:700 12.5px 'Nunito Sans',sans-serif;color:var(--muted)">Tasa de conversión: <b style="color:var(--navy)">27%</b></span>
+        <span style="margin-left:auto;font:700 12px 'Nunito Sans',sans-serif;color:var(--green-ink)">Ver informe comercial →</span>
+      </div>

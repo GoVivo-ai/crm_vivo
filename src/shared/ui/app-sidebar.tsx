@@ -8,6 +8,7 @@ import {
   Orbit,
   ReceiptText,
   Settings2,
+  Wallet,
   type LucideIcon,
 } from "lucide-react";
 import Image from "next/image";
@@ -110,6 +111,13 @@ const NAV_GROUPS: NavGroup[] = [
         href: "/purchases",
         label: "Gastos y compras",
         icon: ReceiptText,
+        accent: "var(--module-finance)",
+      },
+      {
+        resource: "treasury",
+        href: "/treasury",
+        label: "Tesorería",
+        icon: Wallet,
         accent: "var(--module-finance)",
       },
     ],

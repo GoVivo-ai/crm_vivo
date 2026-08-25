@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { Users } from "lucide-react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  CaptureDialogBody,
+  CaptureDialogContent,
+  CaptureDialogFooter,
+  CaptureDialogHeader,
+} from "@/shared/ui/capture-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -16,10 +17,12 @@ import {
   deleteStaffing,
 } from "@/modules/profitability/application/staffing-actions";
 import type { StaffingAssignment } from "@/modules/profitability/domain/types";
+import { Combobox } from "@/shared/ui/combobox";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
+import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
 import { FieldError } from "@/shared/ui/field-error";
-import { NativeSelect } from "@/shared/ui/native-select";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
+import { useDirtyGuard } from "@/shared/ui/use-dirty-guard";
 
 type Option = { id: string; name: string };
 
@@ -36,7 +39,16 @@ export function StaffingManager({
   employees,
 }: StaffingManagerProps) {
   const [open, setOpen] = useState(false);
+  const [employeeId, setEmployeeId] = useState<string | null>(null);
+  const [accountId, setAccountId] = useState<string | null>(null);
   const { submit, pending, fieldErrors } = useActionSubmit<unknown>();
+  const formRef = useRef<HTMLFormElement>(null);
+  const guard = useDirtyGuard({
+    open,
+    setOpen,
+    formRef,
+    extraState: { employeeId, accountId },
+  });
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -44,8 +56,8 @@ export function StaffingManager({
     submit(
       () =>
         createStaffing({
-          accountId: form.get("accountId"),
-          employeeId: form.get("employeeId"),
+          accountId,
+          employeeId,
           dedicationPercent: Number(form.get("dedicationPercent")),
           validFrom: (form.get("validFrom") as string) || null,
           validTo: (form.get("validTo") as string) || null,
@@ -63,35 +75,39 @@ export function StaffingManager({
   return (
     <div className="flex flex-col gap-3">
       <div className="flex justify-end">
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger render={<Button />}>Nueva asignación</DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Asignar persona a cliente</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={onSubmit} className="flex flex-col gap-4">
+        <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
+          <DialogTrigger render={<Button size="sm" />}>Nueva asignación</DialogTrigger>
+          <CaptureDialogContent>
+            <CaptureDialogHeader
+              icon={Users}
+              tint="gold"
+              title="Asignar persona a cliente"
+              subtitle="Rentabilidad · Finanzas"
+            />
+            <form ref={formRef} onSubmit={onSubmit}>
+              <CaptureDialogBody>
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="employeeId">Persona</Label>
-                <NativeSelect id="employeeId" name="employeeId" required>
-                  <option value="">Elige…</option>
-                  {employees.map((e) => (
-                    <option key={e.id} value={e.id}>
-                      {e.name}
-                    </option>
-                  ))}
-                </NativeSelect>
+                <Label>Persona</Label>
+                <Combobox
+                  ariaLabel="Persona a asignar"
+                  options={employees}
+                  value={employeeId}
+                  onValueChange={setEmployeeId}
+                  placeholder="Buscar persona…"
+                  required
+                />
                 <FieldError errors={fieldErrors.employeeId} />
               </div>
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="accountId">Cliente</Label>
-                <NativeSelect id="accountId" name="accountId" required>
-                  <option value="">Elige…</option>
-                  {accounts.map((a) => (
-                    <option key={a.id} value={a.id}>
-                      {a.name}
-                    </option>
-                  ))}
-                </NativeSelect>
+                <Label>Cliente</Label>
+                <Combobox
+                  ariaLabel="Cliente destino"
+                  options={accounts}
+                  value={accountId}
+                  onValueChange={setAccountId}
+                  placeholder="Buscar cliente…"
+                  required
+                />
                 <FieldError errors={fieldErrors.accountId} />
               </div>
               <div className="grid grid-cols-3 gap-3">
@@ -117,12 +133,19 @@ export function StaffingManager({
                   <Input id="validTo" name="validTo" type="date" />
                 </div>
               </div>
-              <Button type="submit" disabled={pending}>
-                {pending ? "Creando…" : "Crear asignación"}
-              </Button>
+              </CaptureDialogBody>
+              <CaptureDialogFooter
+                submitLabel="Crear asignación"
+                pending={pending}
+              />
             </form>
-          </DialogContent>
+          </CaptureDialogContent>
         </Dialog>
+        <DiscardGuardDialog
+          open={guard.discardOpen}
+          onOpenChange={guard.setDiscardOpen}
+          onDiscard={guard.discard}
+        />
       </div>
 
       <ul className="flex flex-col gap-2">

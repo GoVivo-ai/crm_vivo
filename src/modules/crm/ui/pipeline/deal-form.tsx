@@ -1,21 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { Handshake } from "lucide-react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createDeal } from "@/modules/crm/application/deals-actions";
 import type { Deal, PipelineStage } from "@/modules/crm/domain/types";
+import {
+  CaptureDialogBody,
+  CaptureDialogContent,
+  CaptureDialogFooter,
+  CaptureDialogHeader,
+} from "@/shared/ui/capture-dialog";
+import { Combobox } from "@/shared/ui/combobox";
+import { CurrencyFields } from "@/shared/ui/currency-fields";
+import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
 import { FieldError } from "@/shared/ui/field-error";
-import { NativeSelect } from "@/shared/ui/native-select";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
+import { useDirtyGuard } from "@/shared/ui/use-dirty-guard";
 
 type Option = { id: string; name: string };
 
@@ -25,8 +29,21 @@ type DealFormProps = {
 };
 
 export function DealForm({ accounts, stages }: DealFormProps) {
+  const openStages = stages.filter((s) => !s.isWon && !s.isLost);
   const [open, setOpen] = useState(false);
+  const [accountId, setAccountId] = useState<string | null>(null);
+  const [stageId, setStageId] = useState<string | null>(
+    openStages[0]?.id ?? null,
+  );
+  const [currency, setCurrency] = useState("COP");
   const { submit, pending, fieldErrors } = useActionSubmit<Deal>();
+  const formRef = useRef<HTMLFormElement>(null);
+  const guard = useDirtyGuard({
+    open,
+    setOpen,
+    formRef,
+    extraState: { accountId, stageId, currency },
+  });
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -36,85 +53,101 @@ export function DealForm({ accounts, stages }: DealFormProps) {
       () =>
         createDeal({
           title: form.get("title"),
-          accountId: form.get("accountId"),
-          stageId: form.get("stageId"),
+          accountId,
+          stageId,
           amount: rawAmount === "" ? null : Number(rawAmount),
-          expectedCloseDate:
-            (form.get("expectedCloseDate") as string) || null,
+          currency,
+          expectedCloseDate: (form.get("expectedCloseDate") as string) || null,
         }),
       {
-        successMessage: "Deal creado",
+        successMessage: `Deal ${form.get("title")} creado`,
         onSuccess: () => setOpen(false),
       },
     );
   }
 
-  const openStages = stages.filter((s) => !s.isWon && !s.isLost);
-
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button />}>Nuevo deal</DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Nuevo deal</DialogTitle>
-        </DialogHeader>
-        <form onSubmit={onSubmit} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="title">Título</Label>
-            <Input id="title" name="title" required />
-            <FieldError errors={fieldErrors.title} />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="accountId">Cuenta</Label>
-            <NativeSelect id="accountId" name="accountId" required>
-              <option value="">Elige una cuenta…</option>
-              {accounts.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.name}
-                </option>
-              ))}
-            </NativeSelect>
-            <FieldError errors={fieldErrors.accountId} />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="stageId">Etapa</Label>
-              <NativeSelect id="stageId" name="stageId" required>
-                {openStages.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                  </option>
-                ))}
-              </NativeSelect>
-              <FieldError errors={fieldErrors.stageId} />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="amount">Monto (COP)</Label>
-              <Input
-                id="amount"
-                name="amount"
-                type="number"
-                min="0"
-                step="1"
-                inputMode="numeric"
-              />
-              <FieldError errors={fieldErrors.amount} />
-            </div>
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="expectedCloseDate">Cierre esperado</Label>
-            <Input
-              id="expectedCloseDate"
-              name="expectedCloseDate"
-              type="date"
-            />
-            <FieldError errors={fieldErrors.expectedCloseDate} />
-          </div>
-          <Button type="submit" disabled={pending}>
-            {pending ? "Creando…" : "Crear deal"}
-          </Button>
-        </form>
-      </DialogContent>
-    </Dialog>
+    <>
+      <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
+        <DialogTrigger render={<Button size="sm" />}>Nuevo deal</DialogTrigger>
+        <CaptureDialogContent>
+          <CaptureDialogHeader
+            icon={Handshake}
+            tint="green"
+            title="Nuevo deal"
+            subtitle="Pipeline · CRM"
+          />
+          <form ref={formRef} onSubmit={onSubmit}>
+            <CaptureDialogBody>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="title">Título</Label>
+                <Input id="title" name="title" required />
+                <FieldError errors={fieldErrors.title} />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex flex-col gap-1.5">
+                  <Label>Cuenta</Label>
+                  <Combobox
+                    ariaLabel="Cuenta del deal"
+                    options={accounts}
+                    value={accountId}
+                    onValueChange={setAccountId}
+                    placeholder="Buscar cuenta…"
+                    required
+                  />
+                  <FieldError errors={fieldErrors.accountId} />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label>Etapa</Label>
+                  <Combobox
+                    ariaLabel="Etapa inicial"
+                    options={openStages.map((s) => ({ id: s.id, name: s.name }))}
+                    value={stageId}
+                    onValueChange={setStageId}
+                    placeholder="Buscar etapa…"
+                    required
+                  />
+                  <FieldError errors={fieldErrors.stageId} />
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="amount">Monto</Label>
+                  <Input
+                    id="amount"
+                    name="amount"
+                    type="number"
+                    min="0"
+                    step="1"
+                    inputMode="numeric"
+                  />
+                  <FieldError errors={fieldErrors.amount} />
+                </div>
+                <CurrencyFields
+                  currency={currency}
+                  onCurrencyChange={setCurrency}
+                  exchangeRateErrors={fieldErrors.exchangeRate}
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="expectedCloseDate">Cierre esperado</Label>
+                <Input
+                  id="expectedCloseDate"
+                  name="expectedCloseDate"
+                  type="date"
+                />
+                <FieldError errors={fieldErrors.expectedCloseDate} />
+              </div>
+            </CaptureDialogBody>
+            <CaptureDialogFooter submitLabel="Crear deal" pending={pending} />
+          </form>
+        </CaptureDialogContent>
+      </Dialog>
+      <DiscardGuardDialog
+        open={guard.discardOpen}
+        onOpenChange={guard.setDiscardOpen}
+        onDiscard={guard.discard}
+      />
+    </>
   );
 }

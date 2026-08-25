@@ -1,24 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { FolderKanban } from "lucide-react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createProject } from "@/modules/clients/application/projects-actions";
 import type { Project } from "@/modules/clients/domain/types";
+import {
+  CaptureDialogBody,
+  CaptureDialogContent,
+  CaptureDialogFooter,
+  CaptureDialogHeader,
+} from "@/shared/ui/capture-dialog";
+import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
 import { FieldError } from "@/shared/ui/field-error";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
+import { useDirtyGuard } from "@/shared/ui/use-dirty-guard";
 
 export function ProjectForm({ accountId }: { accountId: string }) {
   const [open, setOpen] = useState(false);
   const { submit, pending, fieldErrors } = useActionSubmit<Project>();
+  const formRef = useRef<HTMLFormElement>(null);
+  const guard = useDirtyGuard({ open, setOpen, formRef });
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -32,48 +37,58 @@ export function ProjectForm({ accountId }: { accountId: string }) {
           startDate: (form.get("startDate") as string) || null,
         }),
       {
-        successMessage: "Proyecto creado",
+        successMessage: `Proyecto ${form.get("name")} creado`,
         onSuccess: () => setOpen(false),
       },
     );
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button variant="outline" size="sm" />}>
-        Nuevo proyecto
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Nuevo proyecto</DialogTitle>
-        </DialogHeader>
-        <form onSubmit={onSubmit} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="name">Nombre</Label>
-            <Input id="name" name="name" required />
-            <FieldError errors={fieldErrors.name} />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="clickupListId">Lista de ClickUp (id)</Label>
-              <Input
-                id="clickupListId"
-                name="clickupListId"
-                placeholder="Opcional, habilita el sync"
-              />
-              <FieldError errors={fieldErrors.clickupListId} />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="startDate">Inicio</Label>
-              <Input id="startDate" name="startDate" type="date" />
-              <FieldError errors={fieldErrors.startDate} />
-            </div>
-          </div>
-          <Button type="submit" disabled={pending}>
-            {pending ? "Creando…" : "Crear proyecto"}
-          </Button>
-        </form>
-      </DialogContent>
-    </Dialog>
+    <>
+      <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
+        <DialogTrigger render={<Button variant="outline" size="sm" />}>
+          Nuevo proyecto
+        </DialogTrigger>
+        <CaptureDialogContent>
+          <CaptureDialogHeader
+            icon={FolderKanban}
+            tint="blue"
+            title="Nuevo proyecto"
+            subtitle="Operación · Clientes"
+          />
+          <form ref={formRef} onSubmit={onSubmit}>
+            <CaptureDialogBody>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="name">Nombre</Label>
+                <Input id="name" name="name" required />
+                <FieldError errors={fieldErrors.name} />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="clickupListId">Lista de ClickUp (id)</Label>
+                  <Input
+                    id="clickupListId"
+                    name="clickupListId"
+                    placeholder="Opcional, habilita el sync"
+                  />
+                  <FieldError errors={fieldErrors.clickupListId} />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="startDate">Inicio</Label>
+                  <Input id="startDate" name="startDate" type="date" />
+                  <FieldError errors={fieldErrors.startDate} />
+                </div>
+              </div>
+            </CaptureDialogBody>
+            <CaptureDialogFooter submitLabel="Crear proyecto" pending={pending} />
+          </form>
+        </CaptureDialogContent>
+      </Dialog>
+      <DiscardGuardDialog
+        open={guard.discardOpen}
+        onOpenChange={guard.setDiscardOpen}
+        onDiscard={guard.discard}
+      />
+    </>
   );
 }

@@ -39,6 +39,7 @@ const TINTS = {
   green: "bg-[#E6F9F1] text-[#069B66]",
   blue: "bg-[#E8F0FB] text-[#1E5FBF]",
   gold: "bg-[#FBF7D9] text-[#8C7A0A]",
+  navy: "bg-[#E7EBF3] text-[#011640]",
   neutral: "bg-[#EEF1F6] text-[#5A6B85]",
 } as const;
 

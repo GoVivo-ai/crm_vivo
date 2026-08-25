@@ -45,7 +45,8 @@ export function UserMenu({ name, email, roleLabel, initials }: UserMenuProps) {
               {email}
             </p>
           </div>
-          <span className="shrink-0 rounded-full bg-[#04D98B]/15 px-2 py-0.5 text-[9px] font-extrabold tracking-[0.08em] text-[#069B66] uppercase">
+          {/* Sobre panel claro el chip va en --green-tint (no el rgba del navy). */}
+          <span className="shrink-0 rounded-full bg-[#E6F9F1] px-2 py-0.5 text-[9px] font-extrabold tracking-[0.08em] text-[#069B66] uppercase">
             {roleLabel}
           </span>
         </div>

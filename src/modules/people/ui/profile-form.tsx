@@ -1,15 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { IdCard } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  CaptureDialogBody,
+  CaptureDialogContent,
+  CaptureDialogFooter,
+  CaptureDialogHeader,
+} from "@/shared/ui/capture-dialog";
+import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
+import { useDirtyGuard } from "@/shared/ui/use-dirty-guard";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -55,6 +58,8 @@ export function EmployeeForm({ member }: { member?: TeamMember }) {
   const { submit, pending, fieldErrors } = useActionSubmit<unknown>();
   const editing = member !== undefined;
   const ready = !editing || detail !== null;
+  const formRef = useRef<HTMLFormElement>(null);
+  const guard = useDirtyGuard({ open, setOpen, formRef });
 
   useEffect(() => {
     if (!open || !editing || detail) return;
@@ -97,24 +102,27 @@ export function EmployeeForm({ member }: { member?: TeamMember }) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <>
+    <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
       <DialogTrigger
         render={<Button variant={editing ? "outline" : "default"} size="sm" />}
       >
         {editing ? "Editar" : "+ Nuevo empleado"}
       </DialogTrigger>
-      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>
-            {editing ? `Editar · ${member.fullName}` : "Nuevo empleado"}
-          </DialogTitle>
-        </DialogHeader>
+      <CaptureDialogContent className="max-h-[85vh] overflow-y-auto">
+        <CaptureDialogHeader
+          icon={IdCard}
+          tint="navy"
+          title={editing ? `Editar · ${member.fullName}` : "Nuevo empleado"}
+          subtitle="Directorio · Equipo"
+        />
         {!ready ? (
           <p className="py-6 text-center text-sm text-muted-foreground">
             Cargando expediente…
           </p>
         ) : (
-          <form onSubmit={onSubmit} className="flex flex-col gap-4">
+          <form ref={formRef} onSubmit={onSubmit}>
+            <CaptureDialogBody>
             <div className="grid grid-cols-2 gap-3">
               <Field id="fullName" label="Nombre completo" errors={fieldErrors.fullName}>
                 <Input id="fullName" name="fullName" defaultValue={member?.fullName ?? ""} required />
@@ -159,12 +167,20 @@ export function EmployeeForm({ member }: { member?: TeamMember }) {
             <Field id="notes" label="Notas">
               <Textarea id="notes" name="notes" rows={2} defaultValue={detail?.notes ?? ""} />
             </Field>
-            <Button type="submit" disabled={pending}>
-              {pending ? "Guardando…" : "Guardar empleado"}
-            </Button>
+            </CaptureDialogBody>
+            <CaptureDialogFooter
+              submitLabel="Guardar empleado"
+              pending={pending}
+            />
           </form>
         )}
-      </DialogContent>
+      </CaptureDialogContent>
     </Dialog>
+    <DiscardGuardDialog
+      open={guard.discardOpen}
+      onOpenChange={guard.setDiscardOpen}
+      onDiscard={guard.discard}
+    />
+    </>
   );
 }

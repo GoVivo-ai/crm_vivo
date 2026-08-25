@@ -6,6 +6,7 @@ import {
   Landmark,
   Megaphone,
   Orbit,
+  ReceiptText,
   Settings2,
   type LucideIcon,
 } from "lucide-react";
@@ -102,6 +103,13 @@ const NAV_GROUPS: NavGroup[] = [
         href: "/finance",
         label: "Finanzas",
         icon: Landmark,
+        accent: "var(--module-finance)",
+      },
+      {
+        resource: "purchases",
+        href: "/purchases",
+        label: "Gastos y compras",
+        icon: ReceiptText,
         accent: "var(--module-finance)",
       },
     ],

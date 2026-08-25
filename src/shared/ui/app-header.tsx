@@ -19,6 +19,10 @@ const SEGMENT_LABELS: Record<string, string> = {
   marketing: "Marketing",
   settings: "Ajustes",
   integrations: "Integraciones",
+  purchases: "Gastos y compras",
+  treasury: "Tesorería",
+  people: "Equipo",
+  profitability: "Rentabilidad",
 };
 
 function breadcrumb(pathname: string): string[] {

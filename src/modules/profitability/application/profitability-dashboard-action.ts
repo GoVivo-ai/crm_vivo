@@ -118,8 +118,11 @@ export async function getProfitabilityDashboard(
           revenueCop,
           staffingCostCop,
           assignedDedicationPercent: staffing
-            .filter((s) => s.accountId === accountId)
-            .reduce((acc, s) => acc + s.dedicationPercent, 0),
+            .filter((s: StaffingRow) => s.accountId === accountId)
+            .reduce(
+              (acc: number, s: StaffingRow) => acc + s.dedicationPercent,
+              0,
+            ),
           adSpendCop: adSpendMap.get(accountId) ?? 0,
           adSpendIncludedInMargin: false as const,
           marginCop,

@@ -35,6 +35,7 @@ export function EndServiceButton({
       title={`¿Finalizar "${serviceName}" hoy?`}
       body="El servicio deja de sumar al MRR desde hoy; el histórico se conserva."
       confirmLabel="Finalizar servicio"
+      objectName={serviceName}
       pending={pending}
       onConfirm={() =>
         submit(

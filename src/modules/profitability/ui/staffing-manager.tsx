@@ -8,7 +8,8 @@ import {
   CaptureDialogBody,
   CaptureDialogContent,
   CaptureDialogFooter,
-  CaptureDialogHeader,
+  CaptureLomo,
+  CaptureDialogBar,
 } from "@/shared/ui/capture-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -78,12 +79,13 @@ export function StaffingManager({
         <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
           <DialogTrigger render={<Button size="sm" />}>Nueva asignación</DialogTrigger>
           <CaptureDialogContent>
-            <CaptureDialogHeader
+            <CaptureLomo
               icon={Users}
-              tint="gold"
+              module="Finanzas"
               title="Asignar persona a cliente"
-              subtitle="Rentabilidad · Finanzas"
             />
+            <div className="flex min-w-0 flex-col">
+            <CaptureDialogBar subtitle="Rentabilidad · Finanzas" />
             <form ref={formRef} onSubmit={onSubmit}>
               <CaptureDialogBody>
               <div className="flex flex-col gap-1.5">
@@ -139,6 +141,7 @@ export function StaffingManager({
                 pending={pending}
               />
             </form>
+          </div>
           </CaptureDialogContent>
         </Dialog>
         <DiscardGuardDialog
@@ -178,6 +181,7 @@ export function StaffingManager({
               title={`¿Eliminar la asignación de ${a.employeeName ?? "?"} en ${a.accountName ?? "?"}?`}
               body="Su costo dejará de prorratearse a este cliente desde el periodo vigente."
               confirmLabel="Eliminar asignación"
+              objectName={a.employeeName ?? undefined}
               pending={pending}
               onConfirm={() => onDelete(a)}
             />

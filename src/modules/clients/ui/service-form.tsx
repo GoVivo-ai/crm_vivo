@@ -10,10 +10,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { createService } from "@/modules/clients/application/services-actions";
 import type { Service } from "@/modules/clients/domain/types";
 import {
+  CaptureDialogBar,
   CaptureDialogBody,
   CaptureDialogContent,
   CaptureDialogFooter,
-  CaptureDialogHeader,
+  CaptureLomo,
 } from "@/shared/ui/capture-dialog";
 import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
 import { FieldError } from "@/shared/ui/field-error";
@@ -45,17 +46,16 @@ export function ServiceForm() {
     );
   }
 
+  const lomoContext = undefined;
+
   return (
     <>
       <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
         <DialogTrigger render={<Button size="sm" />}>Nuevo servicio</DialogTrigger>
         <CaptureDialogContent>
-          <CaptureDialogHeader
-            icon={Package}
-            tint="blue"
-            title="Nuevo servicio del catálogo"
-            subtitle="Servicios · Clientes"
-          />
+          <CaptureLomo icon={Package} module="Clientes" title={"Nuevo servicio del catálogo"} context={lomoContext} />
+        <div className="flex min-w-0 flex-col">
+        <CaptureDialogBar subtitle="Servicios · Clientes" />
           <form ref={formRef} onSubmit={onSubmit}>
             <CaptureDialogBody>
               <div className="flex flex-col gap-1.5">
@@ -92,7 +92,8 @@ export function ServiceForm() {
               pending={pending}
             />
           </form>
-        </CaptureDialogContent>
+        </div>
+      </CaptureDialogContent>
       </Dialog>
       <DiscardGuardDialog
         open={guard.discardOpen}

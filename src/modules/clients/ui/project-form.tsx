@@ -9,10 +9,11 @@ import { Label } from "@/components/ui/label";
 import { createProject } from "@/modules/clients/application/projects-actions";
 import type { Project } from "@/modules/clients/domain/types";
 import {
+  CaptureDialogBar,
   CaptureDialogBody,
   CaptureDialogContent,
   CaptureDialogFooter,
-  CaptureDialogHeader,
+  CaptureLomo,
 } from "@/shared/ui/capture-dialog";
 import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
 import { FieldError } from "@/shared/ui/field-error";
@@ -43,6 +44,8 @@ export function ProjectForm({ accountId }: { accountId: string }) {
     );
   }
 
+  const lomoContext = undefined;
+
   return (
     <>
       <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
@@ -50,12 +53,9 @@ export function ProjectForm({ accountId }: { accountId: string }) {
           Nuevo proyecto
         </DialogTrigger>
         <CaptureDialogContent>
-          <CaptureDialogHeader
-            icon={FolderKanban}
-            tint="blue"
-            title="Nuevo proyecto"
-            subtitle="Operación · Clientes"
-          />
+          <CaptureLomo icon={FolderKanban} module="Clientes" title={"Nuevo proyecto"} context={lomoContext} />
+        <div className="flex min-w-0 flex-col">
+        <CaptureDialogBar subtitle="Operación · Clientes" />
           <form ref={formRef} onSubmit={onSubmit}>
             <CaptureDialogBody>
               <div className="flex flex-col gap-1.5">
@@ -82,7 +82,8 @@ export function ProjectForm({ accountId }: { accountId: string }) {
             </CaptureDialogBody>
             <CaptureDialogFooter submitLabel="Crear proyecto" pending={pending} />
           </form>
-        </CaptureDialogContent>
+        </div>
+      </CaptureDialogContent>
       </Dialog>
       <DiscardGuardDialog
         open={guard.discardOpen}

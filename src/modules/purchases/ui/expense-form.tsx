@@ -5,10 +5,11 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
+  CaptureDialogBar,
   CaptureDialogBody,
   CaptureDialogContent,
   CaptureDialogFooter,
-  CaptureDialogHeader,
+  CaptureLomo,
 } from "@/shared/ui/capture-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +19,7 @@ import {
 } from "@/modules/purchases/application/purchases-actions";
 import type { Expense } from "@/modules/purchases/domain/types";
 import { CurrencyFields } from "@/shared/ui/currency-fields";
+import { formatCurrency } from "@/shared/ui/format";
 import { FieldError } from "@/shared/ui/field-error";
 import { Segmented } from "@/shared/ui/segmented";
 import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
@@ -32,6 +34,8 @@ export function ExpenseForm({ expense }: { expense?: Expense }) {
   const [status, setStatus] = useState<"open" | "paid" | "void">(
     expense?.status ?? "open",
   );
+  const [totalStr, setTotalStr] = useState(expense?.total?.toString() ?? "");
+  const [providerName, setProviderName] = useState(expense?.providerName ?? "");
   const { submit, pending, fieldErrors } = useActionSubmit<Expense>();
   const editing = expense !== undefined;
   const today = new Date().toISOString().slice(0, 10);
@@ -78,6 +82,15 @@ export function ExpenseForm({ expense }: { expense?: Expense }) {
     );
   }
 
+  const totalNum = Number(totalStr);
+  const lomoContext = {
+    amount:
+      totalStr !== "" && Number.isFinite(totalNum) && totalNum > 0
+        ? formatCurrency(totalNum, currency)
+        : null,
+    entity: providerName || null,
+  };
+
   return (
     <>
     <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
@@ -87,12 +100,9 @@ export function ExpenseForm({ expense }: { expense?: Expense }) {
         {editing ? "Editar" : "+ Registrar gasto"}
       </DialogTrigger>
       <CaptureDialogContent>
-        <CaptureDialogHeader
-          icon={ReceiptText}
-          tint="blue"
-          title={editing ? "Editar gasto" : "Registrar gasto"}
-          subtitle="Egreso · Gastos y compras"
-        />
+        <CaptureLomo icon={ReceiptText} module="Gastos" title={editing ? "Editar gasto" : "Registrar gasto"} context={lomoContext} />
+        <div className="flex min-w-0 flex-col">
+        <CaptureDialogBar subtitle="Egreso · Gastos y compras" />
         <form ref={formRef} onSubmit={onSubmit}>
           <CaptureDialogBody>
           <div className="grid grid-cols-2 gap-3">
@@ -101,7 +111,8 @@ export function ExpenseForm({ expense }: { expense?: Expense }) {
               <Input
                 id="providerName"
                 name="providerName"
-                defaultValue={expense?.providerName ?? ""}
+                value={providerName}
+                onChange={(e) => setProviderName(e.target.value)}
                 required
               />
               <FieldError errors={fieldErrors.providerName} />
@@ -129,7 +140,8 @@ export function ExpenseForm({ expense }: { expense?: Expense }) {
                 min="0"
                 step="0.01"
                 inputMode="decimal"
-                defaultValue={expense?.total ?? ""}
+                value={totalStr}
+                onChange={(e) => setTotalStr(e.target.value)}
                 required
               />
               <FieldError errors={fieldErrors.total} />
@@ -214,6 +226,7 @@ export function ExpenseForm({ expense }: { expense?: Expense }) {
             }
           />
         </form>
+      </div>
       </CaptureDialogContent>
     </Dialog>
     <DiscardGuardDialog

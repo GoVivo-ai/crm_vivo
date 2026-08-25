@@ -5,16 +5,18 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
+  CaptureDialogBar,
   CaptureDialogBody,
   CaptureDialogContent,
   CaptureDialogFooter,
-  CaptureDialogHeader,
+  CaptureLomo,
 } from "@/shared/ui/capture-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createPayrollPayment } from "@/modules/people/application/team-actions";
 import { Combobox } from "@/shared/ui/combobox";
 import { CurrencyFields } from "@/shared/ui/currency-fields";
+import { formatCurrency } from "@/shared/ui/format";
 import { FieldError } from "@/shared/ui/field-error";
 import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
@@ -29,6 +31,7 @@ export function PayrollPaymentForm({ employees }: { employees: Option[] }) {
   const [employeeId, setEmployeeId] = useState<string | null>(
     employees[0]?.id ?? null,
   );
+  const [amountStr, setAmountStr] = useState("");
   const { submit, pending, fieldErrors } = useActionSubmit<unknown>();
   const today = new Date().toISOString().slice(0, 10);
   const currentPeriod = today.slice(0, 7);
@@ -71,17 +74,23 @@ export function PayrollPaymentForm({ employees }: { employees: Option[] }) {
     );
   }
 
+  const amountNum = Number(amountStr);
+  const lomoContext = {
+    amount:
+      amountStr !== "" && Number.isFinite(amountNum) && amountNum > 0
+        ? formatCurrency(amountNum, currency)
+        : null,
+    entity: employees.find((e) => e.id === employeeId)?.name ?? null,
+  };
+
   return (
     <>
     <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
       <DialogTrigger render={<Button size="sm" />}>+ Pago de nómina</DialogTrigger>
       <CaptureDialogContent>
-        <CaptureDialogHeader
-          icon={HandCoins}
-          tint="gold"
-          title="Registrar pago de nómina"
-          subtitle="Compensación · Equipo"
-        />
+        <CaptureLomo icon={HandCoins} module="Equipo" title={"Registrar pago de nómina"} context={lomoContext} />
+        <div className="flex min-w-0 flex-col">
+        <CaptureDialogBar subtitle="Compensación · Equipo" />
         {employees.length === 0 ? (
           <p className="px-6 pb-6 text-sm text-muted-foreground">
             Crea primero a las personas en el directorio.
@@ -122,6 +131,8 @@ export function PayrollPaymentForm({ employees }: { employees: Option[] }) {
                   min="0"
                   step="0.01"
                   inputMode="decimal"
+                  value={amountStr}
+                  onChange={(e) => setAmountStr(e.target.value)}
                   required
                 />
                 <FieldError errors={fieldErrors.amount} />
@@ -160,6 +171,7 @@ export function PayrollPaymentForm({ employees }: { employees: Option[] }) {
             />
           </form>
         )}
+      </div>
       </CaptureDialogContent>
     </Dialog>
     <DiscardGuardDialog

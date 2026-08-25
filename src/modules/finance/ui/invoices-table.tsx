@@ -91,6 +91,7 @@ export function InvoicesTable({
                     title={`¿Borrar la factura ${invoice.number ?? "sin número"} de ${invoice.accountName ?? invoice.clientName ?? "?"}?`}
                     body="Se borra el registro y deja de contar en facturación y cartera. Esta acción no se puede deshacer."
                     confirmLabel="Borrar factura"
+                    objectName={invoice.number ?? invoice.accountName ?? invoice.clientName ?? undefined}
                     successMessage={`Factura ${invoice.number ?? ""} borrada`.trim()}
                   />
                 </span>

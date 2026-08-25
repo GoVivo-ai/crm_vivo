@@ -155,6 +155,7 @@ export function IntegrationCard({ meta, status, today }: IntegrationCardProps) {
             title={`¿Desconectar ${meta.label}?`}
             body="La sincronización se detiene hasta volver a conectar. Los datos ya sincronizados se conservan."
             confirmLabel={`Desconectar ${meta.label}`}
+            objectName={meta.label}
             pending={pending}
             onConfirm={onDisconnect}
           />

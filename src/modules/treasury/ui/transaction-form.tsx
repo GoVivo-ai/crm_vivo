@@ -5,22 +5,24 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
+  CaptureDialogBar,
   CaptureDialogBody,
   CaptureDialogContent,
   CaptureDialogFooter,
-  CaptureDialogHeader,
+  CaptureLomo,
 } from "@/shared/ui/capture-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createBankTransaction } from "@/modules/treasury/application/treasury-actions";
 import { Combobox } from "@/shared/ui/combobox";
+import { formatAccountingMoney, formatCurrency } from "@/shared/ui/format";
 import { FieldError } from "@/shared/ui/field-error";
 import { Segmented } from "@/shared/ui/segmented";
 import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
 import { useDirtyGuard } from "@/shared/ui/use-dirty-guard";
 
-type Option = { id: string; name: string };
+type Option = { id: string; name: string; balanceCop?: number };
 
 /** Registro rápido de movimiento bancario (entrada/salida). */
 export function TransactionForm({ accounts }: { accounts: Option[] }) {
@@ -29,6 +31,7 @@ export function TransactionForm({ accounts }: { accounts: Option[] }) {
   const [bankAccountId, setBankAccountId] = useState<string | null>(
     accounts[0]?.id ?? null,
   );
+  const [amountStr, setAmountStr] = useState("");
   const { submit, pending, fieldErrors } = useActionSubmit<unknown>();
   const today = new Date().toISOString().slice(0, 10);
   const formRef = useRef<HTMLFormElement>(null);
@@ -67,17 +70,28 @@ export function TransactionForm({ accounts }: { accounts: Option[] }) {
     );
   }
 
+  const selectedAccount = accounts.find((a) => a.id === bankAccountId);
+  const amountNum = Number(amountStr);
+  const lomoContext = {
+    amount:
+      amountStr !== "" && Number.isFinite(amountNum) && amountNum > 0
+        ? `${direction === "out" ? "−" : "+"}${formatCurrency(amountNum, "COP")}`
+        : null,
+    entity: selectedAccount?.name ?? null,
+    fact:
+      selectedAccount?.balanceCop !== undefined
+        ? `Saldo actual: ${formatAccountingMoney(selectedAccount.balanceCop)}`
+        : null,
+  };
+
   return (
     <>
     <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
       <DialogTrigger render={<Button size="sm" />}>+ Movimiento</DialogTrigger>
       <CaptureDialogContent>
-        <CaptureDialogHeader
-          icon={ArrowLeftRight}
-          tint="neutral"
-          title="Registrar movimiento"
-          subtitle="Bancos · Tesorería"
-        />
+        <CaptureLomo icon={ArrowLeftRight} module="Tesorería" title={"Registrar movimiento"} context={lomoContext} />
+        <div className="flex min-w-0 flex-col">
+        <CaptureDialogBar subtitle="Bancos · Tesorería" />
         {accounts.length === 0 ? (
           <p className="px-6 pb-6 text-sm text-muted-foreground">
             Crea primero una cuenta bancaria.
@@ -119,6 +133,8 @@ export function TransactionForm({ accounts }: { accounts: Option[] }) {
                   min="0"
                   step="0.01"
                   inputMode="decimal"
+                  value={amountStr}
+                  onChange={(e) => setAmountStr(e.target.value)}
                   required
                 />
                 <FieldError errors={fieldErrors.amount} />
@@ -154,6 +170,7 @@ export function TransactionForm({ accounts }: { accounts: Option[] }) {
             />
           </form>
         )}
+      </div>
       </CaptureDialogContent>
     </Dialog>
     <DiscardGuardDialog

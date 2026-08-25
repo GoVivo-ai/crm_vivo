@@ -13,10 +13,11 @@ import {
 } from "@/modules/crm/application/contacts-actions";
 import type { Contact } from "@/modules/crm/domain/types";
 import {
+  CaptureDialogBar,
   CaptureDialogBody,
   CaptureDialogContent,
   CaptureDialogFooter,
-  CaptureDialogHeader,
+  CaptureLomo,
 } from "@/shared/ui/capture-dialog";
 import { Combobox } from "@/shared/ui/combobox";
 import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
@@ -74,6 +75,8 @@ export function ContactForm({
     );
   }
 
+  const lomoContext = undefined;
+
   return (
     <>
       <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
@@ -83,12 +86,9 @@ export function ContactForm({
           {triggerLabel}
         </DialogTrigger>
         <CaptureDialogContent>
-          <CaptureDialogHeader
-            icon={UserRound}
-            tint="green"
-            title={contact ? "Editar contacto" : "Nuevo contacto"}
-            subtitle="Personas · CRM"
-          />
+          <CaptureLomo icon={UserRound} module="CRM" title={contact ? "Editar contacto" : "Nuevo contacto"} context={lomoContext} />
+        <div className="flex min-w-0 flex-col">
+        <CaptureDialogBar subtitle="Personas · CRM" />
           <form ref={formRef} onSubmit={onSubmit}>
             <CaptureDialogBody>
               <div className="flex flex-col gap-1.5">
@@ -146,7 +146,8 @@ export function ContactForm({
             </CaptureDialogBody>
             <CaptureDialogFooter submitLabel="Guardar contacto" pending={pending} />
           </form>
-        </CaptureDialogContent>
+        </div>
+      </CaptureDialogContent>
       </Dialog>
       <DiscardGuardDialog
         open={guard.discardOpen}

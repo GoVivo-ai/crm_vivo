@@ -78,6 +78,7 @@ function RejectLeaveDialog({
       title={`¿Rechazar la solicitud de ${request.employeeName ?? "esta persona"}?`}
       body={`${request.startDate} → ${request.endDate}. Quien solicitó verá el rechazo y tu nota.`}
       confirmLabel="Rechazar solicitud"
+      objectName={request.employeeName ?? undefined}
       pending={pending}
       onConfirm={() => onReject(note.trim() || null)}
     >

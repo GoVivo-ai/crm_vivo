@@ -11,10 +11,11 @@ import { createActivity } from "@/modules/crm/application/activities-actions";
 import type { Activity, ActivityType } from "@/modules/crm/domain/types";
 import { ACTIVITY_TYPE_LABELS } from "@/modules/crm/ui/labels";
 import {
+  CaptureDialogBar,
   CaptureDialogBody,
   CaptureDialogContent,
   CaptureDialogFooter,
-  CaptureDialogHeader,
+  CaptureLomo,
 } from "@/shared/ui/capture-dialog";
 import { Combobox } from "@/shared/ui/combobox";
 import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
@@ -52,6 +53,8 @@ export function ActivityForm({ dealId }: { dealId: string }) {
     );
   }
 
+  const lomoContext = undefined;
+
   return (
     <>
       <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
@@ -59,12 +62,9 @@ export function ActivityForm({ dealId }: { dealId: string }) {
           Registrar actividad
         </DialogTrigger>
         <CaptureDialogContent>
-          <CaptureDialogHeader
-            icon={NotebookPen}
-            tint="green"
-            title="Nueva actividad"
-            subtitle="Seguimiento · CRM"
-          />
+          <CaptureLomo icon={NotebookPen} module="CRM" title={"Nueva actividad"} context={lomoContext} />
+        <div className="flex min-w-0 flex-col">
+        <CaptureDialogBar subtitle="Seguimiento · CRM" />
           <form ref={formRef} onSubmit={onSubmit}>
             <CaptureDialogBody>
               <div className="grid grid-cols-2 gap-3">
@@ -99,7 +99,8 @@ export function ActivityForm({ dealId }: { dealId: string }) {
               pending={pending}
             />
           </form>
-        </CaptureDialogContent>
+        </div>
+      </CaptureDialogContent>
       </Dialog>
       <DiscardGuardDialog
         open={guard.discardOpen}

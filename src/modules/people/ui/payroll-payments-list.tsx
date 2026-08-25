@@ -46,6 +46,7 @@ export function PayrollPaymentsList({
               title={`¿Borrar el pago de ${p.employeeName ?? "?"} (${p.period})?`}
               body="Deja de contar en el costo de nómina y en rentabilidad. Esta acción no se puede deshacer."
               confirmLabel="Borrar pago"
+                    objectName={p.employeeName ?? undefined}
               successMessage={`Pago de ${p.employeeName ?? "nómina"} borrado`}
             />
           )}

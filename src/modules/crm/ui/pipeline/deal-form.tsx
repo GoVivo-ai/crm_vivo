@@ -9,13 +9,15 @@ import { Label } from "@/components/ui/label";
 import { createDeal } from "@/modules/crm/application/deals-actions";
 import type { Deal, PipelineStage } from "@/modules/crm/domain/types";
 import {
+  CaptureDialogBar,
   CaptureDialogBody,
   CaptureDialogContent,
   CaptureDialogFooter,
-  CaptureDialogHeader,
+  CaptureLomo,
 } from "@/shared/ui/capture-dialog";
 import { Combobox } from "@/shared/ui/combobox";
 import { CurrencyFields } from "@/shared/ui/currency-fields";
+import { formatCurrency } from "@/shared/ui/format";
 import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
 import { FieldError } from "@/shared/ui/field-error";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
@@ -36,6 +38,7 @@ export function DealForm({ accounts, stages }: DealFormProps) {
     openStages[0]?.id ?? null,
   );
   const [currency, setCurrency] = useState("COP");
+  const [amountStr, setAmountStr] = useState("");
   const { submit, pending, fieldErrors } = useActionSubmit<Deal>();
   const formRef = useRef<HTMLFormElement>(null);
   const guard = useDirtyGuard({
@@ -66,17 +69,23 @@ export function DealForm({ accounts, stages }: DealFormProps) {
     );
   }
 
+  const amountNum = Number(amountStr);
+  const lomoContext = {
+    amount:
+      amountStr !== "" && Number.isFinite(amountNum) && amountNum > 0
+        ? formatCurrency(amountNum, currency)
+        : null,
+    entity: accounts.find((a) => a.id === accountId)?.name ?? null,
+  };
+
   return (
     <>
       <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
         <DialogTrigger render={<Button size="sm" />}>Nuevo deal</DialogTrigger>
         <CaptureDialogContent>
-          <CaptureDialogHeader
-            icon={Handshake}
-            tint="green"
-            title="Nuevo deal"
-            subtitle="Pipeline · CRM"
-          />
+          <CaptureLomo icon={Handshake} module="CRM" title={"Nuevo deal"} context={lomoContext} />
+        <div className="flex min-w-0 flex-col">
+        <CaptureDialogBar subtitle="Pipeline · CRM" />
           <form ref={formRef} onSubmit={onSubmit}>
             <CaptureDialogBody>
               <div className="flex flex-col gap-1.5">
@@ -120,6 +129,8 @@ export function DealForm({ accounts, stages }: DealFormProps) {
                     min="0"
                     step="1"
                     inputMode="numeric"
+                    value={amountStr}
+                    onChange={(e) => setAmountStr(e.target.value)}
                   />
                   <FieldError errors={fieldErrors.amount} />
                 </div>
@@ -141,7 +152,8 @@ export function DealForm({ accounts, stages }: DealFormProps) {
             </CaptureDialogBody>
             <CaptureDialogFooter submitLabel="Crear deal" pending={pending} />
           </form>
-        </CaptureDialogContent>
+        </div>
+      </CaptureDialogContent>
       </Dialog>
       <DiscardGuardDialog
         open={guard.discardOpen}

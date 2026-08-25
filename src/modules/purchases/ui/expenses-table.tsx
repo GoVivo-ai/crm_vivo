@@ -83,6 +83,7 @@ export function ExpensesTable({
                     title={`¿Borrar el gasto de ${expense.providerName} del ${expense.txnDate}?`}
                     body="Se borra el registro y deja de contar en gastos y cuentas por pagar. Esta acción no se puede deshacer."
                     confirmLabel="Borrar gasto"
+                    objectName={expense.providerName}
                     successMessage={`Gasto de ${expense.providerName} borrado`}
                   />
                 </span>

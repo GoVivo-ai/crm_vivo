@@ -69,6 +69,7 @@ export function TransactionsTable({
                     title={`¿Borrar el movimiento del ${tx.date} por ${formatMoney(tx.amount)}?`}
                     body="Deja de contar en el flujo de caja del mes. Esta acción no se puede deshacer."
                     confirmLabel="Borrar movimiento"
+                    objectName={tx.bankName ?? undefined}
                     successMessage="Movimiento borrado"
                   />
                 )}

@@ -5,10 +5,11 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
+  CaptureDialogBar,
   CaptureDialogBody,
   CaptureDialogContent,
   CaptureDialogFooter,
-  CaptureDialogHeader,
+  CaptureLomo,
 } from "@/shared/ui/capture-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +19,7 @@ import {
 } from "@/modules/treasury/application/treasury-actions";
 import type { BankAccountView } from "@/modules/treasury/domain/types";
 import { CurrencyFields } from "@/shared/ui/currency-fields";
+import { formatCurrency } from "@/shared/ui/format";
 import { FieldError } from "@/shared/ui/field-error";
 import { Segmented } from "@/shared/ui/segmented";
 import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
@@ -29,6 +31,10 @@ export function BankAccountForm({ account }: { account?: BankAccountView }) {
   const [open, setOpen] = useState(false);
   const [currency, setCurrency] = useState(account?.currencyCode ?? "COP");
   const [type, setType] = useState(account?.type ?? "bank");
+  const [balanceStr, setBalanceStr] = useState(
+    account?.balance?.toString() ?? "",
+  );
+  const [name, setName] = useState(account?.name ?? "");
   const formRef = useRef<HTMLFormElement>(null);
   const { submit, pending, fieldErrors } = useActionSubmit<unknown>();
   const editing = account !== undefined;
@@ -62,6 +68,15 @@ export function BankAccountForm({ account }: { account?: BankAccountView }) {
     );
   }
 
+  const balanceNum = Number(balanceStr);
+  const lomoContext = {
+    amount:
+      balanceStr !== "" && Number.isFinite(balanceNum)
+        ? formatCurrency(balanceNum, currency)
+        : null,
+    entity: name || null,
+  };
+
   return (
     <>
     <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
@@ -71,18 +86,21 @@ export function BankAccountForm({ account }: { account?: BankAccountView }) {
         {editing ? "Editar" : "+ Cuenta bancaria"}
       </DialogTrigger>
       <CaptureDialogContent>
-        <CaptureDialogHeader
-          icon={Landmark}
-          tint="neutral"
-          title={editing ? `Editar · ${account.name}` : "Nueva cuenta bancaria"}
-          subtitle="Bancos · Tesorería"
-        />
+        <CaptureLomo icon={Landmark} module="Tesorería" title={editing ? `Editar · ${account.name}` : "Nueva cuenta bancaria"} context={lomoContext} />
+        <div className="flex min-w-0 flex-col">
+        <CaptureDialogBar subtitle="Bancos · Tesorería" />
         <form ref={formRef} onSubmit={onSubmit}>
           <CaptureDialogBody>
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="name">Nombre</Label>
-              <Input id="name" name="name" defaultValue={account?.name} required />
+              <Input
+                id="name"
+                name="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
               <FieldError errors={fieldErrors.name} />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -108,7 +126,8 @@ export function BankAccountForm({ account }: { account?: BankAccountView }) {
                 type="number"
                 step="0.01"
                 inputMode="decimal"
-                defaultValue={account?.balance ?? ""}
+                value={balanceStr}
+                onChange={(e) => setBalanceStr(e.target.value)}
                 required
               />
               <FieldError errors={fieldErrors.balance} />
@@ -131,6 +150,7 @@ export function BankAccountForm({ account }: { account?: BankAccountView }) {
           </CaptureDialogBody>
           <CaptureDialogFooter submitLabel="Guardar cuenta" pending={pending} />
         </form>
+      </div>
       </CaptureDialogContent>
     </Dialog>
     <DiscardGuardDialog

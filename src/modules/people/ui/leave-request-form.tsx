@@ -11,10 +11,11 @@ import { createLeaveRequest } from "@/modules/people/application/leave-actions";
 import type { LeaveType } from "@/modules/people/domain/types";
 import { LEAVE_TYPE_LABELS } from "@/modules/people/ui/labels";
 import {
+  CaptureDialogBar,
   CaptureDialogBody,
   CaptureDialogContent,
   CaptureDialogFooter,
-  CaptureDialogHeader,
+  CaptureLomo,
 } from "@/shared/ui/capture-dialog";
 import { Combobox } from "@/shared/ui/combobox";
 import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
@@ -70,17 +71,16 @@ export function LeaveRequestForm() {
     );
   }
 
+  const lomoContext = undefined;
+
   return (
     <>
       <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
         <DialogTrigger render={<Button size="sm" />}>Pedir ausencia</DialogTrigger>
         <CaptureDialogContent>
-          <CaptureDialogHeader
-            icon={CalendarOff}
-            tint="navy"
-            title="Nueva solicitud"
-            subtitle="Ausencias · Equipo"
-          />
+          <CaptureLomo icon={CalendarOff} module="Equipo" title={"Nueva solicitud"} context={lomoContext} />
+        <div className="flex min-w-0 flex-col">
+        <CaptureDialogBar subtitle="Ausencias · Equipo" />
           <form ref={formRef} onSubmit={onSubmit}>
             <CaptureDialogBody>
               <div className="flex flex-col gap-1.5">
@@ -141,7 +141,8 @@ export function LeaveRequestForm() {
             </CaptureDialogBody>
             <CaptureDialogFooter submitLabel="Enviar solicitud" pending={pending} />
           </form>
-        </CaptureDialogContent>
+        </div>
+      </CaptureDialogContent>
       </Dialog>
       <DiscardGuardDialog
         open={guard.discardOpen}

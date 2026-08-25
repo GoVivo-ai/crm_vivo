@@ -9,10 +9,11 @@ import { Label } from "@/components/ui/label";
 import { createProposal } from "@/modules/crm/application/activities-actions";
 import type { Proposal, ProposalStatus } from "@/modules/crm/domain/types";
 import {
+  CaptureDialogBar,
   CaptureDialogBody,
   CaptureDialogContent,
   CaptureDialogFooter,
-  CaptureDialogHeader,
+  CaptureLomo,
 } from "@/shared/ui/capture-dialog";
 import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
 import { FieldError } from "@/shared/ui/field-error";
@@ -52,6 +53,8 @@ export function ProposalForm({ dealId }: { dealId: string }) {
     );
   }
 
+  const lomoContext = undefined;
+
   return (
     <>
       <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
@@ -59,12 +62,9 @@ export function ProposalForm({ dealId }: { dealId: string }) {
           Nueva propuesta
         </DialogTrigger>
         <CaptureDialogContent>
-          <CaptureDialogHeader
-            icon={FileSpreadsheet}
-            tint="green"
-            title="Nueva propuesta"
-            subtitle="Comercial · CRM"
-          />
+          <CaptureLomo icon={FileSpreadsheet} module="CRM" title={"Nueva propuesta"} context={lomoContext} />
+        <div className="flex min-w-0 flex-col">
+        <CaptureDialogBar subtitle="Comercial · CRM" />
           <form ref={formRef} onSubmit={onSubmit}>
             <CaptureDialogBody>
               <div className="flex flex-col gap-1.5">
@@ -111,7 +111,8 @@ export function ProposalForm({ dealId }: { dealId: string }) {
               pending={pending}
             />
           </form>
-        </CaptureDialogContent>
+        </div>
+      </CaptureDialogContent>
       </Dialog>
       <DiscardGuardDialog
         open={guard.discardOpen}

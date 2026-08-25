@@ -12,10 +12,11 @@ import {
 } from "@/modules/clients/application/convert-deal-to-client";
 import type { Service } from "@/modules/clients/domain/types";
 import {
+  CaptureDialogBar,
   CaptureDialogBody,
   CaptureDialogContent,
   CaptureDialogFooter,
-  CaptureDialogHeader,
+  CaptureLomo,
 } from "@/shared/ui/capture-dialog";
 import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
@@ -67,17 +68,16 @@ export function ConvertDealDialog({
     });
   }
 
+  const lomoContext = undefined;
+
   return (
     <>
       <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
         <DialogTrigger render={<Button size="sm" />}>Marcar ganado</DialogTrigger>
         <CaptureDialogContent>
-          <CaptureDialogHeader
-            icon={Trophy}
-            tint="green"
-            title="Convertir en cliente"
-            subtitle="Cierre ganado · CRM"
-          />
+          <CaptureLomo icon={Trophy} module="CRM" title={"Convertir en cliente"} context={lomoContext} />
+        <div className="flex min-w-0 flex-col">
+        <CaptureDialogBar subtitle="Cierre ganado · CRM" />
           <form ref={formRef} onSubmit={onSubmit}>
             <CaptureDialogBody>
               <p className="text-sm text-muted-foreground">
@@ -130,7 +130,8 @@ export function ConvertDealDialog({
               pending={pending}
             />
           </form>
-        </CaptureDialogContent>
+        </div>
+      </CaptureDialogContent>
       </Dialog>
       <DiscardGuardDialog
         open={guard.discardOpen}

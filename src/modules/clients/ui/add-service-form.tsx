@@ -9,10 +9,11 @@ import { Label } from "@/components/ui/label";
 import { addServiceToAccount } from "@/modules/clients/application/services-actions";
 import type { AccountService, Service } from "@/modules/clients/domain/types";
 import {
+  CaptureDialogBar,
   CaptureDialogBody,
   CaptureDialogContent,
   CaptureDialogFooter,
-  CaptureDialogHeader,
+  CaptureLomo,
 } from "@/shared/ui/capture-dialog";
 import { Combobox } from "@/shared/ui/combobox";
 import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
@@ -65,6 +66,8 @@ export function AddServiceForm({
     );
   }
 
+  const lomoContext = undefined;
+
   return (
     <>
       <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
@@ -72,12 +75,9 @@ export function AddServiceForm({
           Contratar servicio
         </DialogTrigger>
         <CaptureDialogContent>
-          <CaptureDialogHeader
-            icon={PackagePlus}
-            tint="blue"
-            title="Contratar servicio"
-            subtitle="Vista 360 · Clientes"
-          />
+          <CaptureLomo icon={PackagePlus} module="Clientes" title={"Contratar servicio"} context={lomoContext} />
+        <div className="flex min-w-0 flex-col">
+        <CaptureDialogBar subtitle="Vista 360 · Clientes" />
           {catalog.length === 0 ? (
             <p className="px-6 pb-6 text-sm text-muted-foreground">
               El catálogo está vacío. Crea primero un servicio en Clientes →
@@ -133,7 +133,8 @@ export function AddServiceForm({
               />
             </form>
           )}
-        </CaptureDialogContent>
+        </div>
+      </CaptureDialogContent>
       </Dialog>
       <DiscardGuardDialog
         open={guard.discardOpen}

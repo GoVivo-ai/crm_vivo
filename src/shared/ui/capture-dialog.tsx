@@ -1,6 +1,8 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DialogClose,
@@ -10,79 +12,180 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
+/** Debounce ~150ms del contexto vivo: nunca parpadea por tecla (§12.1). */
+function useDebounced<T>(value: T, ms = 150): T {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(value), ms);
+    return () => clearTimeout(t);
+  }, [value, ms]);
+  return debounced;
+}
+
+export type LomoContext = {
+  /** Monto ya formateado — protagonista en 20px #04D98B tabular. */
+  amount?: string | null;
+  /** Entidad (cliente, cuenta, persona). */
+  entity?: string | null;
+  /** Hecho útil del módulo si el contrato lo da (saldo, MRR…). */
+  fact?: string | null;
+};
+
 /**
- * Dialog de captura del spec §12.1: hairline gradiente firma de 3px,
- * header con tile del módulo en su tinta + chip "Manual", footer con
- * separador y verbo+objeto. Se usa DENTRO de <Dialog> con su trigger.
+ * Dialog "Lomo navy" (§12.1): franja estructural navy + costura gradiente
+ * + cuerpo blanco. Ningún dialog vuelve a ser un rectángulo blanco.
+ * Estructura: <CaptureDialogContent><CaptureLomo/><div body…></div>
  */
 export function CaptureDialogContent({
   className,
   children,
+  wide = false,
   ...props
-}: React.ComponentProps<typeof DialogContent>) {
+}: React.ComponentProps<typeof DialogContent> & { wide?: boolean }) {
   return (
     <DialogContent
-      className={cn("gap-0 overflow-hidden p-0 sm:max-w-lg", className)}
+      className={cn(
+        "grid gap-0 overflow-hidden p-0 shadow-[0_32px_80px_-28px_rgba(1,22,64,0.55)] duration-200 data-open:zoom-in-[0.97]",
+        wide ? "sm:max-w-[680px]" : "sm:max-w-[560px]",
+        // Lomo vertical en pantallas anchas; cabecera horizontal en <1100px.
+        "min-[1100px]:grid-cols-[var(--lomo-w)_3px_1fr]",
+        "max-[1099px]:grid-cols-1 max-[1099px]:grid-rows-[auto_3px_1fr]",
+        className,
+      )}
+      style={{ "--lomo-w": wide ? "150px" : "130px" } as React.CSSProperties}
       showCloseButton={false}
       {...props}
     >
-      <span
-        aria-hidden
-        className="block h-[3px] w-full bg-gradient-to-r from-[#04D98B] to-[#F2E205]"
-      />
       {children}
     </DialogContent>
   );
 }
 
-// Tintas de área — valores canónicos en DESIGN-SPEC.md §2.
-const TINTS = {
-  green: "bg-[#E6F9F1] text-[#069B66]",
-  blue: "bg-[#E8F0FB] text-[#1E5FBF]",
-  gold: "bg-[#FBF7D9] text-[#8C7A0A]",
-  navy: "bg-[#E7EBF3] text-[#011640]",
-  neutral: "bg-[#EEF1F6] text-[#5A6B85]",
+const TILE_TONES = {
+  green: "bg-[rgba(4,217,139,0.18)] text-[#04D98B]",
+  red: "bg-[rgba(201,58,58,0.30)] text-[#F08A8A]",
 } as const;
 
-export function CaptureDialogHeader({
+export function CaptureLomo({
   icon: Icon,
-  tint,
+  module,
   title,
-  subtitle,
+  context,
+  tone = "green",
+  eyebrowBottom = "Contexto vivo",
+  bottomHighlight,
 }: {
   icon: LucideIcon;
-  /** Tinta del área: factura verde, gasto azul, nómina ámbar, banco neutro. */
-  tint: keyof typeof TINTS;
+  /** Eyebrow del módulo: "FINANZAS", "CRM"… */
+  module: string;
+  /** Título corto: "Nueva factura". */
   title: string;
-  subtitle?: string;
+  context?: LomoContext;
+  /** red = confirmación destructiva (§12.4). */
+  tone?: "green" | "red";
+  /** Eyebrow inferior ("Contexto vivo" / "Irreversible"). */
+  eyebrowBottom?: string;
+  /** Texto destacado inferior en tono (p.ej. el objeto en peligro). */
+  bottomHighlight?: string;
 }) {
+  const amount = useDebounced(context?.amount ?? null);
+  const entity = useDebounced(context?.entity ?? null);
+  const fact = useDebounced(context?.fact ?? null);
+  const red = tone === "red";
+
   return (
-    <div className="flex items-center gap-3 px-6 py-5">
-      <span
-        className={cn(
-          "grid size-[34px] shrink-0 place-items-center rounded-[10px]",
-          TINTS[tint],
-        )}
+    <>
+      <div
+        className="relative flex flex-col overflow-hidden bg-[#011640] p-4 min-[1100px]:min-h-full max-[1099px]:flex-row max-[1099px]:items-center max-[1099px]:gap-3"
+        style={{
+          backgroundImage: red
+            ? "radial-gradient(160px 150px at -30px -20px, rgba(201,58,58,0.28), transparent 70%)"
+            : "radial-gradient(220px 200px at -40px -30px, rgba(4,217,139,0.20), transparent 70%)",
+        }}
       >
-        <Icon className="size-4" />
-      </span>
-      <div className="min-w-0 flex-1">
-        <DialogTitle className="font-[family-name:var(--font-display)] text-[17px] font-extrabold text-[#011640]">
-          {title}
-        </DialogTitle>
-        {subtitle ? (
-          <DialogDescription className="text-[12.5px] font-semibold text-muted-foreground">
-            {subtitle}
-          </DialogDescription>
-        ) : null}
+        <Image
+          src="/brand/logomark-white.png"
+          alt=""
+          width={110}
+          height={81}
+          aria-hidden
+          className={cn(
+            "pointer-events-none absolute -right-6 -bottom-4 -rotate-12 select-none",
+            red ? "opacity-[0.08]" : "opacity-10",
+          )}
+        />
+        <span
+          className={cn(
+            "grid size-9 shrink-0 place-items-center rounded-[11px]",
+            TILE_TONES[tone],
+          )}
+        >
+          <Icon className="size-4" />
+        </span>
+        <div className="min-w-0 max-[1099px]:flex-1">
+          <p className="mt-2.5 text-[10px] font-extrabold tracking-[0.16em] text-white/55 uppercase max-[1099px]:mt-0">
+            {module}
+          </p>
+          <DialogTitle className="font-[family-name:var(--font-display)] text-[15px] leading-tight font-extrabold text-white">
+            {title}
+          </DialogTitle>
+        </div>
+        <div className="mt-auto min-w-0 pt-4 max-[1099px]:mt-0 max-[1099px]:pt-0 max-[1099px]:text-right">
+          <p className="text-[9.5px] font-extrabold tracking-[0.14em] text-white/55 uppercase">
+            {eyebrowBottom}
+          </p>
+          {bottomHighlight ? (
+            <p className="truncate text-[13px] font-extrabold text-[#F08A8A]">
+              {bottomHighlight}
+            </p>
+          ) : (
+            <div className="transition-opacity duration-150">
+              <p className="truncate font-[family-name:var(--font-display)] text-[20px] leading-tight font-extrabold text-[#04D98B] tabular-nums">
+                {amount || <span className="text-white/35">—</span>}
+              </p>
+              {entity && (
+                <p className="truncate text-[11.5px] font-bold text-white/70">
+                  {entity}
+                </p>
+              )}
+              {fact && (
+                <p className="truncate text-[10.5px] font-semibold text-white/45">
+                  {fact}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
       </div>
-      <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[10.5px] font-extrabold text-secondary-foreground">
+      {/* Costura: gradiente firma; ROJA sólida en destructivo. */}
+      <span
+        aria-hidden
+        className={cn(
+          red
+            ? "bg-[#C93A3A]"
+            : "bg-gradient-to-b from-[#04D98B] to-[#F2E205] max-[1099px]:bg-gradient-to-r",
+        )}
+      />
+    </>
+  );
+}
+
+/** Fila superior del cuerpo: chip de fuente + X ghost (§12.1). */
+export function CaptureDialogBar({ subtitle }: { subtitle?: string }) {
+  return (
+    <div className="flex items-center gap-2 px-6 pt-4 pb-1">
+      {subtitle ? (
+        <DialogDescription className="text-[12.5px] font-semibold text-muted-foreground">
+          {subtitle}
+        </DialogDescription>
+      ) : (
+        <span />
+      )}
+      <span className="ml-auto rounded-full bg-secondary px-2 py-0.5 text-[10.5px] font-extrabold text-secondary-foreground">
         Manual
       </span>
       <DialogClose
-        render={
-          <Button variant="ghost" size="icon-sm" className="shrink-0" />
-        }
+        render={<Button variant="ghost" size="icon-sm" className="shrink-0" />}
         aria-label="Cerrar"
       >
         ×
@@ -100,7 +203,7 @@ export function CaptureDialogBody({
   className?: string;
 }) {
   return (
-    <div className={cn("flex flex-col gap-[18px] px-6 pb-5", className)}>
+    <div className={cn("flex flex-col gap-4 px-6 pb-5", className)}>
       {children}
     </div>
   );

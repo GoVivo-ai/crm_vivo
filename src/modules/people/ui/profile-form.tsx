@@ -6,10 +6,11 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
+  CaptureDialogBar,
   CaptureDialogBody,
   CaptureDialogContent,
   CaptureDialogFooter,
-  CaptureDialogHeader,
+  CaptureLomo,
 } from "@/shared/ui/capture-dialog";
 import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
 import { useDirtyGuard } from "@/shared/ui/use-dirty-guard";
@@ -110,12 +111,9 @@ export function EmployeeForm({ member }: { member?: TeamMember }) {
         {editing ? "Editar" : "+ Nuevo empleado"}
       </DialogTrigger>
       <CaptureDialogContent className="max-h-[85vh] overflow-y-auto">
-        <CaptureDialogHeader
-          icon={IdCard}
-          tint="navy"
-          title={editing ? `Editar · ${member.fullName}` : "Nuevo empleado"}
-          subtitle="Directorio · Equipo"
-        />
+        <CaptureLomo icon={IdCard} module="Equipo" title={editing ? `Editar · ${member.fullName}` : "Nuevo empleado"} />
+        <div className="flex min-w-0 flex-col">
+        <CaptureDialogBar subtitle="Directorio · Equipo" />
         {!ready ? (
           <p className="py-6 text-center text-sm text-muted-foreground">
             Cargando expediente…
@@ -174,6 +172,7 @@ export function EmployeeForm({ member }: { member?: TeamMember }) {
             />
           </form>
         )}
+      </div>
       </CaptureDialogContent>
     </Dialog>
     <DiscardGuardDialog

@@ -16,6 +16,8 @@ type DeleteRecordButtonProps = {
   /** Verbo + objeto del botón rojo: "Borrar factura". */
   confirmLabel: string;
   successMessage: string;
+  /** El objeto en peligro, nombrado en el lomo ("FV-2041"). */
+  objectName?: string;
 };
 
 /** Borrado de registros manuales con la confirmación destructiva (§12.4). */
@@ -26,6 +28,7 @@ export function DeleteRecordButton({
   body = "Esta acción no se puede deshacer.",
   confirmLabel,
   successMessage,
+  objectName,
 }: DeleteRecordButtonProps) {
   const { submit, pending } = useActionSubmit<unknown>();
   return (
@@ -43,6 +46,7 @@ export function DeleteRecordButton({
       title={title}
       body={body}
       confirmLabel={confirmLabel}
+      objectName={objectName}
       pending={pending}
       onConfirm={() => submit(() => action(id), { successMessage })}
     />

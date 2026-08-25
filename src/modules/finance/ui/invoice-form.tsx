@@ -5,10 +5,11 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
+  CaptureDialogBar,
   CaptureDialogBody,
   CaptureDialogContent,
   CaptureDialogFooter,
-  CaptureDialogHeader,
+  CaptureLomo,
 } from "@/shared/ui/capture-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +19,7 @@ import {
 } from "@/modules/finance/application/invoices-actions";
 import type { Invoice } from "@/modules/finance/domain/types";
 import { Combobox } from "@/shared/ui/combobox";
+import { formatCurrency } from "@/shared/ui/format";
 import { CurrencyFields } from "@/shared/ui/currency-fields";
 import { FieldError } from "@/shared/ui/field-error";
 import { Segmented } from "@/shared/ui/segmented";
@@ -48,6 +50,7 @@ export function InvoiceForm({
   const [status, setStatus] = useState<"open" | "paid" | "void">(
     invoice?.status ?? "open",
   );
+  const [totalStr, setTotalStr] = useState(invoice?.total?.toString() ?? "");
   const { submit, pending, fieldErrors } = useActionSubmit<Invoice>();
   const today = new Date().toISOString().slice(0, 10);
   const formRef = useRef<HTMLFormElement>(null);
@@ -93,6 +96,15 @@ export function InvoiceForm({
     );
   }
 
+  const totalNum = Number(totalStr);
+  const lomoContext = {
+    amount:
+      totalStr !== "" && Number.isFinite(totalNum) && totalNum > 0
+        ? formatCurrency(totalNum, currency)
+        : null,
+    entity: accounts.find((a) => a.id === accountId)?.name ?? null,
+  };
+
   return (
     <>
     <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
@@ -102,12 +114,9 @@ export function InvoiceForm({
         {invoice ? "Editar" : triggerLabel}
       </DialogTrigger>
       <CaptureDialogContent>
-        <CaptureDialogHeader
-          icon={FileText}
-          tint="green"
-          title={invoice ? "Editar factura" : "Registrar factura"}
-          subtitle="Ingreso · Finanzas"
-        />
+        <CaptureLomo icon={FileText} module="Finanzas" title={invoice ? "Editar factura" : "Registrar factura"} context={lomoContext} />
+        <div className="flex min-w-0 flex-col">
+        <CaptureDialogBar subtitle="Ingreso · Finanzas" />
         <form ref={formRef} onSubmit={onSubmit}>
           <CaptureDialogBody>
           <div className="grid grid-cols-2 gap-3">
@@ -167,7 +176,8 @@ export function InvoiceForm({
                 min="0"
                 step="0.01"
                 inputMode="decimal"
-                defaultValue={invoice?.total ?? ""}
+                value={totalStr}
+                onChange={(e) => setTotalStr(e.target.value)}
                 required
               />
               <FieldError errors={fieldErrors.total} />
@@ -221,6 +231,7 @@ export function InvoiceForm({
             }
           />
         </form>
+      </div>
       </CaptureDialogContent>
     </Dialog>
     <DiscardGuardDialog

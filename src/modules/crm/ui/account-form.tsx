@@ -16,7 +16,8 @@ import {
   CaptureDialogBody,
   CaptureDialogContent,
   CaptureDialogFooter,
-  CaptureDialogHeader,
+  CaptureLomo,
+  CaptureDialogBar,
 } from "@/shared/ui/capture-dialog";
 import { DiscardGuardDialog } from "@/shared/ui/discard-guard";
 import { FieldError } from "@/shared/ui/field-error";
@@ -75,12 +76,13 @@ export function AccountForm({ account, triggerLabel }: AccountFormProps) {
           {triggerLabel}
         </DialogTrigger>
         <CaptureDialogContent>
-          <CaptureDialogHeader
+          <CaptureLomo
             icon={Building2}
-            tint="green"
+            module="CRM"
             title={account ? "Editar cuenta" : "Nueva cuenta"}
-            subtitle="Empresas · CRM"
           />
+        <div className="flex min-w-0 flex-col">
+        <CaptureDialogBar subtitle="Empresas · CRM" />
           <form ref={formRef} onSubmit={onSubmit}>
             <CaptureDialogBody>
               <div className="flex flex-col gap-1.5">
@@ -137,7 +139,8 @@ export function AccountForm({ account, triggerLabel }: AccountFormProps) {
             </CaptureDialogBody>
             <CaptureDialogFooter submitLabel="Guardar cuenta" pending={pending} />
           </form>
-        </CaptureDialogContent>
+        </div>
+      </CaptureDialogContent>
       </Dialog>
       <DiscardGuardDialog
         open={guard.discardOpen}

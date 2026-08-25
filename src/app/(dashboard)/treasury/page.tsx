@@ -38,7 +38,7 @@ export default async function TreasuryPage() {
   const quickbooks = syncStatus.ok ? syncStatus.data.quickbooks : null;
   const accountOptions = accounts
     .filter((a) => a.isActive && a.source === "manual")
-    .map(({ id, name }) => ({ id, name }));
+    .map(({ id, name, balanceCop }) => ({ id, name, balanceCop }));
 
   return (
     <div className="flex flex-col gap-4">

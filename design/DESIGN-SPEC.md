@@ -408,24 +408,29 @@ Misma anatomía del 12.1 — identidad constante, severidad evidente:
 **12.6 Spotlight — capa power-user de captura rápida**
 Captura teclado-primero sobre el lienzo completo. Es una CAPA sobre el sistema
 Lomo, no su reemplazo: crea registros, nunca edita.
-- **Invocación**: `Cmd/Ctrl+K` desde cualquier módulo. El botón "+ Registrar" del
-  topbar sigue abriendo el selector + dialog Lomo (vía mouse) y muestra el hint
-  `⌘K` para descubrir el atajo.
+- **Invocación**: `Cmd/Ctrl+K` desde cualquier módulo (inerte si hay otro overlay
+  abierto). El botón "+ Registrar ⌘K" del topbar abre el MISMO Spotlight — una sola
+  entrada, no dos sistemas: la vía de mouse son los chips de tipo CLICABLES (al
+  clicar uno, el panel muestra ese formulario vacío listo para llenar con mouse o
+  teclado). El botón se oculta a roles sin escritura.
 - **Anatomía**: scrim `rgba(1,22,64,.74)` + aura verde
   `radial-gradient(720px 420px at 50% 18%, rgba(4,217,139,.14), transparent 70%)`.
   Barra de comando 720px en el tercio superior: vidrio blanco 10%, borde blanco
   20%, radio 16, texto Nunito 800 17px blanco, caret verde de 2px, chips kbd de
-  tipo a la derecha (`F factura · G gasto · N nómina · S saldo`). Debajo, el panel
+  tipo a la derecha, clicables y filtrados por permisos del rol (`F factura ·
+  G gasto · N nómina · M movimiento`; "s" parsea como alias de movimiento). Debajo, el panel
   resultado: card blanca radio 20 con hairline gradiente, **monto protagonista a
   44px** con la entidad interpretada como eyebrow, campos restantes en grid, pie
   con hints ("Enter guarda · Tab siguiente campo · Esc cierra") y acciones.
 - **Gramática de parseo**: `{tipo} {entidad} {monto} [fecha]` — tipo por palabra
-  ("factura", "gasto"…) o tecla inicial; entidad por fuzzy match contra
+  ("factura", "gasto"…) o tecla inicial; entidad por fuzzy match sin acentos contra
   clientes/personas/cuentas según el tipo; monto acepta atajos ("14.6" →
-  $14.600.000, "890k", "2.4m"); fecha natural opcional ("ayer", "15 sep").
+  $14.600.000, "890k", "2.4m") y el token de moneda `usd` ("usd 500" → US$ 500;
+  sin token, COP); fecha natural opcional ("ayer", "15 sep", "15/08").
   **Lo interpretado se muestra SIEMPRE en el panel antes de guardar** con la línea
   "Entendido del texto: … · corrige abajo si algo no es" — la barra jamás guarda a
-  ciegas; ambigüedad (dos clientes posibles) = combobox abierto en el campo.
+  ciegas; ambigüedad (≥2 coincidencias) = aviso "N coincidencias — elige abajo" y
+  el combobox del campo ABIERTO (defaultOpen), sin preselección.
 - **Cuándo NO aplica**: formularios largos (>~6 campos), con adjuntos (gasto con
   comprobante) o cualquier edición — en esos casos Spotlight abre el dialog Lomo
   con lo ya parseado precargado. Confirmaciones originadas EN Spotlight usan el

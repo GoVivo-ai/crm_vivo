@@ -55,7 +55,7 @@ export function MoneyTile({
 const SOURCE_LABELS: Record<SyncSource, string> = {
   alegra: "Alegra",
   clickup: "ClickUp",
-  windsor: "Windsor",
+  meta_ads: "Meta Ads",
 };
 
 /** Estado de las tres fuentes externas — visible para cualquier rol. */

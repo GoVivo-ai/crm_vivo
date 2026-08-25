@@ -24,6 +24,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   people: "Equipo",
   leave: "Ausencias",
   profitability: "Rentabilidad",
+  staffing: "Asignaciones",
 };
 
 function breadcrumb(pathname: string): string[] {

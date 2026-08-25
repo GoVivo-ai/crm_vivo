@@ -19,8 +19,6 @@ type DirectoryTableProps = {
   today: string;
 };
 
-const MONTH_SHORT = "ene feb mar abr may jun jul ago sep oct nov dic".split(" ");
-
 function contractWarning(endDate: string | null, today: string) {
   if (!endDate) return null;
   const days = Math.floor(
@@ -45,7 +43,6 @@ export function DirectoryTable({
           <TableHead>Área</TableHead>
           <TableHead>Contrato</TableHead>
           <TableHead>Ingreso</TableHead>
-          <TableHead>Cumple</TableHead>
           <TableHead>Estado</TableHead>
           {canWrite && <TableHead className="text-right">Expediente</TableHead>}
         </TableRow>
@@ -86,13 +83,8 @@ export function DirectoryTable({
               <TableCell className="font-mono text-xs">
                 {member.hiredAt ?? "—"}
               </TableCell>
-              <TableCell className="text-xs">
-                {member.birthday
-                  ? `${member.birthday.day} ${MONTH_SHORT[member.birthday.month - 1] ?? ""}`
-                  : "—"}
-              </TableCell>
               <TableCell>
-                <MemberStatusBadge status={member.status} />
+                <MemberStatusBadge active={member.active} />
               </TableCell>
               {canWrite && (
                 <TableCell className="text-right">

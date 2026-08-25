@@ -30,9 +30,9 @@ export function LeaveStatusBadge({ status }: { status: LeaveStatus }) {
   );
 }
 
-/** Badge de estado del empleado según el directorio de Alegra. */
-export function MemberStatusBadge({ status }: { status: string | null }) {
-  const active = status === "active";
+/** Badge de estado real del empleado (derivado del contrato, no del
+ * status crudo de Alegra). */
+export function MemberStatusBadge({ active }: { active: boolean }) {
   return (
     <Badge
       variant="outline"
@@ -42,7 +42,7 @@ export function MemberStatusBadge({ status }: { status: string | null }) {
           : "text-muted-foreground",
       )}
     >
-      {active ? "Activo" : (status ?? "—")}
+      {active ? "Activo" : "Inactivo"}
     </Badge>
   );
 }

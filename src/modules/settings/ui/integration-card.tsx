@@ -25,7 +25,7 @@ type IntegrationCardProps = {
 };
 
 export function IntegrationCard({ meta, status }: IntegrationCardProps) {
-  const [open, setOpen] = useState(!status.configured);
+  const [open, setOpen] = useState(!status.configured && !meta.oauth);
   const [values, setValues] = useState<Record<string, string>>({});
   const { submit, pending, fieldErrors } = useActionSubmit<unknown>();
   const reducedMotion = useReducedMotion();
@@ -127,23 +127,38 @@ export function IntegrationCard({ meta, status }: IntegrationCardProps) {
       <IntegrationStatusLine status={status} label={meta.label} />
 
       <div className="mt-auto flex flex-wrap gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          aria-expanded={open}
-          onClick={() => setOpen((v) => !v)}
-        >
-          Credenciales
-          <ChevronDown
-            className={cn(
-              "size-3.5 transition-transform",
-              open && "rotate-180",
-            )}
-          />
-        </Button>
-        <Button variant="outline" size="sm" disabled={pending} onClick={onTest}>
-          Probar conexión
-        </Button>
+        {meta.oauth ? (
+          // OAuth (directriz: cero tokens manuales). El botón se habilita
+          // cuando backend publique /api/oauth/[provider]/start.
+          <Button size="sm" disabled title="Conexión en habilitación">
+            Conectar con {meta.label}
+          </Button>
+        ) : (
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              aria-expanded={open}
+              onClick={() => setOpen((v) => !v)}
+            >
+              Credenciales
+              <ChevronDown
+                className={cn(
+                  "size-3.5 transition-transform",
+                  open && "rotate-180",
+                )}
+              />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={pending}
+              onClick={onTest}
+            >
+              Probar conexión
+            </Button>
+          </>
+        )}
         <Button
           variant="outline"
           size="sm"

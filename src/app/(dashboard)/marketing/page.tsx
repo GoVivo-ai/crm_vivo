@@ -55,7 +55,7 @@ export default async function MarketingPage({
   const clients = accountsResult.ok
     ? accountsResult.data.map(({ id, name }) => ({ id, name }))
     : [];
-  const windsor = syncStatus.ok ? syncStatus.data.windsor : null;
+  const metaAds = syncStatus.ok ? syncStatus.data.meta_ads : null;
 
   // Costo por lead solo es agregable con una única moneda de spend.
   const currencies = Object.keys(totals.spendByCurrency);
@@ -81,9 +81,9 @@ export default async function MarketingPage({
           </p>
         </div>
         <SyncStatus
-          source="Windsor"
-          syncedAt={windsor?.status === "success" ? windsor.finishedAt : null}
-          error={windsor?.status === "error" ? windsor.error : null}
+          source="Meta Ads"
+          syncedAt={metaAds?.status === "success" ? metaAds.finishedAt : null}
+          error={metaAds?.status === "error" ? metaAds.error : null}
         />
       </div>
 

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { DomainRuleError } from "@/shared/actions/errors";
 import { actionError, type ActionResult } from "@/shared/actions/result";
 import { runAction } from "@/modules/identity/application/run-action";
+import { can } from "@/modules/identity/domain/permissions";
 import { parseInput } from "@/modules/crm/application/action-helpers";
 import type {
   EmployeeCompensation,
@@ -53,25 +54,39 @@ export async function updateEmployee(
   return { ok: true, data: repo.toDetail(result.data) };
 }
 
-/** Expediente completo con PII/notes (people_directory:write). */
+/** Expediente completo. Acceso: people_directory:write (management/
+ * admin) O el PROPIO empleado (employee.userId === user.id) — el caso
+ * self recibe el detalle SIN notas internas (notes: null), regla §14. */
 export async function getEmployeeDetail(
   id: string,
 ): Promise<ActionResult<EmployeeDetail>> {
-  return runAction("people_directory", "write", async () => {
+  return runAction("people_directory", "read", async (user) => {
     const row = await repo.findEmployeeRow(id);
     if (!row) throw new DomainRuleError("Empleado no encontrado");
-    return repo.toDetail(row);
+    const isWriter = can(user.role, "people_directory", "write");
+    const isSelf = row.userId === user.id;
+    if (!isWriter && !isSelf) {
+      throw new DomainRuleError("Sin permiso para ver este expediente");
+    }
+    const detail = repo.toDetail(row);
+    return isWriter ? detail : { ...detail, notes: null };
   });
 }
 
-/** Compensación: salario base + historial de pagos
- * (people_compensation:read). */
+/** Compensación: salario base + historial de pagos. Acceso:
+ * people_compensation:read O el PROPIO empleado (solo lectura — las
+ * mutaciones siguen exigiendo people_compensation:write, sin self). */
 export async function getEmployeeCompensation(
   employeeId: string,
 ): Promise<ActionResult<EmployeeCompensation>> {
-  return runAction("people_compensation", "read", async () => {
+  return runAction("people_directory", "read", async (user) => {
     const row = await repo.findEmployeeRow(employeeId);
     if (!row) throw new DomainRuleError("Empleado no encontrado");
+    const canRead = can(user.role, "people_compensation", "read");
+    const isSelf = row.userId === user.id;
+    if (!canRead && !isSelf) {
+      throw new DomainRuleError("Sin permiso para ver la compensación");
+    }
     return {
       employeeId: row.id,
       fullName: row.fullName,

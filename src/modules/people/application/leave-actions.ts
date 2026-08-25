@@ -16,7 +16,7 @@ import {
   leaveRequestInputSchema,
 } from "@/modules/people/domain/validation";
 import { countLeaveDays } from "@/modules/people/domain/leave-days";
-import { findEmployeeByUserId } from "@/modules/people/infrastructure/people-repository";
+import { findEmployeeByUserId, findEmployeeRow } from "@/modules/people/infrastructure/people-repository";
 import * as repo from "@/modules/people/infrastructure/leave-repository";
 
 /** Empleado del usuario del guard; sin empleado vinculado no se
@@ -130,4 +130,33 @@ export async function decideLeaveRequest(
       createdAt: row.createdAt,
     },
   };
+}
+
+/** Saldo y solicitudes de un empleado ARBITRARIO — para la card del
+ * expediente. Acceso: people_directory:write (aprobadores) O el propio
+ * empleado (employeeId vinculado al user del guard). */
+export async function getLeaveBalanceFor(
+  employeeId: string,
+): Promise<ActionResult<{ requests: LeaveRequestView[]; balance: LeaveBalance }>> {
+  return runAction("people_directory", "read", async (user) => {
+    const employee = await findEmployeeRow(employeeId);
+    if (!employee) throw new DomainRuleError("Empleado no encontrado");
+    const isApprover = can(user.role, "people_directory", "write");
+    const isSelf = employee.userId === user.id;
+    if (!isApprover && !isSelf) {
+      throw new DomainRuleError("Sin permiso para ver estas ausencias");
+    }
+    const [requests, approvedDaysThisYear] = await Promise.all([
+      repo.listLeaveForEmployee(employeeId),
+      repo.approvedDaysThisYear(employeeId),
+    ]);
+    return {
+      requests,
+      balance: {
+        annualLeaveDays: employee.annualLeaveDays,
+        approvedDaysThisYear,
+        remainingDays: employee.annualLeaveDays - approvedDaysThisYear,
+      },
+    };
+  });
 }

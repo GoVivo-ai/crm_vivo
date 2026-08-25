@@ -31,7 +31,7 @@ export function DealCardContent({
 }: DealCardContentProps) {
   const days = daysInStage(deal, today);
   return (
-    <div className="flex flex-col gap-1.5 rounded-lg border bg-card p-3 text-left shadow-xs transition-[box-shadow,translate] duration-150 hover:-translate-y-0.5 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0">
+    <div className="flex flex-col gap-1.5 rounded-xl border bg-card p-3 text-left shadow-xs transition-[box-shadow,translate] duration-150 hover:-translate-y-0.5 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0">
       <p className="text-sm leading-snug font-medium">{deal.title}</p>
       <p className="text-xs text-muted-foreground">{accountName}</p>
       <div className="flex items-center justify-between gap-2">
@@ -51,15 +51,15 @@ export function DealCardContent({
         )}
       </div>
       {deal.closedAt === null && (
+        // Chip de días del artboard: faint; gold ≥10 d (estancado).
         <span
           className={cn(
-            "text-xs",
-            days >= 30 && "text-health-critical",
-            days >= 14 && days < 30 && "text-health-warn",
-            days < 14 && "text-muted-foreground",
+            "ml-auto text-[10.5px] font-bold",
+            days >= 10 ? "text-[#8C7A0A]" : "text-muted-foreground/70",
           )}
+          title={days >= 10 ? "Estancado en la etapa" : "Días en la etapa"}
         >
-          {days === 0 ? "Entró hoy a la etapa" : `${days} d en etapa`}
+          {days === 0 ? "hoy" : `${days} d`}
         </span>
       )}
     </div>

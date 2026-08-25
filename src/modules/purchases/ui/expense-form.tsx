@@ -19,6 +19,7 @@ import type { Expense } from "@/modules/purchases/domain/types";
 import { CurrencyFields } from "@/shared/ui/currency-fields";
 import { FieldError } from "@/shared/ui/field-error";
 import { NativeSelect } from "@/shared/ui/native-select";
+import { Segmented } from "@/shared/ui/segmented";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
 
 /** Registro/edición de gasto: direct = ya pagado (default), bill = a crédito. */
@@ -82,15 +83,16 @@ export function ExpenseForm({ expense }: { expense?: Expense }) {
               <FieldError errors={fieldErrors.providerName} />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="kind">Tipo</Label>
-              <NativeSelect
-                id="kind"
+              <Label>Tipo</Label>
+              <Segmented
+                ariaLabel="Tipo de gasto"
                 value={kind}
-                onChange={(e) => setKind(e.target.value as "bill" | "direct")}
-              >
-                <option value="direct">Pagado (directo)</option>
-                <option value="bill">A crédito (por pagar)</option>
-              </NativeSelect>
+                onChange={setKind}
+                options={[
+                  { value: "direct", label: "Pagado" },
+                  { value: "bill", label: "A crédito" },
+                ]}
+              />
             </div>
           </div>
           <div className="grid grid-cols-3 gap-3">

@@ -136,14 +136,15 @@ export function PipelineBoard({
         ))}
       </div>
       <DragOverlay>
+        {/* Tarjeta destacada: ring verde mientras se arrastra (artboard). */}
         {activeDeal && (
-          <div className="rotate-2 opacity-95 shadow-lg motion-reduce:rotate-0">
+          <div className="rotate-2 rounded-xl opacity-95 shadow-lg ring-2 ring-[#04D98B] motion-reduce:rotate-0">
             <DealCardContent
-            deal={activeDeal}
-            accountName={accountNames.get(activeDeal.accountId) ?? "—"}
-            overdue={false}
-            today={today}
-          />
+              deal={activeDeal}
+              accountName={accountNames.get(activeDeal.accountId) ?? "—"}
+              overdue={false}
+              today={today}
+            />
           </div>
         )}
       </DragOverlay>

@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { createBankTransaction } from "@/modules/treasury/application/treasury-actions";
 import { FieldError } from "@/shared/ui/field-error";
 import { NativeSelect } from "@/shared/ui/native-select";
+import { Segmented } from "@/shared/ui/segmented";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
 
 type Option = { id: string; name: string };
@@ -21,6 +22,7 @@ type Option = { id: string; name: string };
 /** Registro rápido de movimiento bancario (entrada/salida). */
 export function TransactionForm({ accounts }: { accounts: Option[] }) {
   const [open, setOpen] = useState(false);
+  const [direction, setDirection] = useState<"in" | "out">("in");
   const { submit, pending, fieldErrors } = useActionSubmit<unknown>();
   const today = new Date().toISOString().slice(0, 10);
 
@@ -33,7 +35,7 @@ export function TransactionForm({ accounts }: { accounts: Option[] }) {
           bankAccountId: form.get("bankAccountId"),
           date: form.get("date"),
           amount: Number(form.get("amount")),
-          direction: form.get("direction"),
+          direction,
           description: (form.get("description") as string) || null,
         }),
       {
@@ -69,11 +71,16 @@ export function TransactionForm({ accounts }: { accounts: Option[] }) {
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="direction">Tipo</Label>
-                <NativeSelect id="direction" name="direction" defaultValue="in">
-                  <option value="in">Entrada</option>
-                  <option value="out">Salida</option>
-                </NativeSelect>
+                <Label>Tipo</Label>
+                <Segmented
+                  ariaLabel="Dirección del movimiento"
+                  value={direction}
+                  onChange={setDirection}
+                  options={[
+                    { value: "in", label: "Entrada" },
+                    { value: "out", label: "Salida" },
+                  ]}
+                />
               </div>
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="amount">Monto</Label>

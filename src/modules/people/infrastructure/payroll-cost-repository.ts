@@ -7,7 +7,8 @@ import type { PayrollCostPoint } from "@/modules/people/domain/types";
  * Categorías de pagos salientes que cuentan como nómina. VALIDADO por
  * Integraciones contra las categorías reales de Alegra (julio 2026:
  * Salario por Pagar, Aportes EPS/Caja/ARL, Fondos de pensión PILA;
- * cifra de control con este patrón: 19.872.080 COP).
+ * cifras de control: julio 19.872.080, feb-2026 25.060.732 COP
+ * — incluye cesantías anuales; "cesant" sin tilde cubre id 5267).
  * "Intereses" queda fuera a propósito: existe también como categoría
  * financiera y sería un falso positivo grande (el rubro PILA es ~miles).
  * TODO v2: migrar de regex a lista de IDs de categoría (estables):
@@ -15,7 +16,7 @@ import type { PayrollCostPoint } from "@/modules/people/domain/types";
  * (+5216 Intereses SOLO si el pago es al operador PILA).
  */
 const PAYROLL_PATTERN =
-  "salario|n[oó]mina|aporte|fondos|cesant[ií]a|prima|vacacion|seguridad social";
+  "salario|sueldo|n[oó]mina|aporte|cesant|prima|vacacion|seguridad social|fondos";
 
 /**
  * Costo de nómina mensual DERIVADO de pagos categorizados (la API de

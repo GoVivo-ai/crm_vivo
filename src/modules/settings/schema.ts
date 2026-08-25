@@ -3,7 +3,7 @@ import { users } from "@/modules/identity/schema";
 
 export const integrationTypeEnum = pgEnum("integration_type", [
   "alegra",
-  "windsor",
+  "meta_ads",
   "clickup",
 ]);
 

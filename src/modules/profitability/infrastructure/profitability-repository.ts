@@ -50,7 +50,9 @@ export async function countActiveEmployees(): Promise<number> {
     .where(
       and(
         isNotNull(syncedEmployees.names),
-        sql`coalesce(${syncedEmployees.status}, 'active') = 'active'`,
+        // Activo REAL: contract.endDate null o futura (el status de
+        // Alegra es poco fiable — hay "active" con contrato terminado).
+        sql`coalesce((${syncedEmployees.contract}->>'endDate')::date >= current_date, true)`,
       ),
     );
   return row?.count ?? 0;

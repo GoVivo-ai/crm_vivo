@@ -29,8 +29,6 @@ export const syncedEmployees = pgTable("synced_employees", {
   email: text("email"),
   phone: text("phone"),
   hiredAt: date("hired_at"),
-  /** Fecha completa en cache; el directorio solo expone día y mes. */
-  birthday: date("birthday"),
   position: text("position"),
   area: text("area"),
   /** SENSIBLE: solo se expone vía people_compensation. */

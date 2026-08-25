@@ -78,7 +78,7 @@ export async function getPayrollCostSeries(
   months: number = 12,
 ): Promise<ActionResult<PayrollCostSeries>> {
   return runAction("people_compensation", "read", async () => ({
-    label: "costo de nómina (desde pagos)" as const,
+    label: "nómina Colombia (desde pagos Alegra)" as const,
     points: await getPayrollCostByMonth(Math.min(Math.max(months, 1), 36)),
   }));
 }

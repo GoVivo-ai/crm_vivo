@@ -19,9 +19,12 @@ export function envFallback<I extends Integration>(
             token: env.ALEGRA_API_TOKEN,
           } as IntegrationPayloadMap[I])
         : null;
-    case "windsor":
-      return env.WINDSOR_API_KEY
-        ? ({ apiKey: env.WINDSOR_API_KEY } as IntegrationPayloadMap[I])
+    case "meta_ads":
+      return env.META_ADS_ACCESS_TOKEN
+        ? ({
+            accessToken: env.META_ADS_ACCESS_TOKEN,
+            businessId: env.META_ADS_BUSINESS_ID || undefined,
+          } as IntegrationPayloadMap[I])
         : null;
     default:
       return env.CLICKUP_TOKEN

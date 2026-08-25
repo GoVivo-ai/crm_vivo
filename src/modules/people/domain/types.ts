@@ -18,11 +18,12 @@ export type TeamMember = {
   email: string | null;
   phone: string | null;
   hiredAt: string | null;
-  birthday: { day: number; month: number } | null;
+  /** Activo REAL: contract.endDate null o futura. El status crudo de
+   * Alegra es poco fiable (hay "active" con contrato terminado). */
+  active: boolean;
   /** Del expediente si existe; si no, el del directorio de Alegra. */
   position: string | null;
   area: string | null;
-  status: string | null;
   profile: {
     id: string;
     userId: string | null;
@@ -71,8 +72,9 @@ export type PayrollCostPoint = {
 };
 
 export type PayrollCostSeries = {
-  /** Etiqueta OBLIGATORIA en UI (requisito del Planeador). */
-  label: "costo de nómina (desde pagos)";
+  /** Etiqueta OBLIGATORIA en UI (requisito del Planeador). Es SOLO la
+   * nómina de Colombia vía Alegra — el costo QuickBooks/Chase no está. */
+  label: "nómina Colombia (desde pagos Alegra)";
   points: PayrollCostPoint[];
 };
 

@@ -1,4 +1,4 @@
-import { asc, eq, isNotNull } from "drizzle-orm";
+import { asc, eq, isNotNull, sql } from "drizzle-orm";
 import { db } from "@/shared/database/db";
 import { employeeProfiles, syncedEmployees } from "@/modules/people/schema";
 import type {
@@ -23,10 +23,9 @@ export async function listTeamDirectory(): Promise<TeamMember[]> {
       email: syncedEmployees.email,
       phone: syncedEmployees.phone,
       hiredAt: syncedEmployees.hiredAt,
-      birthday: syncedEmployees.birthday,
+      active: sql<boolean>`coalesce((${syncedEmployees.contract}->>'endDate')::date >= current_date, true)`,
       position: syncedEmployees.position,
       area: syncedEmployees.area,
-      status: syncedEmployees.status,
       profile: employeeProfiles,
     })
     .from(syncedEmployees)
@@ -42,15 +41,9 @@ export async function listTeamDirectory(): Promise<TeamMember[]> {
     email: r.email,
     phone: r.phone,
     hiredAt: r.hiredAt,
-    birthday: r.birthday
-      ? {
-          day: Number(r.birthday.slice(8, 10)),
-          month: Number(r.birthday.slice(5, 7)),
-        }
-      : null,
+    active: r.active,
     position: r.profile?.position ?? r.position,
     area: r.profile?.area ?? r.area,
-    status: r.status,
     profile: r.profile
       ? {
           id: r.profile.id,

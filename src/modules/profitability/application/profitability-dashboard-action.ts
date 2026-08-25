@@ -147,6 +147,7 @@ export async function getProfitabilityDashboard(
       unassignedCostCop: Math.round(totalPayrollCop - assignedTotal),
       activeEmployees,
       assumption: "equal-cost" as const,
+      costScope: "colombia-only" as const,
       accounts,
     };
   });

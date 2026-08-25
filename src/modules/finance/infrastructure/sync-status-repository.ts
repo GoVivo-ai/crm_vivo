@@ -6,7 +6,7 @@ import type {
   SyncSource,
 } from "@/modules/finance/domain/types";
 
-const SOURCES: SyncSource[] = ["alegra", "clickup", "windsor"];
+const SOURCES: SyncSource[] = ["alegra", "clickup", "meta_ads"];
 
 /** Última corrida registrada de cada integración (null si nunca corrió). */
 export async function getLastRunPerSource(): Promise<

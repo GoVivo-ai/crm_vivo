@@ -53,5 +53,8 @@ export type ProfitabilityDashboard = {
   activeEmployees: number;
   /** Suposición del prorrateo, para mostrarla como nota en la UI. */
   assumption: "equal-cost";
+  /** El costo laboral es SOLO nómina Colombia (Alegra) mientras exista
+   * el hueco QuickBooks/Chase — nota obligatoria en la UI. */
+  costScope: "colombia-only";
   accounts: AccountProfitability[];
 };

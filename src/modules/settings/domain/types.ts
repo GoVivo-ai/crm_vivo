@@ -1,12 +1,12 @@
-export type Integration = "alegra" | "windsor" | "clickup";
+export type Integration = "alegra" | "meta_ads" | "clickup";
 
 export type AlegraCredentials = { email: string; token: string };
-export type WindsorCredentials = { apiKey: string };
+export type MetaAdsCredentials = { accessToken: string; businessId?: string };
 export type ClickupCredentials = { token: string };
 
 export type IntegrationPayloadMap = {
   alegra: AlegraCredentials;
-  windsor: WindsorCredentials;
+  meta_ads: MetaAdsCredentials;
   clickup: ClickupCredentials;
 };
 

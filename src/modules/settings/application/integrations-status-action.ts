@@ -11,7 +11,7 @@ import { listCredentialsRows } from "@/modules/settings/infrastructure/credentia
 import { envFallback } from "@/modules/settings/application/get-integration-credentials";
 import { getLastRunPerSource } from "@/modules/finance/infrastructure/sync-status-repository";
 
-const INTEGRATIONS: Integration[] = ["alegra", "windsor", "clickup"];
+const INTEGRATIONS: Integration[] = ["alegra", "meta_ads", "clickup"];
 
 const mask = (value: string) => `****${value.slice(-4)}`;
 
@@ -20,7 +20,7 @@ const mask = (value: string) => `****${value.slice(-4)}`;
 function hintFor(integration: Integration, payload: unknown): string | null {
   const p = payload as Record<string, string>;
   if (integration === "alegra" && p.email) return p.email;
-  const secret = p.apiKey ?? p.token;
+  const secret = p.accessToken ?? p.token;
   return secret ? mask(secret) : null;
 }
 

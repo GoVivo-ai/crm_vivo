@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const integrationSchema = z.enum(["alegra", "windsor", "clickup"]);
+export const integrationSchema = z.enum(["alegra", "meta_ads", "clickup"]);
 
 export const credentialsInputSchema = z.discriminatedUnion("integration", [
   z.object({
@@ -11,9 +11,14 @@ export const credentialsInputSchema = z.discriminatedUnion("integration", [
     }),
   }),
   z.object({
-    integration: z.literal("windsor"),
+    integration: z.literal("meta_ads"),
     credentials: z.object({
-      apiKey: z.string().trim().min(8, "API key demasiado corta").max(500),
+      accessToken: z
+        .string()
+        .trim()
+        .min(20, "Access token demasiado corto")
+        .max(1000),
+      businessId: z.string().trim().max(100).optional(),
     }),
   }),
   z.object({

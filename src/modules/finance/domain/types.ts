@@ -56,7 +56,7 @@ export type FinanceDashboard = {
 export type PnlSeriesPoint = { date: string; totals: PnlTotals };
 export type CashflowSeriesPoint = { date: string; summary: CashflowSummary };
 
-export type SyncSource = "alegra" | "clickup" | "windsor";
+export type SyncSource = "alegra" | "clickup" | "meta_ads";
 
 export type IntegrationSyncStatus = {
   source: SyncSource;

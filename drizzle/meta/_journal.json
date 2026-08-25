@@ -43,6 +43,13 @@
       "when": 1787677147054,
       "tag": "0005_sleepy_killmonger",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1787677419427,
+      "tag": "0006_smiling_mole_man",
+      "breakpoints": true
     }
   ]
 }

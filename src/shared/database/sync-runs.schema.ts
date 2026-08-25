@@ -10,7 +10,7 @@ import {
 export const syncSourceEnum = pgEnum("sync_source", [
   "alegra",
   "clickup",
-  "windsor",
+  "meta_ads",
 ]);
 
 export const syncStatusEnum = pgEnum("sync_status", [

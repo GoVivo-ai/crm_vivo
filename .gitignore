@@ -43,8 +43,8 @@ next-env.d.ts
 
 # tooling local de la integración Neon
 /.agents/
-/.claude/skills/neon/
-/.claude/skills/neon-postgres/
+/.claude/skills/neon
+/.claude/skills/neon-postgres
 /skills-lock.json
 
 # cache local de media-use (assets resueltos)

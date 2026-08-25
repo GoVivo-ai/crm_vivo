@@ -8,5 +8,6 @@ export * from "@/modules/marketing/schema";
 export * from "@/modules/purchases/schema";
 export * from "@/modules/people/schema";
 export * from "@/modules/treasury/schema";
+export * from "@/modules/profitability/schema";
 export * from "@/modules/settings/schema";
 export * from "@/shared/database/sync-runs.schema";

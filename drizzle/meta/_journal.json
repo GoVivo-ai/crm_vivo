@@ -29,6 +29,13 @@
       "when": 1787676396916,
       "tag": "0003_thankful_yellow_claw",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1787676809224,
+      "tag": "0004_far_clea",
+      "breakpoints": true
     }
   ]
 }

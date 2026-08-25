@@ -13,6 +13,13 @@ import {
 import { users } from "@/modules/identity/schema";
 import { recordSourceEnum } from "@/shared/database/record-source.schema";
 
+export const contractTypeEnum = pgEnum("contract_type", [
+  "termino_fijo",
+  "indefinido",
+  "prestacion_servicios",
+  "obra_labor",
+]);
+
 /**
  * Empleados — tabla propia del ERP (fusión del antiguo directorio
  * sincronizado + expediente). QBO Payroll no tiene API pública, así que
@@ -32,8 +39,26 @@ export const employees = pgTable("employees", {
   active: boolean("active").notNull().default(true),
   /** SENSIBLE: solo se expone vía people_compensation. */
   baseSalary: numeric("base_salary", { precision: 14, scale: 2 }),
-  contractType: text("contract_type"),
+  baseSalaryCurrency: text("base_salary_currency").notNull().default("COP"),
+  // --- Contractual (expediente restringido, people_directory:write) ---
+  contractType: contractTypeEnum("contract_type"),
   contractEndDate: date("contract_end_date"),
+  workSchedule: text("work_schedule"),
+  eps: text("eps"),
+  afp: text("afp"),
+  arl: text("arl"),
+  cajaCompensacion: text("caja_compensacion"),
+  // --- Personal (expediente restringido; la EDAD se calcula, jamás se
+  // almacena) ---
+  birthDate: date("birth_date"),
+  address: text("address"),
+  emergencyContactName: text("emergency_contact_name"),
+  emergencyContactPhone: text("emergency_contact_phone"),
+  bloodType: text("blood_type"),
+  // --- Dotación (expediente restringido) ---
+  shirtSize: text("shirt_size"),
+  pantsSize: text("pants_size"),
+  shoeSize: text("shoe_size"),
   /** Metadatos de documentos: [{name, url, expiresAt?}]. */
   documents: jsonb("documents"),
   annualLeaveDays: integer("annual_leave_days").notNull().default(15),

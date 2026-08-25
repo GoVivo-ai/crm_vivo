@@ -8,6 +8,13 @@
       "when": 1787679686611,
       "tag": "0000_mixed_ghost_rider",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1787698324659,
+      "tag": "0001_cloudy_gamma_corps",
+      "breakpoints": true
     }
   ]
 }

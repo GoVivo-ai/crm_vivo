@@ -22,18 +22,42 @@ export type TeamMember = {
   position: string | null;
   area: string | null;
   active: boolean;
-  contractType: string | null;
   contractEndDate: string | null;
   documents: EmployeeDocument[];
   annualLeaveDays: number;
   userId: string | null;
 };
 
-/** Expediente completo (people_directory:write): incluye PII (cédula) y
- * notes, excluidos del directorio general. */
+export type ContractType =
+  | "termino_fijo"
+  | "indefinido"
+  | "prestacion_servicios"
+  | "obra_labor";
+
+/** Expediente completo (people_directory:write): PII, contractual,
+ * personal y dotación — NADA de esto va al directorio general. El
+ * salario NO está aquí: vive en people_compensation. */
 export type EmployeeDetail = TeamMember & {
   identification: string | null;
   notes: string | null;
+  // Contractual
+  contractType: ContractType | null;
+  workSchedule: string | null;
+  eps: string | null;
+  afp: string | null;
+  arl: string | null;
+  cajaCompensacion: string | null;
+  // Personal — age SIEMPRE calculada desde birthDate, jamás almacenada.
+  birthDate: string | null;
+  age: number | null;
+  address: string | null;
+  emergencyContactName: string | null;
+  emergencyContactPhone: string | null;
+  bloodType: string | null;
+  // Dotación
+  shirtSize: string | null;
+  pantsSize: string | null;
+  shoeSize: string | null;
 };
 
 /** Compensación (people_compensation): salario base + pagos. */
@@ -42,6 +66,7 @@ export type EmployeeCompensation = {
   fullName: string;
   identification: string | null;
   baseSalary: number | null;
+  baseSalaryCurrency: string;
   payments: PayrollPayment[];
 };
 

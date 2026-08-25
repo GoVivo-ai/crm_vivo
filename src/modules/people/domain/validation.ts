@@ -9,8 +9,26 @@ export const employeeInputSchema = z.object({
   position: z.string().trim().max(200).nullish(),
   area: z.string().trim().max(200).nullish(),
   active: z.boolean().default(true),
-  contractType: z.string().trim().max(100).nullish(),
+  // Contractual
+  contractType: z
+    .enum(["termino_fijo", "indefinido", "prestacion_servicios", "obra_labor"])
+    .nullish(),
   contractEndDate: z.iso.date().nullish(),
+  workSchedule: z.string().trim().max(200).nullish(),
+  eps: z.string().trim().max(100).nullish(),
+  afp: z.string().trim().max(100).nullish(),
+  arl: z.string().trim().max(100).nullish(),
+  cajaCompensacion: z.string().trim().max(100).nullish(),
+  // Personal
+  birthDate: z.iso.date().nullish(),
+  address: z.string().trim().max(300).nullish(),
+  emergencyContactName: z.string().trim().max(200).nullish(),
+  emergencyContactPhone: z.string().trim().max(50).nullish(),
+  bloodType: z.string().trim().max(5).nullish(),
+  // Dotación (máx 8 chars por directriz)
+  shirtSize: z.string().trim().max(8).nullish(),
+  pantsSize: z.string().trim().max(8).nullish(),
+  shoeSize: z.string().trim().max(8).nullish(),
   documents: z
     .array(
       z.object({
@@ -24,7 +42,15 @@ export const employeeInputSchema = z.object({
   annualLeaveDays: z.number().int().min(0).max(60).default(15),
   userId: z.uuid().nullish(),
   notes: z.string().trim().max(5000).nullish(),
-});
+}).refine(
+  (v) => {
+    if (!v.birthDate) return true;
+    const cutoff = new Date();
+    cutoff.setUTCFullYear(cutoff.getUTCFullYear() - 16);
+    return Date.parse(v.birthDate) <= cutoff.getTime();
+  },
+  { message: "La fecha de nacimiento debe corresponder a mayor de 16 años", path: ["birthDate"] },
+);
 export type EmployeeInput = z.infer<typeof employeeInputSchema>;
 
 export const payrollPaymentInputSchema = z
@@ -46,6 +72,7 @@ export type PayrollPaymentInput = z.infer<typeof payrollPaymentInputSchema>;
 export const setBaseSalarySchema = z.object({
   employeeId: z.uuid(),
   baseSalary: z.number().nonnegative().nullable(),
+  currency: z.string().length(3).default("COP"),
 });
 
 export const leaveRequestInputSchema = z

@@ -77,6 +77,7 @@ export async function getEmployeeCompensation(
       fullName: row.fullName,
       identification: row.identification,
       baseSalary: row.baseSalary === null ? null : Number(row.baseSalary),
+      baseSalaryCurrency: row.baseSalaryCurrency,
       payments: await payroll.listPaymentsForEmployee(employeeId),
     };
   });
@@ -89,7 +90,11 @@ export async function setEmployeeBaseSalary(
   const parsed = parseInput(setBaseSalarySchema, input);
   if (!parsed.ok) return parsed.result;
   const result = await runAction("people_compensation", "write", () =>
-    repo.setBaseSalary(parsed.data.employeeId, parsed.data.baseSalary),
+    repo.setBaseSalary(
+      parsed.data.employeeId,
+      parsed.data.baseSalary,
+      parsed.data.currency,
+    ),
   );
   if (!result.ok) return result;
   if (!result.data) return actionError("Empleado no encontrado");

@@ -21,7 +21,6 @@ export function toTeamMember(row: EmployeeRow): TeamMember {
     position: row.position,
     area: row.area,
     active: row.active,
-    contractType: row.contractType,
     contractEndDate: row.contractEndDate,
     documents: (row.documents ?? []) as EmployeeDocument[],
     annualLeaveDays: row.annualLeaveDays,
@@ -29,11 +28,39 @@ export function toTeamMember(row: EmployeeRow): TeamMember {
   };
 }
 
+function ageFrom(birthDate: string | null): number | null {
+  if (!birthDate) return null;
+  const birth = new Date(`${birthDate}T00:00:00Z`);
+  const now = new Date();
+  let age = now.getUTCFullYear() - birth.getUTCFullYear();
+  const beforeBirthday =
+    now.getUTCMonth() < birth.getUTCMonth() ||
+    (now.getUTCMonth() === birth.getUTCMonth() &&
+      now.getUTCDate() < birth.getUTCDate());
+  if (beforeBirthday) age -= 1;
+  return age;
+}
+
 export function toDetail(row: EmployeeRow): EmployeeDetail {
   return {
     ...toTeamMember(row),
     identification: row.identification,
     notes: row.notes,
+    contractType: row.contractType,
+    workSchedule: row.workSchedule,
+    eps: row.eps,
+    afp: row.afp,
+    arl: row.arl,
+    cajaCompensacion: row.cajaCompensacion,
+    birthDate: row.birthDate,
+    age: ageFrom(row.birthDate),
+    address: row.address,
+    emergencyContactName: row.emergencyContactName,
+    emergencyContactPhone: row.emergencyContactPhone,
+    bloodType: row.bloodType,
+    shirtSize: row.shirtSize,
+    pantsSize: row.pantsSize,
+    shoeSize: row.shoeSize,
   };
 }
 
@@ -70,6 +97,19 @@ function toRow(input: EmployeeInput) {
     active: input.active,
     contractType: input.contractType ?? null,
     contractEndDate: input.contractEndDate ?? null,
+    workSchedule: input.workSchedule ?? null,
+    eps: input.eps ?? null,
+    afp: input.afp ?? null,
+    arl: input.arl ?? null,
+    cajaCompensacion: input.cajaCompensacion ?? null,
+    birthDate: input.birthDate ?? null,
+    address: input.address ?? null,
+    emergencyContactName: input.emergencyContactName ?? null,
+    emergencyContactPhone: input.emergencyContactPhone ?? null,
+    bloodType: input.bloodType ?? null,
+    shirtSize: input.shirtSize ?? null,
+    pantsSize: input.pantsSize ?? null,
+    shoeSize: input.shoeSize ?? null,
     documents: input.documents ?? [],
     annualLeaveDays: input.annualLeaveDays,
     userId: input.userId ?? null,
@@ -98,11 +138,13 @@ export async function updateEmployeeById(
 export async function setBaseSalary(
   id: string,
   baseSalary: number | null,
+  currency: string,
 ): Promise<boolean> {
   const rows = await db
     .update(employees)
     .set({
       baseSalary: baseSalary === null ? null : String(baseSalary),
+      baseSalaryCurrency: currency,
       updatedAt: new Date(),
     })
     .where(eq(employees.id, id))

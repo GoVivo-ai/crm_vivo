@@ -22,6 +22,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   purchases: "Gastos y compras",
   treasury: "Tesorería",
   people: "Equipo",
+  leave: "Ausencias",
   profitability: "Rentabilidad",
 };
 

@@ -8,6 +8,7 @@ import {
   Orbit,
   ReceiptText,
   Settings2,
+  Users,
   Wallet,
   type LucideIcon,
 } from "lucide-react";
@@ -119,6 +120,21 @@ const NAV_GROUPS: NavGroup[] = [
         label: "Tesorería",
         icon: Wallet,
         accent: "var(--module-finance)",
+      },
+    ],
+  },
+  {
+    label: "Equipo",
+    items: [
+      {
+        resource: "people_directory",
+        href: "/people",
+        label: "Equipo",
+        icon: Users,
+        children: [
+          { href: "/people", label: "Directorio" },
+          { href: "/people/leave", label: "Ausencias" },
+        ],
       },
     ],
   },

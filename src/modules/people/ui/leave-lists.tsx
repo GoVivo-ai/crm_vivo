@@ -1,0 +1,98 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import type { LeaveRequestView } from "@/modules/people/domain/types";
+import { decideLeaveRequest } from "@/modules/people/application/leave-actions";
+import {
+  LEAVE_TYPE_LABELS,
+  LeaveStatusBadge,
+} from "@/modules/people/ui/labels";
+import { useActionSubmit } from "@/shared/ui/use-action-submit";
+
+function RequestLine({
+  request,
+  children,
+}: {
+  request: LeaveRequestView;
+  children?: React.ReactNode;
+}) {
+  return (
+    <li className="flex flex-wrap items-center gap-2 rounded-lg border px-3 py-2">
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-medium">
+          {request.employeeName ?? "—"} · {LEAVE_TYPE_LABELS[request.type]}
+        </p>
+        <p className="text-xs text-muted-foreground">
+          {request.startDate} → {request.endDate} · {request.days} día
+          {request.days === 1 ? "" : "s"}
+          {request.reason ? ` · ${request.reason}` : ""}
+          {request.decisionNote ? ` · Nota: ${request.decisionNote}` : ""}
+        </p>
+      </div>
+      <LeaveStatusBadge status={request.status} />
+      {children}
+    </li>
+  );
+}
+
+/** Mis solicitudes — solo lectura. */
+export function MyLeaveList({ requests }: { requests: LeaveRequestView[] }) {
+  return (
+    <ul className="flex flex-col gap-2">
+      {requests.map((r) => (
+        <RequestLine key={r.id} request={r} />
+      ))}
+    </ul>
+  );
+}
+
+/** Bandeja de aprobación (management/admin); nadie decide la propia. */
+export function ApprovalsList({
+  requests,
+}: {
+  requests: LeaveRequestView[];
+}) {
+  const { submit, pending } = useActionSubmit<unknown>();
+
+  function decide(id: string, decision: "approved" | "rejected") {
+    const decisionNote =
+      decision === "rejected"
+        ? window.prompt("Nota para quien solicitó (opcional):") || null
+        : null;
+    submit(
+      () => decideLeaveRequest({ leaveRequestId: id, decision, decisionNote }),
+      {
+        successMessage:
+          decision === "approved" ? "Solicitud aprobada" : "Solicitud rechazada",
+      },
+    );
+  }
+
+  return (
+    <ul className="flex flex-col gap-2">
+      {requests.map((r) => (
+        <RequestLine key={r.id} request={r}>
+          {r.status === "requested" && (
+            <span className="flex gap-1.5">
+              <Button
+                size="sm"
+                disabled={pending}
+                onClick={() => decide(r.id, "approved")}
+              >
+                Aprobar
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={pending}
+                onClick={() => decide(r.id, "rejected")}
+              >
+                Rechazar
+              </Button>
+            </span>
+          )}
+        </RequestLine>
+      ))}
+    </ul>
+  );
+}

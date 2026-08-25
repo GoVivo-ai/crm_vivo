@@ -30,6 +30,11 @@ export async function runAction<T>(
     if (error instanceof PermissionError || error instanceof DomainRuleError) {
       return actionError(error.message);
     }
+    // Errores de control de Next (redirect, notFound, dynamic usage) deben
+    // propagarse — el framework los maneja, no son fallos del action.
+    if (typeof error === "object" && error !== null && "digest" in error) {
+      throw error;
+    }
     console.error(`[${resource} action]`, error);
     return actionError("Error inesperado, intenta de nuevo");
   }

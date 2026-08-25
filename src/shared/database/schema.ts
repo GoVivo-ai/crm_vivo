@@ -5,5 +5,6 @@ export * from "@/modules/crm/schema";
 export * from "@/modules/clients/schema";
 export * from "@/modules/finance/schema";
 export * from "@/modules/marketing/schema";
+export * from "@/modules/purchases/schema";
 export * from "@/modules/settings/schema";
 export * from "@/shared/database/sync-runs.schema";

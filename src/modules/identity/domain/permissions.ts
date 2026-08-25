@@ -13,6 +13,11 @@ export const RESOURCES = [
   "clients",
   "finance",
   "marketing",
+  "purchases",
+  "people_directory",
+  "people_compensation",
+  "treasury",
+  "profitability",
   "settings",
 ] as const;
 export type Resource = (typeof RESOURCES)[number];
@@ -33,6 +38,11 @@ const MATRIX: Record<Role, Record<Resource, Grant>> = {
     clients: "rw",
     finance: "rw",
     marketing: "rw",
+    purchases: "rw",
+    people_directory: "rw",
+    people_compensation: "rw",
+    treasury: "rw",
+    profitability: "rw",
     settings: "rw",
   },
   management: {
@@ -41,6 +51,11 @@ const MATRIX: Record<Role, Record<Resource, Grant>> = {
     clients: "ro",
     finance: "ro",
     marketing: "ro",
+    purchases: "ro",
+    people_directory: "rw",
+    people_compensation: "ro",
+    treasury: "ro",
+    profitability: "ro",
     settings: null,
   },
   sales: {
@@ -49,6 +64,11 @@ const MATRIX: Record<Role, Record<Resource, Grant>> = {
     clients: "ro",
     finance: null,
     marketing: null,
+    purchases: null,
+    people_directory: "ro",
+    people_compensation: null,
+    treasury: null,
+    profitability: null,
     settings: null,
   },
   operations: {
@@ -58,6 +78,11 @@ const MATRIX: Record<Role, Record<Resource, Grant>> = {
     finance: null,
     // rw para vincular cuentas publicitarias a clientes (setAdAccountLink).
     marketing: "rw",
+    purchases: null,
+    people_directory: "ro",
+    people_compensation: null,
+    treasury: null,
+    profitability: null,
     settings: null,
   },
   finance: {
@@ -66,6 +91,12 @@ const MATRIX: Record<Role, Record<Resource, Grant>> = {
     clients: "ro",
     finance: "rw",
     marketing: null,
+    purchases: "rw",
+    people_directory: "ro",
+    // Compensación (nómina/salarios): tan sensible como el P&L.
+    people_compensation: "ro",
+    treasury: "rw",
+    profitability: "ro",
     settings: null,
   },
 };
@@ -87,5 +118,9 @@ export const ROUTE_RESOURCES: Record<string, Resource> = {
   "/clients": "clients",
   "/finance": "finance",
   "/marketing": "marketing",
+  "/purchases": "purchases",
+  "/people": "people_directory",
+  "/treasury": "treasury",
+  "/profitability": "profitability",
   "/settings": "settings",
 };

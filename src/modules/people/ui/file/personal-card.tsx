@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { EmployeeDetail } from "@/modules/people/domain/types";
-import { NativeSelect } from "@/shared/ui/native-select";
+import { SelectField } from "@/shared/ui/select-field";
 import { Badge, FileCard, FRow, Lbl } from "./bits";
 import { formatIsoDate, maskIdentification } from "./helpers";
 import { SectionLomo } from "./section-lomo";
@@ -86,12 +86,12 @@ export function PersonalCard({
                   <Input id="address" name="address" defaultValue={detail.address ?? ""} />
                 </F>
                 <F id="bloodType" label="RH">
-                  <NativeSelect id="bloodType" name="bloodType" defaultValue={detail.bloodType ?? ""}>
-                    <option value="">—</option>
-                    {BLOOD_TYPES.map((t) => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
-                  </NativeSelect>
+                  <SelectField
+                    name="bloodType"
+                    ariaLabel="Grupo sanguíneo RH"
+                    defaultValue={detail.bloodType ?? ""}
+                    options={BLOOD_TYPES.map((t) => ({ value: t, label: t }))}
+                  />
                 </F>
                 <F id="emergencyContactName" label="Contacto de emergencia">
                   <Input id="emergencyContactName" name="emergencyContactName" defaultValue={detail.emergencyContactName ?? ""} placeholder="Nombre (parentesco)" />

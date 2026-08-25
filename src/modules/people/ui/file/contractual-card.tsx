@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { EmployeeDetail } from "@/modules/people/domain/types";
-import { NativeSelect } from "@/shared/ui/native-select";
+import { SelectField } from "@/shared/ui/select-field";
 import { FileCard, FRow, Lbl } from "./bits";
 import {
   CONTRACT_TYPE_LABELS,
@@ -72,18 +72,14 @@ export function ContractualCard({
           >
             <div className="grid grid-cols-2 gap-3">
               <F id="contractType" label="Tipo de contrato">
-                <NativeSelect
-                  id="contractType"
+                <SelectField
                   name="contractType"
+                  ariaLabel="Tipo de contrato"
                   defaultValue={detail.contractType ?? ""}
-                >
-                  <option value="">—</option>
-                  {Object.entries(CONTRACT_TYPE_LABELS).map(([v, l]) => (
-                    <option key={v} value={v}>
-                      {l}
-                    </option>
-                  ))}
-                </NativeSelect>
+                  options={Object.entries(CONTRACT_TYPE_LABELS).map(
+                    ([value, label]) => ({ value, label }),
+                  )}
+                />
               </F>
               <F id="workSchedule" label="Jornada">
                 <Input id="workSchedule" name="workSchedule" defaultValue={detail.workSchedule ?? ""} placeholder="Tiempo completo" />

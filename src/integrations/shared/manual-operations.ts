@@ -1,16 +1,15 @@
 import type {
-  AlegraCredentials,
   ClickupCredentials,
   Integration,
   IntegrationPayload,
   MetaAdsCredentials,
+  QuickbooksCredentials,
 } from "@/modules/settings/domain/types";
-import { testAlegraConnection } from "@/integrations/alegra/test-connection";
 import { testClickUpConnection } from "@/integrations/clickup/test-connection";
 import { testMetaConnection } from "@/integrations/meta/test-connection";
-import { syncAlegra } from "@/integrations/alegra/sync-alegra";
-import { syncAlegraErp } from "@/integrations/alegra/sync-alegra-erp";
+import { testQuickbooksConnection } from "@/integrations/quickbooks/test-connection";
 import { syncClickUp } from "@/integrations/clickup/sync-clickup";
+import { syncQuickbooks } from "@/integrations/quickbooks/sync-quickbooks";
 import {
   discoverMetaAdAccounts,
   syncMeta,
@@ -34,8 +33,8 @@ export async function testConnection(
 ): Promise<ConnectionTestResult> {
   try {
     const result =
-      integration === "alegra"
-        ? await testAlegraConnection(payload as AlegraCredentials)
+      integration === "quickbooks"
+        ? await testQuickbooksConnection(payload as QuickbooksCredentials)
         : integration === "meta_ads"
           ? await testMetaConnection(payload as MetaAdsCredentials)
           : await testClickUpConnection(payload as ClickupCredentials);
@@ -65,14 +64,10 @@ export async function discoverAdAccounts(): Promise<{
 
 export async function runManualSync(
   integration: Integration,
-  /** Solo aplica a alegra: 'core' = invoices/pagos/snapshots, 'erp' = bills/equipo/tesorería. */
-  scope: "core" | "erp" = "core",
 ): Promise<{ ok: boolean; error: string | null }> {
   try {
-    if (integration === "alegra") {
-      if (scope === "erp") await syncAlegraErp();
-      else await syncAlegra();
-    } else if (integration === "meta_ads") await syncMeta();
+    if (integration === "quickbooks") await syncQuickbooks();
+    else if (integration === "meta_ads") await syncMeta();
     else await syncClickUp();
     return { ok: true, error: null };
   } catch (error) {

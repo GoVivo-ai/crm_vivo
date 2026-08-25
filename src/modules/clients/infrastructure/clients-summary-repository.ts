@@ -49,3 +49,40 @@ export async function countProjectsByHealth(): Promise<
   for (const r of rows) result[r.health] = r.count;
   return result;
 }
+
+export type AccountProjectHealth = {
+  accountId: string;
+  accountName: string;
+  /** Peor salud entre los proyectos de la cuenta (sin contar unknown). */
+  worstHealth: ProjectHealth;
+};
+
+/** Cuentas activas con la peor salud de sus proyectos. */
+export async function listAccountsWorstHealth(): Promise<
+  AccountProjectHealth[]
+> {
+  const rows = await db
+    .select({
+      accountId: accounts.id,
+      accountName: accounts.name,
+      worstHealth: sql<string>`coalesce(
+        max(case ${projects.health}
+          when 'red' then 3 when 'yellow' then 2 when 'green' then 1
+          else null end), 0)`,
+    })
+    .from(accounts)
+    .leftJoin(projects, eq(projects.accountId, accounts.id))
+    .where(eq(accounts.status, "active"))
+    .groupBy(accounts.id, accounts.name);
+  const decode: Record<string, ProjectHealth> = {
+    "3": "red",
+    "2": "yellow",
+    "1": "green",
+    "0": "unknown",
+  };
+  return rows.map((r) => ({
+    accountId: r.accountId,
+    accountName: r.accountName,
+    worstHealth: decode[String(r.worstHealth)] ?? "unknown",
+  }));
+}

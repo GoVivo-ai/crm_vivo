@@ -2,6 +2,7 @@
 
 import type { ActionResult } from "@/shared/actions/result";
 import { runAction } from "@/modules/identity/application/run-action";
+import { can } from "@/modules/identity/domain/permissions";
 import { listAccountsWorstHealth } from "@/modules/clients/infrastructure/clients-summary-repository";
 import { getPaymentsByEmployeeMonth } from "@/modules/people/infrastructure/payroll-repository";
 import {
@@ -13,7 +14,9 @@ export type ClientHealthChip = {
   accountId: string;
   accountName: string;
   bucket: "green" | "yellow" | "red";
-  /** Margen COP de los últimos 3 meses, si hay datos de rentabilidad. */
+  /** Margen COP de los últimos 3 meses. SOLO viaja para roles con
+   * profitability:read (finance/management/admin); para el resto el
+   * bucket ya refleja el margen pero la cifra va undefined. */
   marginCop?: number;
 };
 
@@ -32,7 +35,8 @@ const isoDate = (d: Date) => d.toISOString().slice(0, 10);
 export async function getClientsHealthList(): Promise<
   ActionResult<ClientHealthChip[]>
 > {
-  return runAction("clients", "read", async () => {
+  return runAction("clients", "read", async (user) => {
+    const canSeeMargin = can(user.role, "profitability", "read");
     const now = new Date();
     const period = {
       from: isoDate(new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 2, 1))),
@@ -78,7 +82,12 @@ export async function getClientsHealthList(): Promise<
           if ((cost ?? 0) >= revenueCop * 2) bucket = "red";
         }
       }
-      return { accountId: row.accountId, accountName: row.accountName, bucket, marginCop };
+      return {
+        accountId: row.accountId,
+        accountName: row.accountName,
+        bucket,
+        marginCop: canSeeMargin ? marginCop : undefined,
+      };
     });
   });
 }

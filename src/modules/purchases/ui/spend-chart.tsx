@@ -46,10 +46,10 @@ export function SpendChart({ spend }: { spend: MonthlySpend[] }) {
             <ChartTooltipContent
               labelFormatter={(label) => monthLabel(String(label))}
               formatter={(value, _name, item) => {
-                const bills = (item?.payload as MonthlySpend | undefined)
-                  ?.bills;
+                const expenses = (item?.payload as MonthlySpend | undefined)
+                  ?.expenses;
                 return `${formatMoney(Number(value))}${
-                  bills !== undefined ? ` · ${bills} facturas` : ""
+                  expenses !== undefined ? ` · ${expenses} gastos` : ""
                 }`;
               }}
             />

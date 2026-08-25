@@ -108,10 +108,8 @@ export default async function DashboardHome() {
                   detail={`${finance.data.receivables.openInvoices} facturas abiertas`}
                 />
                 <StatTile
-                  label="Saldo en bancos"
-                  amount={
-                    finance.data.cashflowCurrentMonth?.finalBalance ?? null
-                  }
+                  label="Flujo neto del mes"
+                  amount={finance.data.cashflowCurrentMonth?.netCop ?? null}
                 />
               </div>
             ) : (

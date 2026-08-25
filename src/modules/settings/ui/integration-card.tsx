@@ -1,20 +1,13 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Image from "next/image";
-import { useState } from "react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import {
   clearIntegrationCredentials,
-  setIntegrationCredentials,
   testIntegrationConnection,
 } from "@/modules/settings/application/integration-credentials-actions";
 import { runSyncNow } from "@/modules/settings/application/run-sync-now-action";
 import type { IntegrationStatus } from "@/modules/settings/domain/types";
-import { CredentialsForm } from "@/modules/settings/ui/credentials-form";
 import { IntegrationStatusLine } from "@/modules/settings/ui/integration-status-line";
 import type { IntegrationMeta } from "@/modules/settings/ui/integrations-catalog";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
@@ -26,67 +19,31 @@ type IntegrationCardProps = {
   today: string;
 };
 
+/** Tarjeta de integración — conexión SOLO por OAuth (cero tokens manuales). */
 export function IntegrationCard({ meta, status, today }: IntegrationCardProps) {
-  // Siempre cerrada al inicio (decisión de Victor); solo la abre el usuario.
-  const [open, setOpen] = useState(false);
-  const [values, setValues] = useState<Record<string, string>>({});
-  const { submit, pending, fieldErrors } = useActionSubmit<unknown>();
-  const reducedMotion = useReducedMotion();
-
-  const typedCount = meta.fields.filter((f) => values[f.name]?.trim()).length;
-
-  function typedCredentials(): Record<string, string> | null {
-    if (typedCount === 0) return null;
-    if (typedCount < meta.fields.length) {
-      toast.error("Completa todos los campos para usar esas credenciales");
-      return null;
-    }
-    return Object.fromEntries(
-      meta.fields.map((f) => [f.name, values[f.name].trim()]),
-    );
-  }
-
-  function onSave(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const credentials = typedCredentials();
-    if (!credentials) return;
-    submit(
-      () =>
-        setIntegrationCredentials({ integration: meta.integration, credentials }),
-      {
-        successMessage: "Credenciales guardadas",
-        onSuccess: () => {
-          setValues({});
-          setOpen(false);
-        },
-      },
-    );
-  }
+  const { submit, pending } = useActionSubmit<unknown>();
+  const connected = status.configured || status.envFallbackAvailable;
 
   function onTest() {
-    const credentials = typedCount > 0 ? typedCredentials() : null;
-    if (typedCount > 0 && credentials === null) return;
     submit(
       () =>
-        testIntegrationConnection({
-          integration: meta.integration,
-          ...(credentials ? { credentials } : {}),
-        }).then((r) =>
-          r.ok && !r.data.ok
-            ? { ok: false as const, error: r.data.error ?? "Conexión fallida" }
-            : r,
+        testIntegrationConnection({ integration: meta.integration }).then(
+          (r) =>
+            r.ok && !r.data.ok
+              ? {
+                  ok: false as const,
+                  error: r.data.error ?? "Conexión fallida",
+                }
+              : r,
         ),
       { successMessage: "Conexión OK" },
     );
   }
 
-  function onSyncNow(scope?: "core" | "erp") {
+  function onSyncNow() {
     submit(
       () =>
-        runSyncNow({
-          integration: meta.integration,
-          ...(scope ? { scope } : {}),
-        }).then((r) =>
+        runSyncNow({ integration: meta.integration }).then((r) =>
           r.ok && !r.data.ok
             ? { ok: false as const, error: r.data.error ?? "El sync falló" }
             : r,
@@ -95,14 +52,16 @@ export function IntegrationCard({ meta, status, today }: IntegrationCardProps) {
     );
   }
 
-  function onClear() {
-    const question = meta.oauth
-      ? `¿Desconectar ${meta.label}? Podrás volver a conectar cuando quieras.`
-      : `¿Quitar las credenciales guardadas de ${meta.label}?`;
-    if (!window.confirm(question)) return;
+  function onDisconnect() {
+    if (
+      !window.confirm(
+        `¿Desconectar ${meta.label}? Podrás volver a conectar cuando quieras.`,
+      )
+    )
+      return;
     submit(
       () => clearIntegrationCredentials({ integration: meta.integration }),
-      { successMessage: "Credenciales eliminadas" },
+      { successMessage: `${meta.label} desconectado` },
     );
   }
 
@@ -115,8 +74,7 @@ export function IntegrationCard({ meta, status, today }: IntegrationCardProps) {
             alt=""
             width={30}
             height={30}
-            // Logos de 30px (dos son SVG): el optimizador no aporta y
-            // devuelve 400 para SVG sin dangerouslyAllowSVG global.
+            // Logos pequeños (SVG incluidos): sin optimizador.
             unoptimized
             className="size-[30px] object-contain"
           />
@@ -143,46 +101,30 @@ export function IntegrationCard({ meta, status, today }: IntegrationCardProps) {
                 (Date.parse(status.tokenExpiresAt) - Date.parse(today)) /
                   86_400_000,
               );
-              return days >= 0 ? ` · token vence en ${days} d` : "";
+              return days >= 0 ? ` · conexión vence en ${days} d` : "";
             })()}
         </p>
       )}
 
-      <div className="mt-auto flex flex-wrap gap-2">
-        {meta.oauth ? (
-          // OAuth (cero tokens manuales): navegación normal al flujo.
-          status.reconnectRequired ? (
-            <Button
-              variant="destructive"
-              size="sm"
-              render={<a href={`/api/oauth/${meta.integration}/start`} />}
-            >
-              Reconectar con {meta.label}
-            </Button>
-          ) : !status.configured ? (
-            <Button
-              size="sm"
-              render={<a href={`/api/oauth/${meta.integration}/start`} />}
-            >
-              Conectar con {meta.label}
-            </Button>
-          ) : null
-        ) : (
+      <div className="mt-auto flex flex-wrap items-center gap-2">
+        {status.reconnectRequired ? (
+          <Button
+            variant="destructive"
+            size="sm"
+            render={<a href={`/api/oauth/${meta.integration}/start`} />}
+          >
+            Reconectar con {meta.label}
+          </Button>
+        ) : !status.configured ? (
+          <Button
+            size="sm"
+            render={<a href={`/api/oauth/${meta.integration}/start`} />}
+          >
+            Conectar con {meta.label}
+          </Button>
+        ) : null}
+        {connected && (
           <>
-            <Button
-              variant="outline"
-              size="sm"
-              aria-expanded={open}
-              onClick={() => setOpen((v) => !v)}
-            >
-              {status.configured ? "Credenciales" : "Configurar credenciales"}
-              <ChevronDown
-                className={cn(
-                  "size-3.5 transition-transform",
-                  open && "rotate-180",
-                )}
-              />
-            </Button>
             <Button
               variant="outline"
               size="sm"
@@ -191,28 +133,15 @@ export function IntegrationCard({ meta, status, today }: IntegrationCardProps) {
             >
               Probar conexión
             </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={pending}
+              onClick={onSyncNow}
+            >
+              Sincronizar
+            </Button>
           </>
-        )}
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={pending || (!status.configured && !status.envFallbackAvailable)}
-          onClick={() => onSyncNow()}
-        >
-          Sincronizar
-        </Button>
-        {meta.integration === "alegra" && (
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={
-              pending || (!status.configured && !status.envFallbackAvailable)
-            }
-            title="Gastos, nómina y bancos (módulos ERP)"
-            onClick={() => onSyncNow("erp")}
-          >
-            Sincronizar ERP
-          </Button>
         )}
         {status.configured && (
           <Button
@@ -220,38 +149,16 @@ export function IntegrationCard({ meta, status, today }: IntegrationCardProps) {
             size="sm"
             disabled={pending}
             className="text-muted-foreground hover:text-destructive"
-            onClick={onClear}
+            onClick={onDisconnect}
           >
-            {meta.oauth ? "Desconectar" : "Quitar"}
+            Desconectar
           </Button>
         )}
       </div>
 
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            key="form"
-            initial={reducedMotion ? false : { height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={reducedMotion ? undefined : { height: 0, opacity: 0 }}
-            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            className="overflow-hidden"
-          >
-            <CredentialsForm
-              meta={meta}
-              configured={status.configured}
-              values={values}
-              onChange={(name, value) =>
-                setValues((prev) => ({ ...prev, [name]: value }))
-              }
-              fieldErrors={fieldErrors}
-              pending={pending}
-              typedCount={typedCount}
-              onSubmit={onSave}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {!status.configured && (
+        <p className="text-xs text-muted-foreground">{meta.helpText}.</p>
+      )}
     </section>
   );
 }

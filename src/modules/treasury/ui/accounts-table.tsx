@@ -8,7 +8,9 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import type { BankAccountView } from "@/modules/treasury/domain/types";
+import { BankAccountForm } from "@/modules/treasury/ui/bank-account-form";
 import { formatAccountingMoney, formatCurrency } from "@/shared/ui/format";
+import { SourceBadge } from "@/shared/ui/source-badge";
 
 const TYPE_LABELS: Record<string, string> = {
   bank: "Banco",
@@ -16,7 +18,7 @@ const TYPE_LABELS: Record<string, string> = {
   "credit-card": "Tarjeta de crédito",
 };
 
-/** Cuentas bancarias con su saldo propio y el normalizado a COP. */
+/** Cuentas con saldo propio y consolidado; las manuales se editan aquí. */
 export function BankAccountsTable({
   accounts,
 }: {
@@ -30,50 +32,54 @@ export function BankAccountsTable({
           <TableHead>Tipo</TableHead>
           <TableHead className="text-right">Saldo</TableHead>
           <TableHead className="text-right">En COP</TableHead>
+          <TableHead>Fuente</TableHead>
+          <TableHead className="text-right">Acciones</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {accounts.map((account) => {
-          const inactive = account.status !== "active";
-          return (
-            <TableRow
-              key={account.id}
-              className={cn(inactive && "opacity-50")}
+        {accounts.map((account) => (
+          <TableRow
+            key={account.id}
+            className={cn(!account.isActive && "opacity-50")}
+          >
+            <TableCell>
+              <p className="text-sm font-medium">{account.name}</p>
+              {account.balanceUpdatedAt && (
+                <p className="text-xs text-muted-foreground">
+                  saldo al{" "}
+                  {account.balanceUpdatedAt.toISOString().slice(0, 10)}
+                </p>
+              )}
+            </TableCell>
+            <TableCell className="text-sm">
+              {TYPE_LABELS[account.type ?? ""] ?? (account.type || "—")}
+              {!account.isActive && (
+                <span className="ml-1.5 text-xs text-muted-foreground">
+                  · inactiva
+                </span>
+              )}
+            </TableCell>
+            <TableCell className="text-right font-mono text-xs">
+              {formatCurrency(account.balance, account.currencyCode)}
+            </TableCell>
+            <TableCell
+              className={cn(
+                "text-right font-mono text-xs",
+                account.balanceCop < 0 && "text-health-critical",
+              )}
             >
-              <TableCell>
-                <p className="text-sm font-medium">{account.name}</p>
-                {account.number && (
-                  <p className="font-mono text-xs text-muted-foreground">
-                    {account.number}
-                  </p>
-                )}
-              </TableCell>
-              <TableCell className="text-sm">
-                {TYPE_LABELS[account.type ?? ""] ?? (account.type || "—")}
-                {inactive && (
-                  <span className="ml-1.5 text-xs text-muted-foreground">
-                    · inactiva
-                  </span>
-                )}
-              </TableCell>
-              <TableCell className="text-right font-mono text-xs">
-                {account.balance !== null
-                  ? formatCurrency(account.balance, account.currencyCode)
-                  : "—"}
-              </TableCell>
-              <TableCell
-                className={cn(
-                  "text-right font-mono text-xs",
-                  (account.balanceCop ?? 0) < 0 && "text-health-critical",
-                )}
-              >
-                {account.balanceCop !== null
-                  ? formatAccountingMoney(account.balanceCop)
-                  : "—"}
-              </TableCell>
-            </TableRow>
-          );
-        })}
+              {formatAccountingMoney(account.balanceCop)}
+            </TableCell>
+            <TableCell>
+              <SourceBadge source={account.source} />
+            </TableCell>
+            <TableCell className="text-right">
+              {account.source === "manual" && (
+                <BankAccountForm account={account} />
+              )}
+            </TableCell>
+          </TableRow>
+        ))}
       </TableBody>
     </Table>
   );

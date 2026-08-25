@@ -14,54 +14,80 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  getEmployeeProfileDetail,
-  upsertEmployeeProfile,
+  createEmployee,
+  getEmployeeDetail,
+  updateEmployee,
 } from "@/modules/people/application/team-actions";
 import type {
-  EmployeeProfileDetail,
+  EmployeeDetail,
   TeamMember,
 } from "@/modules/people/domain/types";
 import { FieldError } from "@/shared/ui/field-error";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
 
+function Field({
+  id,
+  label,
+  errors,
+  children,
+}: {
+  id: string;
+  label: string;
+  errors?: string[];
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <Label htmlFor={id}>{label}</Label>
+      {children}
+      <FieldError errors={errors} />
+    </div>
+  );
+}
+
 /**
- * Expediente del empleado (solo management/admin). La PII (cédula, notas)
- * no viaja en el directorio: se carga al abrir vía getEmployeeProfileDetail.
+ * Alta/edición de empleado (people_directory:write). La PII (cédula,
+ * notas) se carga on-demand con getEmployeeDetail al editar.
  */
-export function ProfileForm({ member }: { member: TeamMember }) {
+export function EmployeeForm({ member }: { member?: TeamMember }) {
   const [open, setOpen] = useState(false);
-  const [detail, setDetail] = useState<EmployeeProfileDetail | null>(null);
+  const [detail, setDetail] = useState<EmployeeDetail | null>(null);
   const { submit, pending, fieldErrors } = useActionSubmit<unknown>();
+  const editing = member !== undefined;
+  const ready = !editing || detail !== null;
 
   useEffect(() => {
-    if (!open || detail) return;
-    getEmployeeProfileDetail(member.alegraEmployeeId).then((result) => {
-      if (result.ok) {
-        setDetail(result.data);
-      } else {
+    if (!open || !editing || detail) return;
+    getEmployeeDetail(member.id).then((result) => {
+      if (result.ok) setDetail(result.data);
+      else {
         toast.error(result.error);
         setOpen(false);
       }
     });
-  }, [open, detail, member.alegraEmployeeId]);
+  }, [open, editing, detail, member]);
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const rawDays = form.get("annualLeaveDays") as string;
+    const input = {
+      fullName: form.get("fullName"),
+      identification: (form.get("identification") as string) || null,
+      email: (form.get("email") as string) || null,
+      phone: (form.get("phone") as string) || null,
+      hiredAt: (form.get("hiredAt") as string) || null,
+      position: (form.get("position") as string) || null,
+      area: (form.get("area") as string) || null,
+      active: form.get("active") === "on",
+      contractType: (form.get("contractType") as string) || null,
+      contractEndDate: (form.get("contractEndDate") as string) || null,
+      annualLeaveDays: Number(form.get("annualLeaveDays") || 15),
+      notes: (form.get("notes") as string) || null,
+    };
     submit(
-      () =>
-        upsertEmployeeProfile({
-          alegraEmployeeId: member.alegraEmployeeId,
-          position: (form.get("position") as string) || null,
-          area: (form.get("area") as string) || null,
-          contractType: (form.get("contractType") as string) || null,
-          contractEndDate: (form.get("contractEndDate") as string) || null,
-          annualLeaveDays: rawDays === "" ? 15 : Number(rawDays),
-          notes: (form.get("notes") as string) || null,
-        }),
+      () => (editing ? updateEmployee(member.id, input) : createEmployee(input)),
       {
-        successMessage: "Expediente guardado",
+        successMessage: editing ? "Empleado actualizado" : "Empleado creado",
         onSuccess: () => {
           setDetail(null);
           setOpen(false);
@@ -72,89 +98,69 @@ export function ProfileForm({ member }: { member: TeamMember }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button variant="outline" size="sm" />}>
-        {member.profile ? "Expediente" : "Crear expediente"}
+      <DialogTrigger
+        render={<Button variant={editing ? "outline" : "default"} size="sm" />}
+      >
+        {editing ? "Editar" : "+ Nuevo empleado"}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Expediente · {member.fullName}</DialogTitle>
+          <DialogTitle>
+            {editing ? `Editar · ${member.fullName}` : "Nuevo empleado"}
+          </DialogTitle>
         </DialogHeader>
-        {!detail ? (
+        {!ready ? (
           <p className="py-6 text-center text-sm text-muted-foreground">
             Cargando expediente…
           </p>
         ) : (
           <form onSubmit={onSubmit} className="flex flex-col gap-4">
-            {detail.identification && (
-              <p className="text-xs text-muted-foreground">
-                Identificación:{" "}
-                <span className="font-mono">{detail.identification}</span>
-              </p>
-            )}
             <div className="grid grid-cols-2 gap-3">
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="position">Cargo</Label>
-                <Input
-                  id="position"
-                  name="position"
-                  defaultValue={detail.position ?? member.position ?? ""}
-                />
-                <FieldError errors={fieldErrors.position} />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="area">Área</Label>
-                <Input
-                  id="area"
-                  name="area"
-                  defaultValue={detail.area ?? member.area ?? ""}
-                />
-                <FieldError errors={fieldErrors.area} />
-              </div>
+              <Field id="fullName" label="Nombre completo" errors={fieldErrors.fullName}>
+                <Input id="fullName" name="fullName" defaultValue={member?.fullName ?? ""} required />
+              </Field>
+              <Field id="identification" label="Identificación" errors={fieldErrors.identification}>
+                <Input id="identification" name="identification" defaultValue={detail?.identification ?? ""} />
+              </Field>
+              <Field id="email" label="Email" errors={fieldErrors.email}>
+                <Input id="email" name="email" type="email" defaultValue={member?.email ?? ""} />
+              </Field>
+              <Field id="phone" label="Teléfono" errors={fieldErrors.phone}>
+                <Input id="phone" name="phone" defaultValue={member?.phone ?? ""} />
+              </Field>
+              <Field id="position" label="Cargo" errors={fieldErrors.position}>
+                <Input id="position" name="position" defaultValue={member?.position ?? ""} />
+              </Field>
+              <Field id="area" label="Área" errors={fieldErrors.area}>
+                <Input id="area" name="area" defaultValue={member?.area ?? ""} />
+              </Field>
+              <Field id="hiredAt" label="Ingreso" errors={fieldErrors.hiredAt}>
+                <Input id="hiredAt" name="hiredAt" type="date" defaultValue={member?.hiredAt ?? ""} />
+              </Field>
+              <Field id="contractType" label="Tipo de contrato">
+                <Input id="contractType" name="contractType" defaultValue={member?.contractType ?? ""} />
+              </Field>
+              <Field id="contractEndDate" label="Contrato vence" errors={fieldErrors.contractEndDate}>
+                <Input id="contractEndDate" name="contractEndDate" type="date" defaultValue={member?.contractEndDate ?? ""} />
+              </Field>
+              <Field id="annualLeaveDays" label="Días de vacaciones/año" errors={fieldErrors.annualLeaveDays}>
+                <Input id="annualLeaveDays" name="annualLeaveDays" type="number" min="0" max="60" defaultValue={member?.annualLeaveDays ?? 15} />
+              </Field>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="contractType">Tipo de contrato</Label>
-                <Input
-                  id="contractType"
-                  name="contractType"
-                  placeholder="Prestación, término fijo…"
-                  defaultValue={detail.contractType ?? ""}
-                />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="contractEndDate">Vence</Label>
-                <Input
-                  id="contractEndDate"
-                  name="contractEndDate"
-                  type="date"
-                  defaultValue={detail.contractEndDate ?? ""}
-                />
-                <FieldError errors={fieldErrors.contractEndDate} />
-              </div>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="annualLeaveDays">Días de vacaciones al año</Label>
-              <Input
-                id="annualLeaveDays"
-                name="annualLeaveDays"
-                type="number"
-                min="0"
-                max="60"
-                defaultValue={detail.annualLeaveDays}
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                name="active"
+                defaultChecked={member?.active ?? true}
+                className="size-4 accent-[var(--module-crm)]"
               />
-              <FieldError errors={fieldErrors.annualLeaveDays} />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="notes">Notas</Label>
-              <Textarea
-                id="notes"
-                name="notes"
-                rows={3}
-                defaultValue={detail.notes ?? ""}
-              />
-            </div>
+              Activo
+            </label>
+            <Field id="notes" label="Notas">
+              <Textarea id="notes" name="notes" rows={2} defaultValue={detail?.notes ?? ""} />
+            </Field>
             <Button type="submit" disabled={pending}>
-              {pending ? "Guardando…" : "Guardar expediente"}
+              {pending ? "Guardando…" : "Guardar empleado"}
             </Button>
           </form>
         )}

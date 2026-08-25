@@ -54,11 +54,11 @@ export default async function AccountDetailPage({
         <Item label="Sitio web" value={account.website} />
         <Item label="Creada" value={formatDate(account.createdAt)} />
         <Item
-          label="Alegra"
+          label="Facturación (QuickBooks)"
           value={
-            account.alegraContactId ? (
+            account.billingCustomerId ? (
               <span className="font-mono text-xs">
-                {account.alegraContactId}
+                {account.billingCustomerId}
               </span>
             ) : (
               <span className="text-health-warn">Sin vincular</span>

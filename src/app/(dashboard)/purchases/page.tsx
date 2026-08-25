@@ -1,9 +1,11 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getSyncStatus } from "@/modules/finance/application/finance-actions";
 import { AgingChart } from "@/modules/finance/ui/aging-chart";
 import { StatTile } from "@/modules/finance/ui/stat-tile";
 import { getPurchasesDashboard } from "@/modules/purchases/application/purchases-actions";
+import { ExpenseForm } from "@/modules/purchases/ui/expense-form";
 import { SpendChart } from "@/modules/purchases/ui/spend-chart";
 import {
   CostCenterTable,
@@ -46,7 +48,7 @@ export default async function PurchasesPage({
   const { period, spendByMonth, byCostCenter, byProvider, payables } =
     dashboard.data;
   const currentMonth = spendByMonth.at(-1) ?? null;
-  const alegra = syncStatus.ok ? syncStatus.data.alegra : null;
+  const quickbooks = syncStatus.ok ? syncStatus.data.quickbooks : null;
 
   return (
     <div className="flex flex-col gap-4">
@@ -57,11 +59,22 @@ export default async function PurchasesPage({
             Periodo: {period.from} → {period.to}
           </p>
         </div>
-        <SyncStatus
-          source="Alegra"
-          syncedAt={alegra?.status === "success" ? alegra.finishedAt : null}
-          error={alegra?.status === "error" ? alegra.error : null}
-        />
+        <div className="flex items-center gap-2">
+          <SyncStatus
+            source="QuickBooks"
+            syncedAt={
+              quickbooks?.status === "success" ? quickbooks.finishedAt : null
+            }
+            error={quickbooks?.status === "error" ? quickbooks.error : null}
+          />
+          <Link
+            href="/purchases/expenses"
+            className="text-sm text-muted-foreground hover:text-foreground"
+          >
+            Ver gastos
+          </Link>
+          <ExpenseForm />
+        </div>
       </div>
 
       <form
@@ -86,7 +99,7 @@ export default async function PurchasesPage({
         <StatTile
           label="Gasto del mes"
           amount={currentMonth?.totalCop ?? null}
-          detail={currentMonth ? `${currentMonth.bills} facturas` : undefined}
+          detail={currentMonth ? `${currentMonth.expenses} gastos` : undefined}
         />
         <StatTile
           label="Por pagar"

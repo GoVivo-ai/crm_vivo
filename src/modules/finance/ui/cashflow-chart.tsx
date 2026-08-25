@@ -1,9 +1,10 @@
 "use client";
 
 import {
+  Bar,
+  BarChart,
   CartesianGrid,
-  Line,
-  LineChart,
+  Cell,
   ReferenceLine,
   XAxis,
   YAxis,
@@ -14,41 +15,38 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import type { CashflowSeriesPoint } from "@/modules/finance/domain/types";
+import type { CashflowPoint } from "@/modules/finance/domain/types";
 import {
   formatAccountingMoney,
   formatCompactMoney,
 } from "@/shared/ui/format";
 
 const config = {
-  finalBalance: { label: "Saldo en bancos", color: "var(--chart-2)" },
+  netCop: { label: "Flujo neto", color: "var(--chart-2)" },
 } satisfies ChartConfig;
 
-function dayLabel(date: string): string {
-  return `${date.slice(8, 10)}/${date.slice(5, 7)}`;
-}
+const POSITIVE = "#1e5fbf";
+const NEGATIVE = "#b3261e";
+
+const MONTHS = "ene feb mar abr may jun jul ago sep oct nov dic".split(" ");
+const monthLabel = (m: string) =>
+  `${MONTHS[Number(m.slice(5, 7)) - 1] ?? m} ${m.slice(2, 4)}`;
 
 /**
- * Saldo final en bancos por día. El dominio NUNCA se recorta en cero:
- * hay saldos negativos reales y la línea debe cruzar el cero visible.
+ * Flujo de caja neto mensual desde movimientos bancarios registrados.
+ * Dominio sin recorte en cero; el tooltip desglosa entradas y salidas.
  */
-export function CashflowChart({ series }: { series: CashflowSeriesPoint[] }) {
-  const data = series.map((p) => ({
-    date: p.date,
-    finalBalance: p.summary.finalBalance,
-  }));
-
+export function CashflowChart({ series }: { series: CashflowPoint[] }) {
   return (
     <ChartContainer config={config} className="h-56 w-full">
-      <LineChart data={data} margin={{ left: 8, right: 8 }}>
+      <BarChart data={series} margin={{ left: 8, right: 8 }}>
         <CartesianGrid vertical={false} strokeOpacity={0.35} />
         <XAxis
-          dataKey="date"
-          tickFormatter={dayLabel}
+          dataKey="month"
+          tickFormatter={monthLabel}
           tickLine={false}
           axisLine={false}
           fontSize={11}
-          minTickGap={24}
         />
         <YAxis
           domain={["dataMin", "dataMax"]}
@@ -62,20 +60,23 @@ export function CashflowChart({ series }: { series: CashflowSeriesPoint[] }) {
         <ChartTooltip
           content={
             <ChartTooltipContent
-              labelFormatter={(label) => dayLabel(String(label))}
-              formatter={(value) => formatAccountingMoney(Number(value))}
+              labelFormatter={(label) => monthLabel(String(label))}
+              formatter={(value, _name, item) => {
+                const p = item?.payload as CashflowPoint | undefined;
+                const detail = p
+                  ? ` (entra ${formatCompactMoney(p.inflowCop)} · sale ${formatCompactMoney(p.outflowCop)})`
+                  : "";
+                return `${formatAccountingMoney(Number(value))}${detail}`;
+              }}
             />
           }
         />
-        <Line
-          dataKey="finalBalance"
-          type="monotone"
-          stroke="var(--color-finalBalance)"
-          strokeWidth={2}
-          dot={false}
-          activeDot={{ r: 4 }}
-        />
-      </LineChart>
+        <Bar dataKey="netCop" radius={[4, 4, 0, 0]} maxBarSize={26}>
+          {series.map((p) => (
+            <Cell key={p.month} fill={p.netCop < 0 ? NEGATIVE : POSITIVE} />
+          ))}
+        </Bar>
+      </BarChart>
     </ChartContainer>
   );
 }

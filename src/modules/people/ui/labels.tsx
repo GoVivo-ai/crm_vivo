@@ -30,8 +30,7 @@ export function LeaveStatusBadge({ status }: { status: LeaveStatus }) {
   );
 }
 
-/** Badge de estado real del empleado (derivado del contrato, no del
- * status crudo de Alegra). */
+/** Badge de estado del empleado (campo `active` del directorio). */
 export function MemberStatusBadge({ active }: { active: boolean }) {
   return (
     <Badge

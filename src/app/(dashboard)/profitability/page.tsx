@@ -31,7 +31,7 @@ export default async function ProfitabilityPage() {
           label="Costo de nómina del periodo"
           value={totalPayrollCop}
           kind="accounting"
-          detail="serie: nómina Colombia (desde pagos Alegra)"
+          detail="serie: nómina (pagos registrados)"
         />
         <Kpi
           label="Costo sin asignar (compañía)"
@@ -55,7 +55,7 @@ export default async function ProfitabilityPage() {
       {accounts.length === 0 ? (
         <EmptyState
           title="Sin datos de rentabilidad"
-          hint="Asigna personas a clientes en Asignaciones y sincroniza Alegra para cruzar ingresos con costo de personal."
+          hint="Asigna personas a clientes en Asignaciones y registra facturas y pagos de nómina para cruzar ingresos con costo de personal."
         />
       ) : (
         <section className="overflow-x-auto rounded-lg border bg-card">
@@ -64,11 +64,10 @@ export default async function ProfitabilityPage() {
       )}
 
       <p className="max-w-3xl text-xs text-muted-foreground">
-        Método: el costo de personal se prorratea del costo real de nómina por
-        capacidad total y supone costo igual por empleado; usa el headcount
-        actual ({activeEmployees}) para toda la serie. Costo laboral solo
-        Colombia (falta QuickBooks). La pauta gestionada se muestra aparte y
-        no está restada del margen.
+        Método: costo real desde los pagos de nómina registrados por persona,
+        prorrateado por su % de dedicación; lo no asignado queda como costo de
+        compañía. Headcount activo: {activeEmployees}. La pauta gestionada se
+        muestra aparte y no está restada del margen.
       </p>
     </div>
   );

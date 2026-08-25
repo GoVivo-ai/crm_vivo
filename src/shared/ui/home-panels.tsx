@@ -53,7 +53,7 @@ export function MoneyTile({
 }
 
 const SOURCE_LABELS: Record<SyncSource, string> = {
-  alegra: "Alegra",
+  quickbooks: "QuickBooks",
   clickup: "ClickUp",
   meta_ads: "Meta Ads",
 };

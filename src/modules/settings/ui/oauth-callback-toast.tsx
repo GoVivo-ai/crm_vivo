@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { toast } from "sonner";
 
 const PROVIDER_LABELS: Record<string, string> = {
+  quickbooks: "QuickBooks",
   meta_ads: "Meta Ads",
   clickup: "ClickUp",
 };

@@ -1,6 +1,8 @@
 import { getSyncStatus } from "@/modules/finance/application/finance-actions";
 import { getTreasuryPosition } from "@/modules/treasury/application/treasury-actions";
 import { BankAccountsTable } from "@/modules/treasury/ui/accounts-table";
+import { BankAccountForm } from "@/modules/treasury/ui/bank-account-form";
+import { TransactionForm } from "@/modules/treasury/ui/transaction-form";
 import { TransactionsTable } from "@/modules/treasury/ui/transactions-table";
 import { ActionError } from "@/shared/ui/action-error";
 import { EmptyState } from "@/shared/ui/empty-state";
@@ -31,17 +33,26 @@ export default async function TreasuryPage() {
 
   const { accounts, totalCashCop, recentTransactions, projection } =
     position.data;
-  const alegra = syncStatus.ok ? syncStatus.data.alegra : null;
+  const quickbooks = syncStatus.ok ? syncStatus.data.quickbooks : null;
+  const accountOptions = accounts
+    .filter((a) => a.isActive && a.source === "manual")
+    .map(({ id, name }) => ({ id, name }));
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold">Tesorería</h1>
-        <SyncStatus
-          source="Alegra"
-          syncedAt={alegra?.status === "success" ? alegra.finishedAt : null}
-          error={alegra?.status === "error" ? alegra.error : null}
-        />
+        <div className="flex items-center gap-2">
+          <SyncStatus
+            source="QuickBooks"
+            syncedAt={
+              quickbooks?.status === "success" ? quickbooks.finishedAt : null
+            }
+            error={quickbooks?.status === "error" ? quickbooks.error : null}
+          />
+          <BankAccountForm />
+          <TransactionForm accounts={accountOptions} />
+        </div>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -74,7 +85,8 @@ export default async function TreasuryPage() {
         {accounts.length === 0 ? (
           <EmptyState
             title="Sin cuentas bancarias"
-            hint="Corre la sincronización ERP de Alegra para traer las cuentas y sus saldos."
+            hint="Crea tus cuentas con su saldo actual, o conecta QuickBooks para traerlas."
+            action={<BankAccountForm />}
           />
         ) : (
           <BankAccountsTable accounts={accounts} />
@@ -85,7 +97,7 @@ export default async function TreasuryPage() {
         {recentTransactions.length === 0 ? (
           <EmptyState
             title="Sin movimientos"
-            hint="Los últimos movimientos bancarios aparecerán aquí tras la sincronización."
+            hint="Registra entradas y salidas con + Movimiento — alimentan el flujo de caja."
           />
         ) : (
           <TransactionsTable transactions={recentTransactions} />

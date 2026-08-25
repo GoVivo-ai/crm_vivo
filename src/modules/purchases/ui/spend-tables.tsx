@@ -12,14 +12,14 @@ import type {
 } from "@/modules/purchases/domain/types";
 import { formatMoney } from "@/shared/ui/format";
 
-/** Gasto del periodo por centro de costo (texto libre de Alegra). */
+/** Gasto del periodo por centro de costo (texto libre). */
 export function CostCenterTable({ rows }: { rows: SpendByCostCenter[] }) {
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Centro de costo</TableHead>
-          <TableHead className="text-right">Facturas</TableHead>
+          <TableHead className="text-right">Registros</TableHead>
           <TableHead className="text-right">Gasto</TableHead>
         </TableRow>
       </TableHeader>
@@ -36,7 +36,7 @@ export function CostCenterTable({ rows }: { rows: SpendByCostCenter[] }) {
               {row.costCenter ?? "Sin asignar"}
             </TableCell>
             <TableCell className="text-right font-mono text-xs">
-              {row.bills}
+              {row.expenses}
             </TableCell>
             <TableCell className="text-right font-mono text-xs">
               {formatMoney(row.totalCop)}
@@ -55,18 +55,18 @@ export function ProviderTable({ rows }: { rows: SpendByProvider[] }) {
       <TableHeader>
         <TableRow>
           <TableHead>Proveedor</TableHead>
-          <TableHead className="text-right">Facturas</TableHead>
+          <TableHead className="text-right">Registros</TableHead>
           <TableHead className="text-right">Gasto</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {rows.map((row) => (
-          <TableRow key={row.alegraProviderId ?? row.providerName ?? "__none"}>
+          <TableRow key={row.providerName}>
             <TableCell className="max-w-72 truncate font-medium">
               {row.providerName ?? "Sin proveedor"}
             </TableCell>
             <TableCell className="text-right font-mono text-xs">
-              {row.bills}
+              {row.expenses}
             </TableCell>
             <TableCell className="text-right font-mono text-xs">
               {formatMoney(row.totalCop)}

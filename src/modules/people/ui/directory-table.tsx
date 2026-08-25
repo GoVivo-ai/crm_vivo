@@ -9,7 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 import type { TeamMember } from "@/modules/people/domain/types";
 import { MemberStatusBadge } from "@/modules/people/ui/labels";
-import { ProfileForm } from "@/modules/people/ui/profile-form";
+import { EmployeeForm } from "@/modules/people/ui/profile-form";
 
 type DirectoryTableProps = {
   members: TeamMember[];
@@ -49,12 +49,9 @@ export function DirectoryTable({
       </TableHeader>
       <TableBody>
         {members.map((member) => {
-          const warning = contractWarning(
-            member.profile?.contractEndDate ?? null,
-            today,
-          );
+          const warning = contractWarning(member.contractEndDate, today);
           return (
-            <TableRow key={member.alegraEmployeeId}>
+            <TableRow key={member.id}>
               <TableCell>
                 <p className="text-sm font-medium">{member.fullName}</p>
                 {(member.email || member.phone) && (
@@ -66,7 +63,7 @@ export function DirectoryTable({
               <TableCell className="text-sm">{member.position ?? "—"}</TableCell>
               <TableCell className="text-sm">{member.area ?? "—"}</TableCell>
               <TableCell className="text-sm">
-                {member.profile?.contractType ?? "—"}
+                {member.contractType ?? "—"}
                 {warning && (
                   <span
                     className={cn(
@@ -88,7 +85,7 @@ export function DirectoryTable({
               </TableCell>
               {canWrite && (
                 <TableCell className="text-right">
-                  <ProfileForm member={member} />
+                  <EmployeeForm member={member} />
                 </TableCell>
               )}
             </TableRow>

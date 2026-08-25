@@ -44,7 +44,7 @@ export function StaffingManager({
       () =>
         createStaffing({
           accountId: form.get("accountId"),
-          alegraEmployeeId: form.get("alegraEmployeeId"),
+          employeeId: form.get("employeeId"),
           dedicationPercent: Number(form.get("dedicationPercent")),
           validFrom: (form.get("validFrom") as string) || null,
           validTo: (form.get("validTo") as string) || null,
@@ -76,8 +76,8 @@ export function StaffingManager({
             </DialogHeader>
             <form onSubmit={onSubmit} className="flex flex-col gap-4">
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="alegraEmployeeId">Persona</Label>
-                <NativeSelect id="alegraEmployeeId" name="alegraEmployeeId" required>
+                <Label htmlFor="employeeId">Persona</Label>
+                <NativeSelect id="employeeId" name="employeeId" required>
                   <option value="">Elige…</option>
                   {employees.map((e) => (
                     <option key={e.id} value={e.id}>
@@ -85,7 +85,7 @@ export function StaffingManager({
                     </option>
                   ))}
                 </NativeSelect>
-                <FieldError errors={fieldErrors.alegraEmployeeId} />
+                <FieldError errors={fieldErrors.employeeId} />
               </div>
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="accountId">Cliente</Label>

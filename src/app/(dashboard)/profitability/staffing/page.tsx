@@ -26,7 +26,7 @@ export default async function StaffingPage() {
   const employees = directory.ok
     ? directory.data
         .filter((m) => m.active)
-        .map((m) => ({ id: m.alegraEmployeeId, name: m.fullName }))
+        .map((m) => ({ id: m.id, name: m.fullName }))
     : [];
 
   return (

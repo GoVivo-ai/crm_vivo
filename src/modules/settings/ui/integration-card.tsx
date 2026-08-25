@@ -112,6 +112,7 @@ export function IntegrationCard({ meta, status, today }: IntegrationCardProps) {
             variant="destructive"
             size="sm"
             render={<a href={`/api/oauth/${meta.integration}/start`} />}
+            nativeButton={false}
           >
             Reconectar con {meta.label}
           </Button>
@@ -119,6 +120,7 @@ export function IntegrationCard({ meta, status, today }: IntegrationCardProps) {
           <Button
             size="sm"
             render={<a href={`/api/oauth/${meta.integration}/start`} />}
+            nativeButton={false}
           >
             Conectar con {meta.label}
           </Button>

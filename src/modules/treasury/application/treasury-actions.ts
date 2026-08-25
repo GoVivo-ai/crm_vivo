@@ -110,3 +110,22 @@ export async function deleteBankTransaction(
   revalidatePath("/treasury");
   return { ok: true, data: { id } };
 }
+
+export type BankAccountOption = {
+  id: string;
+  name: string;
+  currencyCode: string;
+};
+
+/** Opciones ligeras de cuenta bancaria para selects/Spotlight
+ * (treasury:read) — sin saldos ni proyecciones. */
+export async function listBankAccountOptions(): Promise<
+  ActionResult<BankAccountOption[]>
+> {
+  return runAction("treasury", "read", async () => {
+    const accounts = await repo.listBankAccounts();
+    return accounts
+      .filter((a) => a.isActive)
+      .map(({ id, name, currencyCode }) => ({ id, name, currencyCode }));
+  });
+}

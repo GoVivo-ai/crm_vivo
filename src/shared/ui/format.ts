@@ -41,6 +41,24 @@ export function formatCompactMoney(amount: number): string {
   return compactMoney.format(amount);
 }
 
+const currencyFormats = new Map<string, Intl.NumberFormat>();
+
+/** Multi-moneda explícita (ads sin convertir a COP): "US$ 1.200", "$ 3,5 M". */
+export function formatCurrency(amount: number, currency: string): string {
+  const digits = Math.abs(amount) < 100 ? 2 : 0;
+  const key = `${currency}:${digits}`;
+  let format = currencyFormats.get(key);
+  if (!format) {
+    format = new Intl.NumberFormat(LOCALE, {
+      style: "currency",
+      currency,
+      maximumFractionDigits: digits,
+    });
+    currencyFormats.set(key, format);
+  }
+  return format.format(amount);
+}
+
 const relative = new Intl.RelativeTimeFormat("es", { numeric: "auto" });
 
 /** "hace 2 h", "hace 3 días" — usado por el pulso de sincronización. */

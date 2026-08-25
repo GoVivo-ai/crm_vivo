@@ -73,6 +73,10 @@ const NAV: NavItem[] = [
     label: "Marketing",
     icon: Megaphone,
     accent: "var(--module-marketing)",
+    children: [
+      { href: "/marketing", label: "Dashboard" },
+      { href: "/marketing/accounts", label: "Cuentas de ads" },
+    ],
   },
   { resource: "settings", href: "/settings", label: "Ajustes", icon: Settings2 },
 ];

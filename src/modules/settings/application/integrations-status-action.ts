@@ -48,6 +48,7 @@ export async function getIntegrationsStatus(): Promise<
           payloadMeta.set(integration, {
             ...(payload.meta as Record<string, unknown> | undefined),
             expiresAt: payload.expiresAt,
+            hasRefreshToken: !!payload.refreshToken,
           });
         } catch {
           hint = null; // key rotada o dato corrupto: configurada, sin pista
@@ -58,8 +59,14 @@ export async function getIntegrationsStatus(): Promise<
         connectedAs?: string;
         authMethod?: string;
         expiresAt?: string;
+        refreshExpiresAt?: string;
+        hasRefreshToken?: boolean;
       };
-      const tokenExpiresAt = meta.expiresAt ?? null;
+      // Con refresh token (QBO) la señal de reconexión es la vida del
+      // REFRESH token (~100d), no la del access (1h) que se renueva solo.
+      const tokenExpiresAt =
+        (meta.hasRefreshToken ? meta.refreshExpiresAt : meta.expiresAt) ??
+        null;
       result[integration] = {
         integration,
         configured: !!row,

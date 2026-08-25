@@ -64,7 +64,7 @@ export async function GET(
     if (provider === "meta_ads") {
       await discoverAdAccounts().catch(() => undefined);
     } else {
-      await runManualSync(provider, "core").catch(() => undefined);
+      await runManualSync(provider).catch(() => undefined);
     }
 
     return settingsUrl(`?connected=${provider}`);

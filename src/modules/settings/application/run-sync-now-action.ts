@@ -10,9 +10,6 @@ import { runManualSync } from "@/integrations/shared/manual-operations";
 
 const runSyncSchema = z.object({
   integration: integrationSchema,
-  /** Solo aplica a alegra: 'core' (invoices/pagos/snapshots) o 'erp'
-   * (bills/empleados/bancos). */
-  scope: z.enum(["core", "erp"]).default("core"),
 });
 
 /** "Sincronizar ahora" de settings/integrations. Reutiliza la lógica de
@@ -24,10 +21,7 @@ export async function runSyncNow(
   const parsed = parseInput(runSyncSchema, input);
   if (!parsed.ok) return parsed.result;
   return runAction("settings", "write", async () => {
-    const result = await runManualSync(
-      parsed.data.integration,
-      parsed.data.scope,
-    );
+    const result = await runManualSync(parsed.data.integration);
     revalidatePath("/settings");
     return result;
   });

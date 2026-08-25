@@ -10,7 +10,10 @@ import {
 import { alegraPages } from "@/integrations/alegra/alegra-client";
 import { mapInvoice, mapPayment } from "@/integrations/alegra/mappers";
 import type { AlegraInvoice, AlegraPayment } from "@/integrations/alegra/types";
-import { upsertReceivablesSnapshot } from "@/integrations/alegra/snapshots";
+import {
+  upsertReceivablesSnapshot,
+  upsertReportSnapshots,
+} from "@/integrations/alegra/snapshots";
 
 /** Páginas por ejecución: acota el backfill al timeout del cron (300s). */
 const MAX_PAGES_PER_RUN = 40;
@@ -148,9 +151,11 @@ export async function syncAlegra(): Promise<{
       }
     }
 
-    // 3) Snapshot diario de cartera calculado sobre la cache recién escrita.
+    // 3) Snapshots diarios: cartera desde la cache + P&L/cashflow desde el
+    //    backend de reportes de Alegra (fallos de reportes no tumban el sync).
     const snapshot = await upsertReceivablesSnapshot();
+    const reports = await upsertReportSnapshots();
 
-    return { ...cursor, invoicesSynced, paymentsSynced, snapshot };
+    return { ...cursor, invoicesSynced, paymentsSynced, snapshot, reports };
   });
 }

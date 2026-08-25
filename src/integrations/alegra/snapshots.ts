@@ -1,14 +1,17 @@
 import { and, eq, isNotNull, ne, sql } from "drizzle-orm";
 import { db } from "@/shared/database/db";
 import { financeSnapshots, syncedInvoices } from "@/modules/finance/schema";
+import {
+  fetchCashFlow,
+  fetchProfitAndLoss,
+  summarizeCashFlow,
+  summarizePnl,
+} from "@/integrations/alegra/reports-client";
 
 /**
  * Snapshot diario de cartera (receivables) calculado desde la cache
  * synced_invoices, normalizando USD→COP con la TRM de cada factura.
  * Cifra de control (QA): debe cuadrar con el reporte de cartera de Alegra.
- *
- * P&L y cashflow quedan pendientes de confirmar los endpoints de reportes
- * de la API de Alegra (no documentados de forma estable); ver sync_runs.
  */
 export async function upsertReceivablesSnapshot(): Promise<{
   openInvoices: number;
@@ -67,4 +70,56 @@ export async function upsertReceivablesSnapshot(): Promise<{
     openInvoices: receivables.openInvoices,
     outstandingCop: receivables.outstandingCop,
   };
+}
+
+/**
+ * Snapshot diario de P&L y cashflow del mes en curso, desde el backend de
+ * reportes de Alegra. Cada reporte falla aislado (el 500 de uno no pierde
+ * el otro ni el sync); los errores se devuelven para sync_runs.stats.
+ */
+export async function upsertReportSnapshots(): Promise<{
+  pnl: boolean;
+  cashflow: boolean;
+  errors: Record<string, string>;
+}> {
+  const today = new Date().toISOString().slice(0, 10);
+  const monthStart = `${today.slice(0, 8)}01`;
+  const errors: Record<string, string> = {};
+  const set: { pnl?: unknown; cashflow?: unknown } = {};
+
+  try {
+    const tree = await fetchProfitAndLoss(monthStart, today);
+    set.pnl = { from: monthStart, to: today, totals: summarizePnl(tree), tree };
+  } catch (error) {
+    errors.pnl = error instanceof Error ? error.message : String(error);
+  }
+
+  try {
+    const sections = await fetchCashFlow(monthStart, today);
+    set.cashflow = {
+      from: monthStart,
+      to: today,
+      summary: summarizeCashFlow(sections),
+      sections,
+    };
+  } catch (error) {
+    errors.cashflow = error instanceof Error ? error.message : String(error);
+  }
+
+  if (Object.keys(set).length > 0) {
+    await db
+      .insert(financeSnapshots)
+      .values({ snapshotDate: today, ...set })
+      .onConflictDoUpdate({
+        target: financeSnapshots.snapshotDate,
+        set: {
+          ...(set.pnl !== undefined && { pnl: sql`excluded.pnl` }),
+          ...(set.cashflow !== undefined && {
+            cashflow: sql`excluded.cashflow`,
+          }),
+        },
+      });
+  }
+
+  return { pnl: set.pnl !== undefined, cashflow: set.cashflow !== undefined, errors };
 }

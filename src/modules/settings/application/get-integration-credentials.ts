@@ -72,7 +72,10 @@ async function refreshIfNeeded(
         return refreshed;
       })
       .catch((error) => {
-        console.error(`[oauth refresh ${integration}]`, error);
+        console.error(
+          `[oauth refresh ${integration}]`,
+          error instanceof Error ? error.message : String(error),
+        );
         return null;
       })
       .finally(() => refreshLocks.delete(integration));

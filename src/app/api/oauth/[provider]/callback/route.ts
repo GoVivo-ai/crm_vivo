@@ -9,7 +9,10 @@ import {
 } from "@/modules/settings/infrastructure/oauth-providers";
 import { encryptPayload } from "@/modules/settings/infrastructure/credentials-crypto";
 import { upsertCredentials } from "@/modules/settings/infrastructure/credentials-repository";
-import { runManualSync } from "@/integrations/shared/manual-operations";
+import {
+  discoverAdAccounts,
+  runManualSync,
+} from "@/integrations/shared/manual-operations";
 
 /** Callback OAuth: valida state, intercambia code→tokens, guarda
  * cifrado y dispara el descubrimiento inicial (sync) del proveedor. */
@@ -45,13 +48,22 @@ export async function GET(
     };
     await upsertCredentials(provider, encryptPayload(payload), user.id);
 
-    // Alta inmediata de datos (para meta_ads descubre las ad accounts).
-    // Best-effort: si falla, queda registrado en sync_runs.
-    await runManualSync(provider, "core").catch(() => undefined);
+    // Alta inmediata best-effort: meta_ads descubre las ad accounts con
+    // la variante ligera (sin insights — el cron trae métricas después);
+    // clickup corre su sync normal (liviano).
+    if (provider === "meta_ads") {
+      await discoverAdAccounts().catch(() => undefined);
+    } else {
+      await runManualSync(provider, "core").catch(() => undefined);
+    }
 
     return settingsUrl(`?connected=${provider}`);
   } catch (error) {
-    console.error(`[oauth callback ${provider}]`, error);
+    // Solo message: nunca el objeto completo (podría anidar URLs/params).
+    console.error(
+      `[oauth callback ${provider}]`,
+      error instanceof Error ? error.message : String(error),
+    );
     return settingsUrl("?oauth_error=exchange");
   }
 }

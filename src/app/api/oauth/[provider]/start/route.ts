@@ -26,7 +26,10 @@ export async function GET(
     const state = createOAuthState(provider, user.id);
     return NextResponse.redirect(buildAuthorizeUrl(provider, redirectUri, state));
   } catch (error) {
-    console.error(`[oauth start ${provider}]`, error);
+    console.error(
+      `[oauth start ${provider}]`,
+      error instanceof Error ? error.message : String(error),
+    );
     return NextResponse.redirect(
       `${request.nextUrl.origin}/settings?oauth_error=config`,
     );

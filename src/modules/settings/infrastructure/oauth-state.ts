@@ -1,11 +1,15 @@
-import { createHmac, randomBytes, timingSafeEqual } from "crypto";
+import { createHmac, hkdfSync, randomBytes, timingSafeEqual } from "crypto";
 
 const STATE_TTL_MS = 10 * 60 * 1000;
 
+/** Subkey HKDF derivada de la master key (info "oauth-state-hmac") — nunca se
+ * usa la key AES directamente para firmar (nota de QA). */
 function hmacKey(): Buffer {
   const hex = process.env.CREDENTIALS_ENCRYPTION_KEY;
   if (!hex) throw new Error("CREDENTIALS_ENCRYPTION_KEY no está definida");
-  return Buffer.from(hex, "hex");
+  return Buffer.from(
+    hkdfSync("sha256", Buffer.from(hex, "hex"), Buffer.alloc(0), "oauth-state-hmac", 32),
+  );
 }
 
 const sign = (data: string) =>
@@ -22,7 +26,11 @@ export function createOAuthState(provider: string, userId: string): string {
   return `${payload}.${sign(payload)}`;
 }
 
-/** Valida firma, expiración (10 min), provider y usuario de la sesión. */
+/** Valida firma, expiración (10 min), provider y usuario de la sesión.
+ * Nota (aceptada por QA): al ser stateless no hay nonce consumido — un
+ * replay dentro del TTL es posible PERO exige la misma sesión admin
+ * (state ligado a userId + re-validación de sesión y permiso en el
+ * callback), así que el CSRF que el state previene sigue cubierto. */
 export function verifyOAuthState(
   state: string,
   provider: string,

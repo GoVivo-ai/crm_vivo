@@ -4,7 +4,7 @@ export type StaffingAssignment = {
   id: string;
   accountId: string;
   accountName: string | null;
-  alegraEmployeeId: string;
+  employeeId: string;
   employeeName: string | null;
   dedicationPercent: number;
   validFrom: string | null;
@@ -15,13 +15,10 @@ export type StaffingAssignment = {
  * Desglose del margen por cuenta. Componentes por separado (requisito
  * del Planeador) para que la UI muestre el detalle.
  *
- * staffingCostCop se prorratea del costo REAL de nómina mensual (serie
- * derivada de pagos, nunca registeredSalary) por CAPACIDAD TOTAL:
- * costo(cuenta, mes) = nómina(mes) × Σ%dedicación(cuenta, mes)
- *                      / (100 × empleados_activos).
- * Lo no asignado queda como "costo sin asignar" (compañía) — así la
- * adopción gradual del staffing no distorsiona los márgenes. Supone
- * costo igual por empleado (assumption: 'equal-cost' en el dashboard).
+ * staffingCostCop usa el costo REAL por empleado (payroll_payments por
+ * persona y mes): costo(cuenta, mes) = Σ pago(empleado, mes) ×
+ * %dedicación(empleado→cuenta, mes) / 100. Lo no asignado queda como
+ * "costo sin asignar" (compañía).
  *
  * adSpendCop es INFORMATIVO y NO se resta del margen: en esta agencia el
  * cliente normalmente paga su pauta directo (pendiente de confirmación
@@ -48,13 +45,9 @@ export type ProfitabilityDashboard = {
   totalAssignedPercent: number;
   /** Nómina del periodo NO asignada a cuentas (compañía) — visible en UI. */
   unassignedCostCop: number;
-  /** Empleados activos usados como capacidad (conteo actual del
-   * directorio; no hay historial mensual). */
+  /** Empleados activos del directorio (informativo). */
   activeEmployees: number;
-  /** Suposición del prorrateo, para mostrarla como nota en la UI. */
-  assumption: "equal-cost";
-  /** El costo laboral es SOLO nómina Colombia (Alegra) mientras exista
-   * el hueco QuickBooks/Chase — nota obligatoria en la UI. */
-  costScope: "colombia-only";
+  /** Método del costo, para la nota de la UI: pagos reales por persona. */
+  assumption: "per-employee-cost";
   accounts: AccountProfitability[];
 };

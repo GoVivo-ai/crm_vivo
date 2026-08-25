@@ -1,4 +1,5 @@
 import {
+  boolean,
   date,
   integer,
   jsonb,
@@ -10,55 +11,61 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { users } from "@/modules/identity/schema";
+import { recordSourceEnum } from "@/shared/database/record-source.schema";
 
-// RR.HH. (Fase 7 — parcial). synced_payrolls NO se crea aún: la API de
-// payroll de Alegra devuelve 402 con el plan actual; el costo de nómina
-// se deriva de synced_supplier_payments.categories (decisión pendiente
-// del Planeador). employee_profiles y leave_requests llegan con los
-// contratos de F7.
-
-/** Empleados de Alegra (upsert por alegra_employee_id — ULID string). */
-export const syncedEmployees = pgTable("synced_employees", {
+/**
+ * Empleados — tabla propia del ERP (fusión del antiguo directorio
+ * sincronizado + expediente). QBO Payroll no tiene API pública, así que
+ * la fuente es manual (source queda por si otra fuente aparece).
+ */
+export const employees = pgTable("employees", {
   id: uuid("id").primaryKey().defaultRandom(),
-  alegraEmployeeId: text("alegra_employee_id").notNull().unique(),
-  names: text("names"),
-  lastNames: text("last_names"),
-  /** PII: NO va al directorio general — solo expediente (write) y
-   * compensation. */
+  source: recordSourceEnum("source").notNull().default("manual"),
+  fullName: text("full_name").notNull(),
+  /** PII: NO va al directorio general — solo expediente y compensación. */
   identification: text("identification"),
   email: text("email"),
   phone: text("phone"),
   hiredAt: date("hired_at"),
   position: text("position"),
   area: text("area"),
+  active: boolean("active").notNull().default(true),
   /** SENSIBLE: solo se expone vía people_compensation. */
-  salary: numeric("salary", { precision: 14, scale: 2 }),
-  status: text("status"),
-  contract: jsonb("contract"),
-  raw: jsonb("raw"),
-  syncedAt: timestamp("synced_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-});
-
-/** Expediente editable del empleado (datos que no existen en Alegra). */
-export const employeeProfiles = pgTable("employee_profiles", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  alegraEmployeeId: text("alegra_employee_id").notNull().unique(),
-  /** Vínculo opcional al usuario de la app (por email, lo fija un admin). */
-  userId: uuid("user_id").unique().references(() => users.id),
-  position: text("position"),
-  area: text("area"),
+  baseSalary: numeric("base_salary", { precision: 14, scale: 2 }),
   contractType: text("contract_type"),
   contractEndDate: date("contract_end_date"),
   /** Metadatos de documentos: [{name, url, expiresAt?}]. */
   documents: jsonb("documents"),
   annualLeaveDays: integer("annual_leave_days").notNull().default(15),
+  /** Vínculo opcional al usuario de la app (lo fija un admin). */
+  userId: uuid("user_id").unique().references(() => users.id),
   notes: text("notes"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+/** Pagos de nómina por persona y periodo — registro manual (QBO Payroll
+ * sin API). Fuente de la serie de costo de nómina y del costo por
+ * empleado de F9. */
+export const payrollPayments = pgTable("payroll_payments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  source: recordSourceEnum("source").notNull().default("manual"),
+  employeeId: uuid("employee_id")
+    .notNull()
+    .references(() => employees.id),
+  /** Periodo YYYY-MM al que corresponde el pago. */
+  period: text("period").notNull(),
+  amount: numeric("amount", { precision: 14, scale: 2 }).notNull(),
+  currencyCode: text("currency_code").notNull().default("COP"),
+  exchangeRate: numeric("exchange_rate", { precision: 14, scale: 4 }),
+  paidAt: date("paid_at").notNull(),
+  notes: text("notes"),
+  createdBy: uuid("created_by").references(() => users.id),
+  createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
 });
@@ -81,9 +88,9 @@ export const leaveStatusEnum = pgEnum("leave_status", [
  * ser distinto del solicitante (regla del Planeador, sin excepciones). */
 export const leaveRequests = pgTable("leave_requests", {
   id: uuid("id").primaryKey().defaultRandom(),
-  employeeProfileId: uuid("employee_profile_id")
+  employeeId: uuid("employee_id")
     .notNull()
-    .references(() => employeeProfiles.id),
+    .references(() => employees.id),
   type: leaveTypeEnum("type").notNull(),
   startDate: date("start_date").notNull(),
   endDate: date("end_date").notNull(),

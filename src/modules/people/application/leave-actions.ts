@@ -15,21 +15,21 @@ import {
   decideLeaveSchema,
   leaveRequestInputSchema,
 } from "@/modules/people/domain/validation";
-import { findProfileByUserId } from "@/modules/people/infrastructure/people-repository";
+import { findEmployeeByUserId } from "@/modules/people/infrastructure/people-repository";
 import * as repo from "@/modules/people/infrastructure/leave-repository";
 
-/** Perfil del usuario del guard; sin employee_profile vinculado no se
+/** Empleado del usuario del guard; sin empleado vinculado no se
  * resuelven datos de ausencias de nadie (regla del Planeador). */
-async function requireOwnProfile() {
+async function requireOwnEmployee() {
   const user = await getCurrentUser();
   if (!user) throw new DomainRuleError("Sesión no válida");
-  const profile = await findProfileByUserId(user.id);
-  if (!profile) {
+  const employee = await findEmployeeByUserId(user.id);
+  if (!employee) {
     throw new DomainRuleError(
-      "Tu usuario no está vinculado a un expediente de empleado; pídelo a un admin",
+      "Tu usuario no está vinculado a un empleado; pídelo a un admin",
     );
   }
-  return { user, profile };
+  return { user, employee };
 }
 
 /** Crea una solicitud de ausencia. El solicitante es SIEMPRE el usuario
@@ -40,8 +40,8 @@ export async function createLeaveRequest(
   const parsed = parseInput(leaveRequestInputSchema, input);
   if (!parsed.ok) return parsed.result;
   return runAction("people_directory", "read", async () => {
-    const { user, profile } = await requireOwnProfile();
-    const leave = await repo.insertLeave(profile.id, user.id, parsed.data);
+    const { user, employee } = await requireOwnEmployee();
+    const leave = await repo.insertLeave(employee.id, user.id, parsed.data);
     revalidatePath("/people");
     return leave;
   });
@@ -52,17 +52,17 @@ export async function getMyLeave(): Promise<
   ActionResult<{ requests: LeaveRequestView[]; balance: LeaveBalance }>
 > {
   return runAction("people_directory", "read", async () => {
-    const { profile } = await requireOwnProfile();
+    const { employee } = await requireOwnEmployee();
     const [requests, approvedDaysThisYear] = await Promise.all([
-      repo.listLeaveForProfile(profile.id),
-      repo.approvedDaysThisYear(profile.id),
+      repo.listLeaveForEmployee(employee.id),
+      repo.approvedDaysThisYear(employee.id),
     ]);
     return {
       requests,
       balance: {
-        annualLeaveDays: profile.annualLeaveDays,
+        annualLeaveDays: employee.annualLeaveDays,
         approvedDaysThisYear,
-        remainingDays: profile.annualLeaveDays - approvedDaysThisYear,
+        remainingDays: employee.annualLeaveDays - approvedDaysThisYear,
       },
     };
   });
@@ -114,7 +114,7 @@ export async function decideLeaveRequest(
     ok: true,
     data: {
       id: row.id,
-      employeeProfileId: row.employeeProfileId,
+      employeeId: row.employeeId,
       employeeName: null,
       type: row.type,
       startDate: row.startDate,

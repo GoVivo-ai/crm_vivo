@@ -1,10 +1,14 @@
 import { z } from "zod";
 
-export const employeeProfileInputSchema = z.object({
-  alegraEmployeeId: z.string().trim().min(1).max(100),
-  userId: z.uuid().nullish(),
+export const employeeInputSchema = z.object({
+  fullName: z.string().trim().min(1, "El nombre es obligatorio").max(200),
+  identification: z.string().trim().max(50).nullish(),
+  email: z.email("Email inválido").nullish().or(z.literal("")),
+  phone: z.string().trim().max(50).nullish(),
+  hiredAt: z.iso.date().nullish(),
   position: z.string().trim().max(200).nullish(),
   area: z.string().trim().max(200).nullish(),
+  active: z.boolean().default(true),
   contractType: z.string().trim().max(100).nullish(),
   contractEndDate: z.iso.date().nullish(),
   documents: z
@@ -18,9 +22,31 @@ export const employeeProfileInputSchema = z.object({
     .max(50)
     .nullish(),
   annualLeaveDays: z.number().int().min(0).max(60).default(15),
+  userId: z.uuid().nullish(),
   notes: z.string().trim().max(5000).nullish(),
 });
-export type EmployeeProfileInput = z.infer<typeof employeeProfileInputSchema>;
+export type EmployeeInput = z.infer<typeof employeeInputSchema>;
+
+export const payrollPaymentInputSchema = z
+  .object({
+    employeeId: z.uuid(),
+    period: z.string().regex(/^\d{4}-\d{2}$/, "Periodo en formato YYYY-MM"),
+    amount: z.number().positive("El monto debe ser mayor a 0"),
+    currencyCode: z.string().length(3).default("COP"),
+    exchangeRate: z.number().positive().nullish(),
+    paidAt: z.iso.date(),
+    notes: z.string().trim().max(2000).nullish(),
+  })
+  .refine((v) => v.currencyCode === "COP" || v.exchangeRate != null, {
+    message: "Indica la TRM para monedas distintas de COP",
+    path: ["exchangeRate"],
+  });
+export type PayrollPaymentInput = z.infer<typeof payrollPaymentInputSchema>;
+
+export const setBaseSalarySchema = z.object({
+  employeeId: z.uuid(),
+  baseSalary: z.number().nonnegative().nullable(),
+});
 
 export const leaveRequestInputSchema = z
   .object({

@@ -1,25 +1,46 @@
-import type { AgingBucket } from "@/modules/finance/domain/types";
+import type {
+  AgingBucket,
+  RecordSource,
+} from "@/modules/finance/domain/types";
 
-// Tipos de dominio de Gastos y compras (Fase 6). Montos en COP
-// (normalizados con la TRM de cada documento).
+// Gastos y compras — registros propios (manual + QuickBooks), en COP.
+
+export type ExpenseKind = "bill" | "direct";
+export type ExpenseStatus = "open" | "paid" | "void";
+
+export type Expense = {
+  id: string;
+  source: RecordSource; // editable/borrable solo cuando 'manual'
+  kind: ExpenseKind;
+  providerName: string;
+  paymentAccountName: string | null;
+  costCenter: string | null;
+  txnDate: string;
+  dueDate: string | null;
+  status: ExpenseStatus;
+  total: number;
+  balance: number;
+  currencyCode: string;
+  exchangeRate: number | null;
+  notes: string | null;
+};
 
 export type MonthlySpend = {
   month: string; // YYYY-MM
   totalCop: number;
-  bills: number;
+  expenses: number;
 };
 
 export type SpendByCostCenter = {
-  costCenter: string | null; // null = sin centro de costo asignado
+  costCenter: string | null;
   totalCop: number;
-  bills: number;
+  expenses: number;
 };
 
 export type SpendByProvider = {
-  alegraProviderId: string | null;
-  providerName: string | null;
+  providerName: string;
   totalCop: number;
-  bills: number;
+  expenses: number;
 };
 
 export type Payables = {
@@ -30,12 +51,8 @@ export type Payables = {
 
 export type PurchasesDashboard = {
   period: { from: string; to: string };
-  /** Gasto por mes, últimos 12 meses (independiente del period). */
-  spendByMonth: MonthlySpend[];
-  /** Del periodo pedido (default mes en curso). */
-  byCostCenter: SpendByCostCenter[];
-  /** Top proveedores del periodo, por gasto descendente. */
-  byProvider: SpendByProvider[];
-  /** Cuentas por pagar vivas (no dependen del periodo). */
-  payables: Payables;
+  spendByMonth: MonthlySpend[]; // últimos 12 meses
+  byCostCenter: SpendByCostCenter[]; // del periodo
+  byProvider: SpendByProvider[]; // top del periodo
+  payables: Payables; // solo kind=bill con saldo
 };

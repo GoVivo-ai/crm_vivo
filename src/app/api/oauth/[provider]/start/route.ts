@@ -22,7 +22,8 @@ export async function GET(
     return NextResponse.json({ error: "Sin permiso" }, { status: 403 });
   }
   try {
-    const redirectUri = `${request.nextUrl.origin}/api/oauth/${provider}/callback`;
+    const appOrigin = process.env.NEXT_PUBLIC_APP_URL ?? request.nextUrl.origin;
+    const redirectUri = `${appOrigin}/api/oauth/${provider}/callback`;
     const state = createOAuthState(provider, user.id);
     return NextResponse.redirect(buildAuthorizeUrl(provider, redirectUri, state));
   } catch (error) {
@@ -31,7 +32,7 @@ export async function GET(
       error instanceof Error ? error.message : String(error),
     );
     return NextResponse.redirect(
-      `${request.nextUrl.origin}/settings?oauth_error=config`,
+      `${process.env.NEXT_PUBLIC_APP_URL ?? request.nextUrl.origin}/settings?oauth_error=config`,
     );
   }
 }

@@ -1,135 +1,111 @@
-import { asc, eq, isNotNull, sql } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { db } from "@/shared/database/db";
-import { employeeProfiles, syncedEmployees } from "@/modules/people/schema";
+import { employees } from "@/modules/people/schema";
 import type {
-  EmployeeCompensation,
+  EmployeeDetail,
   EmployeeDocument,
   TeamMember,
 } from "@/modules/people/domain/types";
-import type { EmployeeProfileInput } from "@/modules/people/domain/validation";
+import type { EmployeeInput } from "@/modules/people/domain/validation";
 
-export type ProfileRow = typeof employeeProfiles.$inferSelect;
+export type EmployeeRow = typeof employees.$inferSelect;
 
-const fullName = (names: string | null, lastNames: string | null) =>
-  [names, lastNames].filter(Boolean).join(" ") || "(sin nombre)";
-
-/** Directorio SIN compensación: nunca selecciona salary/contract. */
-export async function listTeamDirectory(): Promise<TeamMember[]> {
-  const rows = await db
-    .select({
-      alegraEmployeeId: syncedEmployees.alegraEmployeeId,
-      names: syncedEmployees.names,
-      lastNames: syncedEmployees.lastNames,
-      email: syncedEmployees.email,
-      phone: syncedEmployees.phone,
-      hiredAt: syncedEmployees.hiredAt,
-      active: sql<boolean>`coalesce((${syncedEmployees.contract}->>'endDate')::date >= current_date, true)`,
-      position: syncedEmployees.position,
-      area: syncedEmployees.area,
-      profile: employeeProfiles,
-    })
-    .from(syncedEmployees)
-    .leftJoin(
-      employeeProfiles,
-      eq(employeeProfiles.alegraEmployeeId, syncedEmployees.alegraEmployeeId),
-    )
-    .where(isNotNull(syncedEmployees.names))
-    .orderBy(asc(syncedEmployees.names));
-  return rows.map((r) => ({
-    alegraEmployeeId: r.alegraEmployeeId,
-    fullName: fullName(r.names, r.lastNames),
-    email: r.email,
-    phone: r.phone,
-    hiredAt: r.hiredAt,
-    active: r.active,
-    position: r.profile?.position ?? r.position,
-    area: r.profile?.area ?? r.area,
-    profile: r.profile
-      ? {
-          id: r.profile.id,
-          userId: r.profile.userId,
-          contractType: r.profile.contractType,
-          contractEndDate: r.profile.contractEndDate,
-          documents: (r.profile.documents ?? []) as EmployeeDocument[],
-          annualLeaveDays: r.profile.annualLeaveDays,
-        }
-      : null,
-  }));
-}
-
-export async function findCompensation(
-  alegraEmployeeId: string,
-): Promise<EmployeeCompensation | null> {
-  const rows = await db
-    .select()
-    .from(syncedEmployees)
-    .where(eq(syncedEmployees.alegraEmployeeId, alegraEmployeeId))
-    .limit(1);
-  const r = rows[0];
-  if (!r) return null;
+/** Directorio SIN compensación ni PII (no expone salario ni cédula). */
+export function toTeamMember(row: EmployeeRow): TeamMember {
   return {
-    alegraEmployeeId: r.alegraEmployeeId,
-    fullName: fullName(r.names, r.lastNames),
-    identification: r.identification,
-    registeredSalary: r.salary === null ? null : Number(r.salary),
-    contract: r.contract,
+    id: row.id,
+    fullName: row.fullName,
+    email: row.email,
+    phone: row.phone,
+    hiredAt: row.hiredAt,
+    position: row.position,
+    area: row.area,
+    active: row.active,
+    contractType: row.contractType,
+    contractEndDate: row.contractEndDate,
+    documents: (row.documents ?? []) as EmployeeDocument[],
+    annualLeaveDays: row.annualLeaveDays,
+    userId: row.userId,
   };
 }
 
-export async function upsertProfile(
-  input: EmployeeProfileInput,
-): Promise<ProfileRow> {
-  const values = {
-    alegraEmployeeId: input.alegraEmployeeId,
-    userId: input.userId ?? null,
+export function toDetail(row: EmployeeRow): EmployeeDetail {
+  return {
+    ...toTeamMember(row),
+    identification: row.identification,
+    notes: row.notes,
+  };
+}
+
+export async function listEmployees(): Promise<TeamMember[]> {
+  const rows = await db.select().from(employees).orderBy(asc(employees.fullName));
+  return rows.map(toTeamMember);
+}
+
+export async function findEmployeeRow(id: string): Promise<EmployeeRow | null> {
+  const rows = await db.select().from(employees).where(eq(employees.id, id)).limit(1);
+  return rows[0] ?? null;
+}
+
+export async function findEmployeeByUserId(
+  userId: string,
+): Promise<EmployeeRow | null> {
+  const rows = await db
+    .select()
+    .from(employees)
+    .where(eq(employees.userId, userId))
+    .limit(1);
+  return rows[0] ?? null;
+}
+
+function toRow(input: EmployeeInput) {
+  return {
+    fullName: input.fullName,
+    identification: input.identification ?? null,
+    email: input.email || null,
+    phone: input.phone ?? null,
+    hiredAt: input.hiredAt ?? null,
     position: input.position ?? null,
     area: input.area ?? null,
+    active: input.active,
     contractType: input.contractType ?? null,
     contractEndDate: input.contractEndDate ?? null,
     documents: input.documents ?? [],
     annualLeaveDays: input.annualLeaveDays,
+    userId: input.userId ?? null,
     notes: input.notes ?? null,
   };
-  const rows = await db
-    .insert(employeeProfiles)
-    .values(values)
-    .onConflictDoUpdate({
-      target: employeeProfiles.alegraEmployeeId,
-      set: { ...values, updatedAt: new Date() },
-    })
-    .returning();
+}
+
+export async function insertEmployee(input: EmployeeInput): Promise<EmployeeRow> {
+  const rows = await db.insert(employees).values(toRow(input)).returning();
   return rows[0];
 }
 
-export async function findEmployeeIdentification(
-  alegraEmployeeId: string,
-): Promise<string | null> {
+export async function updateEmployeeById(
+  id: string,
+  input: EmployeeInput,
+): Promise<EmployeeRow | null> {
   const rows = await db
-    .select({ identification: syncedEmployees.identification })
-    .from(syncedEmployees)
-    .where(eq(syncedEmployees.alegraEmployeeId, alegraEmployeeId))
-    .limit(1);
-  return rows[0]?.identification ?? null;
-}
-
-export async function findProfileByAlegraEmployeeId(
-  alegraEmployeeId: string,
-): Promise<ProfileRow | null> {
-  const rows = await db
-    .select()
-    .from(employeeProfiles)
-    .where(eq(employeeProfiles.alegraEmployeeId, alegraEmployeeId))
-    .limit(1);
+    .update(employees)
+    .set({ ...toRow(input), updatedAt: new Date() })
+    .where(eq(employees.id, id))
+    .returning();
   return rows[0] ?? null;
 }
 
-export async function findProfileByUserId(
-  userId: string,
-): Promise<ProfileRow | null> {
+/** SENSIBLE — solo se invoca tras guard people_compensation:write. */
+export async function setBaseSalary(
+  id: string,
+  baseSalary: number | null,
+): Promise<boolean> {
   const rows = await db
-    .select()
-    .from(employeeProfiles)
-    .where(eq(employeeProfiles.userId, userId))
-    .limit(1);
-  return rows[0] ?? null;
+    .update(employees)
+    .set({
+      baseSalary: baseSalary === null ? null : String(baseSalary),
+      updatedAt: new Date(),
+    })
+    .where(eq(employees.id, id))
+    .returning({ id: employees.id });
+  return rows.length > 0;
 }

@@ -1,8 +1,8 @@
-import { and, eq, gte, isNotNull, lte, sql } from "drizzle-orm";
+import { and, eq, gte, isNotNull, lte, ne, sql } from "drizzle-orm";
 import { db } from "@/shared/database/db";
 import { accounts } from "@/modules/crm/schema";
-import { syncedInvoices } from "@/modules/finance/schema";
-import { syncedEmployees } from "@/modules/people/schema";
+import { invoices } from "@/modules/finance/schema";
+import { employees } from "@/modules/people/schema";
 import {
   adAccounts,
   syncedCampaignMetrics,
@@ -14,8 +14,8 @@ export type RevenueByAccount = {
   revenueCop: number;
 };
 
-/** Ingresos por cuenta en el rango: synced_invoices (COP con TRM por
- * factura) unidas por alegra_client_id ↔ accounts.alegra_contact_id. */
+/** Ingresos por cuenta en el rango, desde las facturas del ERP (COP con
+ * TRM por factura). Solo facturas vinculadas a una cuenta CRM. */
 export async function getRevenueByAccount(range: {
   from: string;
   to: string;
@@ -24,44 +24,33 @@ export async function getRevenueByAccount(range: {
     .select({
       accountId: accounts.id,
       accountName: accounts.name,
-      revenueCop: sql<string>`coalesce(sum(${syncedInvoices.total} * coalesce(${syncedInvoices.exchangeRate}, 1)), 0)`,
+      revenueCop: sql<string>`coalesce(sum(${invoices.total} * coalesce(${invoices.exchangeRate}, 1)), 0)`,
     })
-    .from(syncedInvoices)
-    .innerJoin(
-      accounts,
-      eq(syncedInvoices.alegraClientId, accounts.alegraContactId),
-    )
+    .from(invoices)
+    .innerJoin(accounts, eq(invoices.accountId, accounts.id))
     .where(
       and(
-        isNotNull(syncedInvoices.date),
-        gte(syncedInvoices.date, range.from),
-        lte(syncedInvoices.date, range.to),
+        ne(invoices.status, "void"),
+        gte(invoices.issueDate, range.from),
+        lte(invoices.issueDate, range.to),
       ),
     )
     .groupBy(accounts.id, accounts.name);
   return rows.map((r) => ({ ...r, revenueCop: Number(r.revenueCop) }));
 }
 
-/** Empleados activos (post-filtro fantasma): capacidad del prorrateo. */
+/** Empleados activos del directorio (informativo en el dashboard). */
 export async function countActiveEmployees(): Promise<number> {
   const [row] = await db
     .select({ count: sql<number>`count(*)::int` })
-    .from(syncedEmployees)
-    .where(
-      and(
-        isNotNull(syncedEmployees.names),
-        // Activo REAL: contract.endDate null o futura (el status de
-        // Alegra es poco fiable — hay "active" con contrato terminado).
-        sql`coalesce((${syncedEmployees.contract}->>'endDate')::date >= current_date, true)`,
-      ),
-    );
+    .from(employees)
+    .where(eq(employees.active, true));
   return row?.count ?? 0;
 }
 
 export type AdSpendByAccount = { accountId: string; adSpendCop: number };
 
-/** Pauta por cuenta en el rango (informativa; solo cuentas con moneda
- * COP suman — el spend multi-moneda no se mezcla). */
+/** Pauta por cuenta en el rango (informativa; solo cuentas en COP). */
 export async function getAdSpendByAccount(range: {
   from: string;
   to: string;

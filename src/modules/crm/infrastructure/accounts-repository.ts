@@ -37,7 +37,7 @@ function toRow(input: AccountInput) {
     website: input.website,
     status: input.status,
     ownerId: input.ownerId ?? null,
-    alegraContactId: input.alegraContactId,
+    billingCustomerId: input.billingCustomerId,
     clickupFolderId: input.clickupFolderId,
     notes: input.notes ?? null,
   };

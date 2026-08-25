@@ -12,7 +12,7 @@ export type Account = {
   website: string | null;
   status: AccountStatus;
   ownerId: string | null;
-  alegraContactId: string | null;
+  billingCustomerId: string | null;
   clickupFolderId: string | null;
   notes: string | null;
   createdAt: Date;

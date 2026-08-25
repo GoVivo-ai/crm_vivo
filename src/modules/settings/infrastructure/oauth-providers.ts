@@ -1,9 +1,13 @@
 import { resilientFetch } from "@/shared/http/resilient-fetch";
 import type { OAuthTokens } from "@/modules/settings/domain/types";
 
-export type OAuthProvider = "meta_ads" | "clickup";
+export type OAuthProvider = "quickbooks" | "meta_ads" | "clickup";
 
-export const OAUTH_PROVIDERS: OAuthProvider[] = ["meta_ads", "clickup"];
+export const OAUTH_PROVIDERS: OAuthProvider[] = [
+  "quickbooks",
+  "meta_ads",
+  "clickup",
+];
 
 export const isOAuthProvider = (v: string): v is OAuthProvider =>
   (OAUTH_PROVIDERS as string[]).includes(v);
@@ -16,6 +20,12 @@ type ProviderConfig = {
 };
 
 const CONFIG: Record<OAuthProvider, ProviderConfig> = {
+  quickbooks: {
+    authUrl: "https://appcenter.intuit.com/connect/oauth2",
+    scopes: "com.intuit.quickbooks.accounting",
+    clientIdEnv: "QBO_CLIENT_ID",
+    clientSecretEnv: "QBO_CLIENT_SECRET",
+  },
   meta_ads: {
     authUrl: "https://www.facebook.com/v21.0/dialog/oauth",
     scopes: "ads_read,business_management",
@@ -54,11 +64,46 @@ export function buildAuthorizeUrl(
   url.searchParams.set("redirect_uri", redirectUri);
   url.searchParams.set("state", state);
   if (cfg.scopes) url.searchParams.set("scope", cfg.scopes);
-  if (provider === "meta_ads") url.searchParams.set("response_type", "code");
+  if (provider !== "clickup") url.searchParams.set("response_type", "code");
   return url.toString();
 }
 
 const asJson = async (res: Response) => (await res.json()) as Record<string, unknown>;
+
+const INTUIT_TOKEN_URL = "https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer";
+
+/** POST al token endpoint de Intuit con Basic auth. */
+async function intuitTokenRequest(
+  provider: OAuthProvider,
+  body: URLSearchParams,
+): Promise<OAuthTokens> {
+  const { clientId, clientSecret } = appCredentials(provider);
+  const basic = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
+  const res = await resilientFetch(INTUIT_TOKEN_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Basic ${basic}`,
+      "Content-Type": "application/x-www-form-urlencoded",
+      Accept: "application/json",
+    },
+    body: body.toString(),
+  });
+  const data = (await res.json()) as Record<string, unknown>;
+  return {
+    accessToken: String(data.access_token),
+    // Intuit ROTA el refresh_token en cada refresh: persistir SIEMPRE el
+    // último o la conexión muere en silencio.
+    refreshToken: String(data.refresh_token),
+    expiresAt: new Date(
+      Date.now() + Number(data.expires_in ?? 3600) * 1000,
+    ).toISOString(),
+    meta: {
+      refreshExpiresAt: new Date(
+        Date.now() + Number(data.x_refresh_token_expires_in ?? 100 * 86400) * 1000,
+      ).toISOString(),
+    },
+  };
+}
 
 /** code → tokens. Meta: exchange adicional a long-lived (~60 días). */
 export async function exchangeCode(
@@ -67,6 +112,15 @@ export async function exchangeCode(
   redirectUri: string,
 ): Promise<OAuthTokens> {
   const { clientId, clientSecret } = appCredentials(provider);
+
+  if (provider === "quickbooks") {
+    const body = new URLSearchParams({
+      grant_type: "authorization_code",
+      code,
+      redirect_uri: redirectUri,
+    });
+    return intuitTokenRequest(provider, body);
+  }
 
   if (provider === "meta_ads") {
     const tokenUrl = new URL("https://graph.facebook.com/v21.0/oauth/access_token");
@@ -119,22 +173,36 @@ export async function identify(
       const data = await asJson(await resilientFetch(url.toString()));
       return data.name ? String(data.name) : null;
     }
-    const res = await resilientFetch("https://api.clickup.com/api/v2/user", {
-      headers: { Authorization: accessToken },
-    });
-    const data = (await res.json()) as { user?: { username?: string } };
-    return data.user?.username ?? null;
+    if (provider === "clickup") {
+      const res = await resilientFetch("https://api.clickup.com/api/v2/user", {
+        headers: { Authorization: accessToken },
+      });
+      const data = (await res.json()) as { user?: { username?: string } };
+      return data.user?.username ?? null;
+    }
+    return null; // quickbooks: connectedAs lo resuelve el callback con realmId
   } catch {
     return null;
   }
 }
 
-/** Meta: re-exchange del token vigente para extender ~60 días más.
- * ClickUp no expira → null (nada que refrescar). */
+/** Meta: re-exchange del token vigente. QuickBooks: refresh_token grant
+ * (Intuit rota el refresh token — se persiste el nuevo; refresh expira a
+ * ~100 días de inactividad → reconnectRequired). ClickUp no expira. */
 export async function refreshTokens(
   provider: OAuthProvider,
   current: OAuthTokens,
 ): Promise<OAuthTokens | null> {
+  if (provider === "quickbooks") {
+    if (!current.refreshToken) return null;
+    const body = new URLSearchParams({
+      grant_type: "refresh_token",
+      refresh_token: current.refreshToken,
+    });
+    const fresh = await intuitTokenRequest(provider, body);
+    // Conserva realmId/connectedAs y demás campos del payload actual.
+    return { ...current, ...fresh, meta: { ...current.meta, ...fresh.meta } };
+  }
   if (provider !== "meta_ads") return null;
   const { clientId, clientSecret } = appCredentials(provider);
   const url = new URL("https://graph.facebook.com/v21.0/oauth/access_token");

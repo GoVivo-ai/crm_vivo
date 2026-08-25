@@ -28,7 +28,9 @@ export const accounts = pgTable("accounts", {
   website: text("website"),
   status: accountStatusEnum("status").notNull().default("prospect"),
   ownerId: uuid("owner_id").references(() => users.id),
-  alegraContactId: text("alegra_contact_id").unique(),
+  /** Id del cliente en la fuente de facturación conectada (hoy QBO
+   * Customer.Id) — matcheo genérico cliente↔fuente. */
+  billingCustomerId: text("billing_customer_id").unique(),
   clickupFolderId: text("clickup_folder_id").unique(),
   notes: text("notes"),
   createdAt: timestamp("created_at", { withTimezone: true })

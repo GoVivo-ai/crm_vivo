@@ -1,34 +1,32 @@
+import type { RecordSource } from "@/modules/finance/domain/types";
+
 export type BankAccountView = {
   id: string;
-  alegraBankId: string;
+  source: RecordSource; // editable solo cuando 'manual'
   name: string;
-  number: string | null;
-  type: string | null; // 'bank'|'cash'|'credit-card'
-  status: string | null;
-  /** Saldo en la moneda de la cuenta. */
-  balance: number | null;
+  type: string | null; // 'bank' | 'cash' | 'credit-card'
   currencyCode: string;
-  /** Saldo normalizado a COP por Alegra — el que suma la posición. */
-  balanceCop: number | null;
-  syncedAt: Date;
+  /** Saldo en la moneda de la cuenta. */
+  balance: number;
+  /** Saldo consolidado a COP (balance × TRM registrada, 1 si COP). */
+  balanceCop: number;
+  balanceUpdatedAt: Date | null;
+  isActive: boolean;
 };
 
 export type BankTransactionView = {
   id: string;
-  alegraBankId: string;
+  bankAccountId: string;
   bankName: string | null;
-  date: string | null;
-  amount: number | null;
-  type: string | null; // 'in'|'out'
-  movementType: string | null;
-  clientName: string | null;
-  associations: string | null;
-  anotation: string | null;
+  date: string;
+  amount: number;
+  direction: "in" | "out";
+  description: string | null;
 };
 
 export type TreasuryPosition = {
   accounts: BankAccountView[];
-  /** Posición consolidada en COP (suma de balanceCop de cuentas activas). */
+  /** Posición consolidada COP (cuentas activas). */
   totalCashCop: number;
   recentTransactions: BankTransactionView[];
   /** Proyección simple: caja + cartera por cobrar − cuentas por pagar. */

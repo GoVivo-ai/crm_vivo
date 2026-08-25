@@ -16,13 +16,17 @@ import {
 
 /** Callback OAuth: valida state, intercambia code→tokens, guarda
  * cifrado y dispara el descubrimiento inicial (sync) del proveedor. */
+/** Origin canónico: en producción erp.govivo.ai vía NEXT_PUBLIC_APP_URL. */
+const appOrigin = (request: NextRequest) =>
+  process.env.NEXT_PUBLIC_APP_URL ?? request.nextUrl.origin;
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ provider: string }> },
 ) {
   const { provider } = await params;
   const settingsUrl = (suffix: string) =>
-    NextResponse.redirect(`${request.nextUrl.origin}/settings${suffix}`);
+    NextResponse.redirect(`${appOrigin(request)}/settings${suffix}`);
 
   if (!isOAuthProvider(provider)) {
     return NextResponse.json({ error: "Proveedor no soportado" }, { status: 404 });
@@ -39,11 +43,17 @@ export async function GET(
   }
 
   try {
-    const redirectUri = `${request.nextUrl.origin}/api/oauth/${provider}/callback`;
+    const redirectUri = `${appOrigin(request)}/api/oauth/${provider}/callback`;
+    // Intuit entrega el realmId (company id) como query param del callback.
+    const realmId = request.nextUrl.searchParams.get("realmId");
+    if (provider === "quickbooks" && !realmId) {
+      return settingsUrl("?oauth_error=exchange");
+    }
     const tokens = await exchangeCode(provider, code, redirectUri);
     const connectedAs = await identify(provider, tokens.accessToken);
     const payload = {
       ...tokens,
+      ...(provider === "quickbooks" ? { realmId } : {}),
       meta: { ...tokens.meta, connectedAs, authMethod: "oauth" },
     };
     await upsertCredentials(provider, encryptPayload(payload), user.id);

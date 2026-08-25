@@ -24,7 +24,7 @@ async function assertCapacity(
   excludeId?: string,
 ) {
   const existing = await repo.overlappingPercentForEmployee(
-    input.alegraEmployeeId,
+    input.employeeId,
     input.validFrom ?? null,
     input.validTo ?? null,
     excludeId,

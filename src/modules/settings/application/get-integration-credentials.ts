@@ -23,11 +23,12 @@ export function envFallback<I extends Integration>(
 ): IntegrationPayloadMap[I] | null {
   const env = process.env;
   switch (integration) {
-    case "alegra":
-      return env.ALEGRA_EMAIL && env.ALEGRA_API_TOKEN
+    case "quickbooks":
+      return env.QBO_ACCESS_TOKEN && env.QBO_REALM_ID
         ? ({
-            email: env.ALEGRA_EMAIL,
-            token: env.ALEGRA_API_TOKEN,
+            accessToken: env.QBO_ACCESS_TOKEN,
+            refreshToken: env.QBO_REFRESH_TOKEN || undefined,
+            realmId: env.QBO_REALM_ID,
           } as IntegrationPayloadMap[I])
         : null;
     case "meta_ads":
@@ -44,9 +45,13 @@ export function envFallback<I extends Integration>(
   }
 }
 
-/** Re-exchange cuando faltan < 15 días (Meta no da refresh_token: se
- * renueva con fb_exchange_token mientras el token siga vigente). */
-const REFRESH_WINDOW_MS = 15 * 24 * 3600 * 1000;
+/** Ventana de renovación por proveedor: Meta re-exchange con 15 días de
+ * margen (no hay refresh_token); QuickBooks access de 1h → refresh con
+ * 10 min de margen (refresh_token rotativo). */
+const REFRESH_WINDOW_MS: Record<string, number> = {
+  meta_ads: 15 * 24 * 3600 * 1000,
+  quickbooks: 10 * 60 * 1000,
+};
 
 /** Lock simple anti-carrera por integración (por instancia). */
 const refreshLocks = new Map<string, Promise<OAuthTokens | null>>();
@@ -57,7 +62,7 @@ async function refreshIfNeeded(
 ): Promise<OAuthTokens> {
   if (!isOAuthProvider(integration) || !payload.expiresAt) return payload;
   const remaining = Date.parse(payload.expiresAt) - Date.now();
-  if (remaining > REFRESH_WINDOW_MS) return payload;
+  if (remaining > (REFRESH_WINDOW_MS[integration] ?? 0)) return payload;
 
   let pending = refreshLocks.get(integration);
   if (!pending) {

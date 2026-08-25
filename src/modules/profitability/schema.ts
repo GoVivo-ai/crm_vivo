@@ -2,11 +2,11 @@ import {
   date,
   integer,
   pgTable,
-  text,
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
 import { accounts } from "@/modules/crm/schema";
+import { employees } from "@/modules/people/schema";
 
 /**
  * Asignación empleado↔cuenta con % de dedicación y vigencia — el dato
@@ -19,8 +19,9 @@ export const accountStaffing = pgTable("account_staffing", {
   accountId: uuid("account_id")
     .notNull()
     .references(() => accounts.id),
-  /** FK lógica a synced_employees.alegra_employee_id (ULID). */
-  alegraEmployeeId: text("alegra_employee_id").notNull(),
+  employeeId: uuid("employee_id")
+    .notNull()
+    .references(() => employees.id),
   dedicationPercent: integer("dedication_percent").notNull(),
   /** Vigencia; null = abierta por ese extremo. */
   validFrom: date("valid_from"),

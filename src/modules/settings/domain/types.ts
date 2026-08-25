@@ -1,6 +1,6 @@
-export type Integration = "alegra" | "meta_ads" | "clickup";
+export type Integration = "quickbooks" | "meta_ads" | "clickup";
 
-export type AlegraCredentials = { email: string; token: string };
+
 
 /** Tokens OAuth cifrados en BD. expiresAt ISO; meta guarda datos no
  * sensibles del flujo (connectedAs, ids). */
@@ -13,9 +13,12 @@ export type OAuthTokens = {
 
 export type MetaAdsCredentials = OAuthTokens & { businessId?: string };
 export type ClickupCredentials = OAuthTokens;
+/** realmId (company id de Intuit) llega en el callback; sin él no se
+ * puede llamar la API. Vive SOLO en el payload cifrado. */
+export type QuickbooksCredentials = OAuthTokens & { realmId: string };
 
 export type IntegrationPayloadMap = {
-  alegra: AlegraCredentials;
+  quickbooks: QuickbooksCredentials;
   meta_ads: MetaAdsCredentials;
   clickup: ClickupCredentials;
 };

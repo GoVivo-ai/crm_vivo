@@ -1,6 +1,26 @@
-// Tipos de dominio de Finanzas 360 (lecturas sobre la cache de Alegra).
-// Todos los montos están normalizados a COP (moneda base; las facturas
-// EXPORT en USD se convierten con la TRM propia de cada factura).
+// Tipos de dominio de Finanzas — registros propios del ERP (manual +
+// QuickBooks). Montos normalizados a COP con la TRM de cada documento.
+
+export type RecordSource = "manual" | "quickbooks";
+export type InvoiceStatus = "open" | "paid" | "void";
+
+export type Invoice = {
+  id: string;
+  source: RecordSource; // editable/borrable solo cuando 'manual'
+  number: string | null;
+  accountId: string | null;
+  accountName: string | null;
+  clientName: string | null;
+  issueDate: string;
+  dueDate: string | null;
+  status: InvoiceStatus;
+  total: number;
+  totalPaid: number;
+  balance: number;
+  currencyCode: string;
+  exchangeRate: number | null;
+  notes: string | null;
+};
 
 export type AgingBucketId = "current" | "1-30" | "31-60" | "61-90" | "90+";
 
@@ -22,41 +42,32 @@ export type MonthlyBilling = {
   invoices: number;
 };
 
-/** Shape de finance_snapshots.pnl.totals (lo escribe Integraciones). */
-export type PnlTotals = {
-  income: number;
-  cost: number;
-  productionCost: number;
-  expense: number;
-  netIncome: number;
+/** P&L mensual CALCULADO desde registros propios:
+ * netIncome = income − expenses − payroll. */
+export type PnlPoint = {
+  month: string;
+  incomeCop: number;
+  expensesCop: number;
+  payrollCop: number;
+  netIncomeCop: number;
 };
 
-/** Shape de finance_snapshots.cashflow.summary (lo escribe Integraciones). */
-export type CashflowSummary = {
-  initialBalance: number;
-  income: number;
-  expenses: number;
-  periodBalance: number;
-  finalBalance: number;
+/** Flujo de caja mensual desde movimientos bancarios registrados. */
+export type CashflowPoint = {
+  month: string;
+  inflowCop: number;
+  outflowCop: number;
+  netCop: number;
 };
 
 export type FinanceDashboard = {
-  /** Facturación por mes, últimos 12 meses. */
-  billing: MonthlyBilling[];
-  /** Cartera viva calculada en el momento desde synced_invoices. */
+  billing: MonthlyBilling[]; // últimos 12 meses
   receivables: Receivables;
-  /** P&L del mes en curso, del snapshot más reciente (null si no hay). */
-  pnlCurrentMonth: PnlTotals | null;
-  /** Cashflow del mes en curso, del snapshot más reciente. */
-  cashflowCurrentMonth: CashflowSummary | null;
-  /** Fecha del snapshot usado para pnl/cashflow. */
-  snapshotDate: string | null;
+  pnlCurrentMonth: PnlPoint | null;
+  cashflowCurrentMonth: CashflowPoint | null;
 };
 
-export type PnlSeriesPoint = { date: string; totals: PnlTotals };
-export type CashflowSeriesPoint = { date: string; summary: CashflowSummary };
-
-export type SyncSource = "alegra" | "clickup" | "meta_ads";
+export type SyncSource = "quickbooks" | "clickup" | "meta_ads";
 
 export type IntegrationSyncStatus = {
   source: SyncSource;

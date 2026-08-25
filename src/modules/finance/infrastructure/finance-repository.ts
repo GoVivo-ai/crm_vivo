@@ -1,15 +1,23 @@
-import { and, desc, eq, gte, isNotNull, ne, sql } from "drizzle-orm";
+import { and, eq, gte, isNotNull, ne, sql } from "drizzle-orm";
 import { db } from "@/shared/database/db";
-import { financeSnapshots, syncedInvoices } from "@/modules/finance/schema";
+import { invoices } from "@/modules/finance/schema";
+import { expenses } from "@/modules/purchases/schema";
+import { payrollPayments } from "@/modules/people/schema";
+import { bankTransactions } from "@/modules/treasury/schema";
 import type {
   AgingBucket,
   AgingBucketId,
+  CashflowPoint,
   MonthlyBilling,
+  PnlPoint,
   Receivables,
 } from "@/modules/finance/domain/types";
 
-const balanceCop = sql<string>`sum(${syncedInvoices.balance} * coalesce(${syncedInvoices.exchangeRate}, 1))`;
-const totalCop = sql<string>`sum(${syncedInvoices.total} * coalesce(${syncedInvoices.exchangeRate}, 1))`;
+const invoiceCop = sql<string>`sum(${invoices.total} * coalesce(${invoices.exchangeRate}, 1))`;
+const balanceCop = sql<string>`sum(${invoices.balance} * coalesce(${invoices.exchangeRate}, 1))`;
+
+const monthsBack = (months: number) =>
+  sql`(date_trunc('month', current_date) - make_interval(months => ${months - 1}))::date`;
 
 /** Facturación mensual (COP) de los últimos `months` meses. */
 export async function getMonthlyBilling(
@@ -17,19 +25,13 @@ export async function getMonthlyBilling(
 ): Promise<MonthlyBilling[]> {
   const rows = await db
     .select({
-      month: sql<string>`to_char(${syncedInvoices.date}, 'YYYY-MM')`,
-      totalCop,
+      month: sql<string>`to_char(${invoices.issueDate}, 'YYYY-MM')`,
+      totalCop: invoiceCop,
       invoices: sql<number>`count(*)::int`,
     })
-    .from(syncedInvoices)
+    .from(invoices)
     .where(
-      and(
-        isNotNull(syncedInvoices.date),
-        gte(
-          syncedInvoices.date,
-          sql`(date_trunc('month', current_date) - make_interval(months => ${months - 1}))::date`,
-        ),
-      ),
+      and(ne(invoices.status, "void"), gte(invoices.issueDate, monthsBack(months))),
     )
     .groupBy(sql`1`)
     .orderBy(sql`1`);
@@ -40,33 +42,33 @@ export async function getMonthlyBilling(
   }));
 }
 
-/** Cartera viva con aging, calculada al momento desde synced_invoices. */
+/** Cartera viva con aging desde las facturas abiertas. */
 export async function getReceivables(): Promise<Receivables> {
   const openCondition = and(
-    eq(syncedInvoices.status, "open"),
-    isNotNull(syncedInvoices.balance),
-    ne(syncedInvoices.balance, "0"),
+    eq(invoices.status, "open"),
+    isNotNull(invoices.balance),
+    ne(invoices.balance, "0"),
   );
   const [totals] = await db
     .select({
       openInvoices: sql<number>`count(*)::int`,
       outstandingCop: balanceCop,
     })
-    .from(syncedInvoices)
+    .from(invoices)
     .where(openCondition);
 
   const byAging = await db
     .select({
       bucket: sql<string>`case
-        when ${syncedInvoices.dueDate} >= current_date then 'current'
-        when ${syncedInvoices.dueDate} >= current_date - 30 then '1-30'
-        when ${syncedInvoices.dueDate} >= current_date - 60 then '31-60'
-        when ${syncedInvoices.dueDate} >= current_date - 90 then '61-90'
+        when coalesce(${invoices.dueDate}, ${invoices.issueDate}) >= current_date then 'current'
+        when coalesce(${invoices.dueDate}, ${invoices.issueDate}) >= current_date - 30 then '1-30'
+        when coalesce(${invoices.dueDate}, ${invoices.issueDate}) >= current_date - 60 then '31-60'
+        when coalesce(${invoices.dueDate}, ${invoices.issueDate}) >= current_date - 90 then '61-90'
         else '90+' end`,
       amountCop: balanceCop,
       invoices: sql<number>`count(*)::int`,
     })
-    .from(syncedInvoices)
+    .from(invoices)
     .where(openCondition)
     .groupBy(sql`1`);
 
@@ -87,27 +89,84 @@ export async function getReceivables(): Promise<Receivables> {
   };
 }
 
-export type SnapshotRow = typeof financeSnapshots.$inferSelect;
+type MonthTotal = { month: string; total: string };
 
-export async function getLatestSnapshot(): Promise<SnapshotRow | null> {
-  const rows = await db
-    .select()
-    .from(financeSnapshots)
-    .orderBy(desc(financeSnapshots.snapshotDate))
-    .limit(1);
-  return rows[0] ?? null;
+const byMonth = (rows: MonthTotal[]) =>
+  new Map(rows.map((r) => [r.month, Number(r.total ?? 0)]));
+
+/** P&L mensual calculado: ingresos − gastos − nómina, todo COP. */
+export async function getPnlByMonth(months: number): Promise<PnlPoint[]> {
+  const [income, expense, payroll] = await Promise.all([
+    db
+      .select({
+        month: sql<string>`to_char(${invoices.issueDate}, 'YYYY-MM')`,
+        total: invoiceCop,
+      })
+      .from(invoices)
+      .where(
+        and(ne(invoices.status, "void"), gte(invoices.issueDate, monthsBack(months))),
+      )
+      .groupBy(sql`1`),
+    db
+      .select({
+        month: sql<string>`to_char(${expenses.txnDate}, 'YYYY-MM')`,
+        total: sql<string>`sum(${expenses.total} * coalesce(${expenses.exchangeRate}, 1))`,
+      })
+      .from(expenses)
+      .where(
+        and(ne(expenses.status, "void"), gte(expenses.txnDate, monthsBack(months))),
+      )
+      .groupBy(sql`1`),
+    db
+      .select({
+        month: payrollPayments.period,
+        total: sql<string>`sum(${payrollPayments.amount} * coalesce(${payrollPayments.exchangeRate}, 1))`,
+      })
+      .from(payrollPayments)
+      .where(
+        gte(sql`(${payrollPayments.period} || '-01')::date`, monthsBack(months)),
+      )
+      .groupBy(payrollPayments.period),
+  ]);
+
+  const incomeMap = byMonth(income);
+  const expenseMap = byMonth(expense);
+  const payrollMap = byMonth(payroll);
+  const allMonths = [
+    ...new Set([...incomeMap.keys(), ...expenseMap.keys(), ...payrollMap.keys()]),
+  ].sort();
+  return allMonths.map((month) => {
+    const incomeCop = incomeMap.get(month) ?? 0;
+    const expensesCop = expenseMap.get(month) ?? 0;
+    const payrollCop = payrollMap.get(month) ?? 0;
+    return {
+      month,
+      incomeCop,
+      expensesCop,
+      payrollCop,
+      netIncomeCop: incomeCop - expensesCop - payrollCop,
+    };
+  });
 }
 
-/** Snapshots ascendentes de los últimos `days` días (para series). */
-export async function getSnapshotsSince(days: number): Promise<SnapshotRow[]> {
-  return db
-    .select()
-    .from(financeSnapshots)
-    .where(
-      gte(
-        financeSnapshots.snapshotDate,
-        sql`(current_date - make_interval(days => ${days}))::date`,
-      ),
-    )
-    .orderBy(financeSnapshots.snapshotDate);
+/** Flujo de caja mensual desde movimientos bancarios registrados. */
+export async function getCashflowByMonth(
+  months: number,
+): Promise<CashflowPoint[]> {
+  const rows = await db
+    .select({
+      month: sql<string>`to_char(${bankTransactions.date}, 'YYYY-MM')`,
+      inflow: sql<string>`coalesce(sum(${bankTransactions.amount}) filter (where ${bankTransactions.direction} = 'in'), 0)`,
+      outflow: sql<string>`coalesce(sum(${bankTransactions.amount}) filter (where ${bankTransactions.direction} = 'out'), 0)`,
+    })
+    .from(bankTransactions)
+    .where(gte(bankTransactions.date, monthsBack(months)))
+    .groupBy(sql`1`)
+    .orderBy(sql`1`);
+  return rows.map((r) => ({
+    month: r.month,
+    inflowCop: Number(r.inflow),
+    outflowCop: Number(r.outflow),
+    netCop: Number(r.inflow) - Number(r.outflow),
+  }));
 }

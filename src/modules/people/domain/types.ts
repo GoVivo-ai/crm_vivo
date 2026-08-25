@@ -1,5 +1,6 @@
-// Tipos de dominio de RR.HH. El salario y el costo de nómina viven SOLO
-// detrás de people_compensation; el directorio nunca los incluye.
+// Tipos de dominio de RR.HH. — empleados y nómina como registros propios
+// del ERP (QBO Payroll no tiene API). La compensación vive SOLO detrás
+// de people_compensation; el directorio nunca la incluye.
 
 export type LeaveType = "vacation" | "sick" | "personal" | "unpaid" | "other";
 export type LeaveStatus = "requested" | "approved" | "rejected";
@@ -11,60 +12,52 @@ export type EmployeeDocument = {
 };
 
 /** Directorio (people_directory) — SIN compensación y con minimización
- * de PII: sin cédula y cumpleaños solo día/mes (sin año). */
+ * de PII (sin cédula). */
 export type TeamMember = {
-  alegraEmployeeId: string;
+  id: string;
   fullName: string;
   email: string | null;
   phone: string | null;
   hiredAt: string | null;
-  /** Activo REAL: contract.endDate null o futura. El status crudo de
-   * Alegra es poco fiable (hay "active" con contrato terminado). */
+  position: string | null;
+  area: string | null;
   active: boolean;
-  /** Del expediente si existe; si no, el del directorio de Alegra. */
-  position: string | null;
-  area: string | null;
-  profile: {
-    id: string;
-    userId: string | null;
-    contractType: string | null;
-    contractEndDate: string | null;
-    documents: EmployeeDocument[];
-    annualLeaveDays: number;
-  } | null;
-};
-
-/** Expediente completo (people_directory:write): incluye notes, que se
- * excluye del directorio por poder contener info sensible de RR.HH. */
-export type EmployeeProfileDetail = {
-  id: string | null; // null si aún no hay expediente creado
-  alegraEmployeeId: string;
-  /** PII — solo visible aquí (people_directory:write) y en compensation. */
-  identification: string | null;
-  userId: string | null;
-  position: string | null;
-  area: string | null;
   contractType: string | null;
   contractEndDate: string | null;
   documents: EmployeeDocument[];
   annualLeaveDays: number;
+  userId: string | null;
+};
+
+/** Expediente completo (people_directory:write): incluye PII (cédula) y
+ * notes, excluidos del directorio general. */
+export type EmployeeDetail = TeamMember & {
+  identification: string | null;
   notes: string | null;
 };
 
-/** Expediente con compensación (people_compensation). */
+/** Compensación (people_compensation): salario base + pagos. */
 export type EmployeeCompensation = {
-  alegraEmployeeId: string;
+  employeeId: string;
   fullName: string;
-  /** La cédula es necesaria para nómina (people_compensation). */
   identification: string | null;
-  /** Salario del directorio de Alegra — puede estar DESACTUALIZADO; se
-   * muestra como "salario registrado en Alegra", nunca alimenta series. */
-  registeredSalary: number | null;
-  contract: unknown;
+  baseSalary: number | null;
+  payments: PayrollPayment[];
 };
 
-/** Punto de la serie de costo de nómina, derivado de pagos categorizados
- * (la API de payroll no está en el plan de Alegra). */
+export type PayrollPayment = {
+  id: string;
+  employeeId: string;
+  employeeName: string | null;
+  period: string; // YYYY-MM
+  amount: number;
+  currencyCode: string;
+  exchangeRate: number | null;
+  paidAt: string;
+  notes: string | null;
+};
+
+/** Punto de la serie de costo de nómina desde pagos registrados. */
 export type PayrollCostPoint = {
   month: string; // YYYY-MM
   totalCop: number;
@@ -72,15 +65,14 @@ export type PayrollCostPoint = {
 };
 
 export type PayrollCostSeries = {
-  /** Etiqueta OBLIGATORIA en UI (requisito del Planeador). Es SOLO la
-   * nómina de Colombia vía Alegra — el costo QuickBooks/Chase no está. */
-  label: "nómina Colombia (desde pagos Alegra)";
+  /** Etiqueta OBLIGATORIA en UI. */
+  label: "nómina (pagos registrados)";
   points: PayrollCostPoint[];
 };
 
 export type LeaveRequestView = {
   id: string;
-  employeeProfileId: string;
+  employeeId: string;
   employeeName: string | null;
   type: LeaveType;
   startDate: string;

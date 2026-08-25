@@ -2,11 +2,11 @@ import { and, asc, eq, ne, sql } from "drizzle-orm";
 import { db } from "@/shared/database/db";
 import { accountStaffing } from "@/modules/profitability/schema";
 import { accounts } from "@/modules/crm/schema";
-import { syncedEmployees } from "@/modules/people/schema";
+import { employees } from "@/modules/people/schema";
 import type { StaffingAssignment } from "@/modules/profitability/domain/types";
 import type { StaffingInput } from "@/modules/profitability/domain/validation";
 
-const employeeName = sql<string | null>`concat_ws(' ', ${syncedEmployees.names}, ${syncedEmployees.lastNames})`;
+
 
 export async function listStaffing(
   accountId?: string | null,
@@ -15,21 +15,18 @@ export async function listStaffing(
     .select({
       staffing: accountStaffing,
       accountName: accounts.name,
-      employeeName,
+      employeeName: employees.fullName,
     })
     .from(accountStaffing)
     .leftJoin(accounts, eq(accountStaffing.accountId, accounts.id))
-    .leftJoin(
-      syncedEmployees,
-      eq(accountStaffing.alegraEmployeeId, syncedEmployees.alegraEmployeeId),
-    )
+    .leftJoin(employees, eq(accountStaffing.employeeId, employees.id))
     .where(accountId ? eq(accountStaffing.accountId, accountId) : undefined)
     .orderBy(asc(accounts.name));
   return rows.map((r) => ({
     id: r.staffing.id,
     accountId: r.staffing.accountId,
     accountName: r.accountName,
-    alegraEmployeeId: r.staffing.alegraEmployeeId,
+    employeeId: r.staffing.employeeId,
     employeeName: r.employeeName,
     dedicationPercent: r.staffing.dedicationPercent,
     validFrom: r.staffing.validFrom,
@@ -40,13 +37,13 @@ export async function listStaffing(
 /** Suma de % del empleado en asignaciones que se solapan con el rango
  * dado (null = extremo abierto), excluyendo opcionalmente una fila. */
 export async function overlappingPercentForEmployee(
-  alegraEmployeeId: string,
+  employeeId: string,
   validFrom: string | null,
   validTo: string | null,
   excludeId?: string,
 ): Promise<number> {
   const conditions = [
-    eq(accountStaffing.alegraEmployeeId, alegraEmployeeId),
+    eq(accountStaffing.employeeId, employeeId),
     sql`coalesce(${accountStaffing.validFrom}, '-infinity'::date) <= coalesce(${validTo ?? null}::date, 'infinity'::date)`,
     sql`coalesce(${validFrom ?? null}::date, '-infinity'::date) <= coalesce(${accountStaffing.validTo}, 'infinity'::date)`,
   ];
@@ -65,7 +62,7 @@ export async function insertStaffing(input: StaffingInput) {
     .insert(accountStaffing)
     .values({
       accountId: input.accountId,
-      alegraEmployeeId: input.alegraEmployeeId,
+      employeeId: input.employeeId,
       dedicationPercent: input.dedicationPercent,
       validFrom: input.validFrom ?? null,
       validTo: input.validTo ?? null,
@@ -79,7 +76,7 @@ export async function updateStaffing(id: string, input: StaffingInput) {
     .update(accountStaffing)
     .set({
       accountId: input.accountId,
-      alegraEmployeeId: input.alegraEmployeeId,
+      employeeId: input.employeeId,
       dedicationPercent: input.dedicationPercent,
       validFrom: input.validFrom ?? null,
       validTo: input.validTo ?? null,

@@ -2,63 +2,52 @@ import {
   date,
   jsonb,
   numeric,
+  pgEnum,
   pgTable,
   text,
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
 import { accounts } from "@/modules/crm/schema";
+import { users } from "@/modules/identity/schema";
+import { recordSourceEnum } from "@/shared/database/record-source.schema";
 
-// Cache de Alegra. Moneda base de la app: COP; facturas EXPORT en USD
-// traen su propia TRM en exchange_rate.
-export const syncedInvoices = pgTable("synced_invoices", {
+export const invoiceStatusEnum = pgEnum("invoice_status", [
+  "open",
+  "paid",
+  "void",
+]);
+
+/**
+ * Facturas de ingreso — registro propio del ERP. source='manual' se
+ * edita/borra en la app; source='quickbooks' es solo lectura (upsert por
+ * qbo_id del sync). Moneda base COP; otras monedas con su TRM.
+ */
+export const invoices = pgTable("invoices", {
   id: uuid("id").primaryKey().defaultRandom(),
-  alegraInvoiceId: text("alegra_invoice_id").notNull().unique(),
-  numberFull: text("number_full"),
-  alegraClientId: text("alegra_client_id"),
+  source: recordSourceEnum("source").notNull().default("manual"),
+  qboId: text("qbo_id").unique(),
+  number: text("number"),
   accountId: uuid("account_id").references(() => accounts.id),
-  date: date("date"),
+  /** Nombre del cliente cuando no hay cuenta CRM vinculada. */
+  clientName: text("client_name"),
+  issueDate: date("issue_date").notNull(),
   dueDate: date("due_date"),
-  status: text("status"),
-  stampLegalStatus: text("stamp_legal_status"),
-  subtotal: numeric("subtotal", { precision: 14, scale: 2 }),
-  tax: numeric("tax", { precision: 14, scale: 2 }),
-  total: numeric("total", { precision: 14, scale: 2 }),
-  totalPaid: numeric("total_paid", { precision: 14, scale: 2 }),
-  balance: numeric("balance", { precision: 14, scale: 2 }),
+  status: invoiceStatusEnum("status").notNull().default("open"),
+  total: numeric("total", { precision: 14, scale: 2 }).notNull(),
+  totalPaid: numeric("total_paid", { precision: 14, scale: 2 })
+    .notNull()
+    .default("0"),
+  balance: numeric("balance", { precision: 14, scale: 2 }).notNull(),
   currencyCode: text("currency_code").notNull().default("COP"),
   exchangeRate: numeric("exchange_rate", { precision: 14, scale: 4 }),
+  notes: text("notes"),
   raw: jsonb("raw"),
-  syncedAt: timestamp("synced_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-});
-
-// Solo pagos type=in de Alegra.
-export const syncedPayments = pgTable("synced_payments", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  alegraPaymentId: text("alegra_payment_id").notNull().unique(),
-  alegraClientId: text("alegra_client_id"),
-  accountId: uuid("account_id").references(() => accounts.id),
-  date: date("date"),
-  amount: numeric("amount", { precision: 14, scale: 2 }),
-  // Array de {id, number, amount} asociados por Alegra.
-  invoiceIds: jsonb("invoice_ids"),
-  bankAccount: text("bank_account"),
-  costCenter: text("cost_center"),
-  raw: jsonb("raw"),
-  syncedAt: timestamp("synced_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-});
-
-export const financeSnapshots = pgTable("finance_snapshots", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  snapshotDate: date("snapshot_date").notNull().unique(),
-  pnl: jsonb("pnl"),
-  cashflow: jsonb("cashflow"),
-  receivables: jsonb("receivables"),
+  createdBy: uuid("created_by").references(() => users.id),
   createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
 });

@@ -11,15 +11,14 @@ import { listCredentialsRows } from "@/modules/settings/infrastructure/credentia
 import { envFallback } from "@/modules/settings/application/get-integration-credentials";
 import { getLastRunPerSource } from "@/modules/finance/infrastructure/sync-status-repository";
 
-const INTEGRATIONS: Integration[] = ["alegra", "meta_ads", "clickup"];
+const INTEGRATIONS: Integration[] = ["quickbooks", "meta_ads", "clickup"];
 
 const mask = (value: string) => `****${value.slice(-4)}`;
 
-/** Pista NO sensible por integración: email de Alegra enmascarado; para
- * tokens, solo los últimos 4 caracteres. */
-function hintFor(integration: Integration, payload: unknown): string | null {
+/** Pista NO sensible: últimos 4 caracteres del token (el realmId de
+ * QBO jamás sale al cliente). */
+function hintFor(_integration: Integration, payload: unknown): string | null {
   const p = payload as Record<string, string>;
-  if (integration === "alegra" && p.email) return p.email;
   const secret = p.accessToken ?? p.token;
   return secret ? mask(secret) : null;
 }

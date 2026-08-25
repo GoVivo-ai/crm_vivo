@@ -1,7 +1,6 @@
 import { and, desc, eq, sql } from "drizzle-orm";
 import { db } from "@/shared/database/db";
-import { employeeProfiles, leaveRequests } from "@/modules/people/schema";
-import { syncedEmployees } from "@/modules/people/schema";
+import { employees, leaveRequests } from "@/modules/people/schema";
 import type { LeaveRequestView } from "@/modules/people/domain/types";
 import type { LeaveRequestInput } from "@/modules/people/domain/validation";
 
@@ -16,7 +15,7 @@ const dayCount = (start: string, end: string) =>
 function toView(row: LeaveRow, employeeName: string | null): LeaveRequestView {
   return {
     id: row.id,
-    employeeProfileId: row.employeeProfileId,
+    employeeId: row.employeeId,
     employeeName,
     type: row.type,
     startDate: row.startDate,
@@ -32,27 +31,18 @@ function toView(row: LeaveRow, employeeName: string | null): LeaveRequestView {
   };
 }
 
-const employeeNameSql = sql<string | null>`concat_ws(' ', ${syncedEmployees.names}, ${syncedEmployees.lastNames})`;
-
 function baseQuery() {
   return db
-    .select({ leave: leaveRequests, employeeName: employeeNameSql })
+    .select({ leave: leaveRequests, employeeName: employees.fullName })
     .from(leaveRequests)
-    .innerJoin(
-      employeeProfiles,
-      eq(leaveRequests.employeeProfileId, employeeProfiles.id),
-    )
-    .leftJoin(
-      syncedEmployees,
-      eq(employeeProfiles.alegraEmployeeId, syncedEmployees.alegraEmployeeId),
-    );
+    .innerJoin(employees, eq(leaveRequests.employeeId, employees.id));
 }
 
-export async function listLeaveForProfile(
-  employeeProfileId: string,
+export async function listLeaveForEmployee(
+  employeeId: string,
 ): Promise<LeaveRequestView[]> {
   const rows = await baseQuery()
-    .where(eq(leaveRequests.employeeProfileId, employeeProfileId))
+    .where(eq(leaveRequests.employeeId, employeeId))
     .orderBy(desc(leaveRequests.createdAt));
   return rows.map((r) => toView(r.leave, r.employeeName));
 }
@@ -65,14 +55,14 @@ export async function listAllLeave(): Promise<LeaveRequestView[]> {
 }
 
 export async function insertLeave(
-  employeeProfileId: string,
+  employeeId: string,
   requestedBy: string,
   input: LeaveRequestInput,
 ): Promise<LeaveRequestView> {
   const rows = await db
     .insert(leaveRequests)
     .values({
-      employeeProfileId,
+      employeeId,
       type: input.type,
       startDate: input.startDate,
       endDate: input.endDate,
@@ -110,7 +100,7 @@ export async function decideLeave(
  * aceptada (QA): una ausencia que cruza el año cuenta completa en el
  * año de su fecha de inicio. */
 export async function approvedDaysThisYear(
-  employeeProfileId: string,
+  employeeId: string,
 ): Promise<number> {
   const [row] = await db
     .select({
@@ -119,7 +109,7 @@ export async function approvedDaysThisYear(
     .from(leaveRequests)
     .where(
       and(
-        eq(leaveRequests.employeeProfileId, employeeProfileId),
+        eq(leaveRequests.employeeId, employeeId),
         eq(leaveRequests.status, "approved"),
         sql`extract(year from ${leaveRequests.startDate}) = extract(year from current_date)`,
       ),

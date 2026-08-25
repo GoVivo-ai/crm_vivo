@@ -2,7 +2,7 @@ import { pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { users } from "@/modules/identity/schema";
 
 export const integrationTypeEnum = pgEnum("integration_type", [
-  "alegra",
+  "quickbooks",
   "meta_ads",
   "clickup",
 ]);

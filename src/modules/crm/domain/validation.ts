@@ -26,7 +26,7 @@ export const accountInputSchema = z.object({
   website: optionalTrimmed,
   status: z.enum(["prospect", "active", "paused", "churned"]).default("prospect"),
   ownerId: z.uuid().nullish(),
-  alegraContactId: optionalTrimmed,
+  billingCustomerId: optionalTrimmed,
   clickupFolderId: optionalTrimmed,
   notes: z.string().trim().max(5000).nullish(),
 });

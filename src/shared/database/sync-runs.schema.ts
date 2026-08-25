@@ -8,7 +8,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 export const syncSourceEnum = pgEnum("sync_source", [
-  "alegra",
+  "quickbooks",
   "clickup",
   "meta_ads",
 ]);

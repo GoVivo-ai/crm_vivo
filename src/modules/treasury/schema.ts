@@ -1,64 +1,67 @@
 import {
+  boolean,
   date,
   index,
   jsonb,
   numeric,
+  pgEnum,
   pgTable,
   text,
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
+import { users } from "@/modules/identity/schema";
+import { recordSourceEnum } from "@/shared/database/record-source.schema";
 
-// Tesorería (Fase 8) — cache de Alegra Banks.
-
-export const syncedBankAccounts = pgTable("synced_bank_accounts", {
+/** Cuentas bancarias/tarjetas — registro propio. Manual: saldo
+ * actualizable a mano; QBO: current_balance del sync (solo lectura). */
+export const bankAccounts = pgTable("bank_accounts", {
   id: uuid("id").primaryKey().defaultRandom(),
-  alegraBankId: text("alegra_bank_id").notNull().unique(),
+  source: recordSourceEnum("source").notNull().default("manual"),
+  qboId: text("qbo_id").unique(),
   name: text("name").notNull(),
-  number: text("number"),
-  type: text("type"), // 'bank'|'cash'|'credit-card'
-  status: text("status"),
-  balance: numeric("balance", { precision: 14, scale: 2 }),
-  /** Saldo YA normalizado a COP por Alegra — usar para la posición
-   * consolidada. */
-  mainCurrencyBalance: numeric("main_currency_balance", {
-    precision: 14,
-    scale: 2,
-  }),
+  type: text("type"), // 'bank' | 'cash' | 'credit-card'
   currencyCode: text("currency_code").notNull().default("COP"),
+  balance: numeric("balance", { precision: 14, scale: 2 })
+    .notNull()
+    .default("0"),
+  /** TRM para consolidar a COP cuentas en otra moneda (manual). */
   exchangeRate: numeric("exchange_rate", { precision: 14, scale: 4 }),
+  balanceUpdatedAt: timestamp("balance_updated_at", { withTimezone: true }),
+  isActive: boolean("is_active").notNull().default(true),
   raw: jsonb("raw"),
-  syncedAt: timestamp("synced_at", { withTimezone: true })
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
 });
 
-export const syncedBankTransactions = pgTable(
-  "synced_bank_transactions",
+export const txDirectionEnum = pgEnum("tx_direction", ["in", "out"]);
+
+/** Movimientos bancarios — registro MANUAL (QBO no expone el feed crudo
+ * por API; los cargos de Chase llegan como gastos directos a expenses). */
+export const bankTransactions = pgTable(
+  "bank_transactions",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    alegraTransactionId: text("alegra_transaction_id").notNull().unique(),
-    /** FK lógica a synced_bank_accounts.alegra_bank_id. */
-    alegraBankId: text("alegra_bank_id").notNull(),
-    date: date("date"),
-    amount: numeric("amount", { precision: 14, scale: 2 }),
-    type: text("type"), // 'in'|'out'
-    status: text("status"),
-    movementType: text("movement_type"),
-    clientName: text("client_name"),
-    clientIdentification: text("client_identification"),
-    /** Texto legible de Alegra, ej. "Facturas: FE10399". */
-    associations: text("associations"),
-    anotation: text("anotation"),
-    raw: jsonb("raw"),
-    syncedAt: timestamp("synced_at", { withTimezone: true })
+    source: recordSourceEnum("source").notNull().default("manual"),
+    bankAccountId: uuid("bank_account_id")
+      .notNull()
+      .references(() => bankAccounts.id),
+    date: date("date").notNull(),
+    amount: numeric("amount", { precision: 14, scale: 2 }).notNull(),
+    direction: txDirectionEnum("direction").notNull(),
+    description: text("description"),
+    createdBy: uuid("created_by").references(() => users.id),
+    createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
   },
   (table) => [
-    // Backfill con cursor por cuenta (~1.350 movimientos en la principal).
-    index("bank_transactions_bank_date_idx").on(
-      table.alegraBankId,
+    index("bank_transactions_account_date_idx").on(
+      table.bankAccountId,
       table.date,
     ),
   ],

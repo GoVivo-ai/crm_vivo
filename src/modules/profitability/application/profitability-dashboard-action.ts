@@ -8,7 +8,7 @@ import type {
   ProfitabilityDashboard,
 } from "@/modules/profitability/domain/types";
 import { profitabilityPeriodSchema } from "@/modules/profitability/domain/validation";
-import { getPayrollCostForRange } from "@/modules/people/infrastructure/payroll-cost-repository";
+import { getPaymentsByEmployeeMonth } from "@/modules/people/infrastructure/payroll-repository";
 import {
   countActiveEmployees,
   getAdSpendByAccount,
@@ -18,40 +18,24 @@ import { listStaffingOverlappingPeriod } from "@/modules/profitability/infrastru
 
 const isoDate = (d: Date) => d.toISOString().slice(0, 10);
 
-/** Meses YYYY-MM cubiertos por el rango. */
-function monthsInRange(from: string, to: string): string[] {
-  const months: string[] = [];
-  const cursor = new Date(`${from.slice(0, 7)}-01T00:00:00Z`);
-  const end = to.slice(0, 7);
-  while (isoDate(cursor).slice(0, 7) <= end) {
-    months.push(isoDate(cursor).slice(0, 7));
-    cursor.setUTCMonth(cursor.getUTCMonth() + 1);
-  }
-  return months;
-}
-
 type StaffingRow = Awaited<
   ReturnType<typeof listStaffingOverlappingPeriod>
 >[number];
 
 /** Vigente en el mes = su rango solapa [mes-01, mes-fin]. */
 function activeInMonth(row: StaffingRow, month: string): boolean {
-  const monthStart = `${month}-01`;
-  const monthEnd = `${month}-31`;
   return (
-    (row.validFrom ?? "0000-01-01") <= monthEnd &&
-    monthStart <= (row.validTo ?? "9999-12-31")
+    (row.validFrom ?? "0000-01-01") <= `${month}-31` &&
+    `${month}-01` <= (row.validTo ?? "9999-12-31")
   );
 }
 
 /**
  * Margen por cuenta (profitability:read = finance/management/admin).
- * Prorrateo mensual por CAPACIDAD TOTAL (directriz del Planeador):
- * costo(cuenta, mes) = nómina(mes) × Σ%(cuenta, mes) / (100 × empleados
- * activos); el residuo queda como unassignedCostCop (compañía). Supone
- * costo igual por empleado — assumption: 'equal-cost' en el resultado.
- * adSpend es informativo, NO se resta del margen (el cliente paga su
- * pauta directo — pendiente confirmación final con datos).
+ * Costo de personal REAL por empleado (pagos de nómina registrados):
+ * costo(cuenta, mes) = Σ pago(empleado, mes) × %dedicación/100.
+ * El residuo (pagos sin asignación) queda como unassignedCostCop.
+ * adSpend es informativo, NO se resta del margen.
  */
 export async function getProfitabilityDashboard(
   input: unknown = {},
@@ -66,31 +50,29 @@ export async function getProfitabilityDashboard(
   const period = { from, to };
 
   return runAction("profitability", "read", async () => {
-    const [revenue, adSpend, staffing, payrollSeries, activeEmployees] =
+    const [revenue, adSpend, staffing, payments, activeEmployees] =
       await Promise.all([
         getRevenueByAccount(period),
         getAdSpendByAccount(period),
         listStaffingOverlappingPeriod(period),
-        getPayrollCostForRange(period),
+        getPaymentsByEmployeeMonth(period),
         countActiveEmployees(),
       ]);
 
-    const months = monthsInRange(from, to);
     const staffingCostByAccount = new Map<string, number>();
     let totalPayrollCop = 0;
-    // Capacidad total del mes: 100% × empleados activos (conteo actual;
-    // no hay historial mensual del directorio).
-    const capacityPercent = 100 * Math.max(activeEmployees, 1);
-    for (const month of months) {
-      const payroll = payrollSeries.find((p) => p.month === month);
-      if (!payroll || payroll.totalCop === 0) continue;
-      totalPayrollCop += payroll.totalCop;
-      const active = staffing.filter((s) => activeInMonth(s, month));
-      for (const s of active) {
+    for (const payment of payments) {
+      totalPayrollCop += payment.amountCop;
+      const assignments = staffing.filter(
+        (s) =>
+          s.employeeId === payment.employeeId &&
+          activeInMonth(s, payment.month),
+      );
+      for (const s of assignments) {
         staffingCostByAccount.set(
           s.accountId,
           (staffingCostByAccount.get(s.accountId) ?? 0) +
-            (payroll.totalCop * s.dedicationPercent) / capacityPercent,
+            (payment.amountCop * s.dedicationPercent) / 100,
         );
       }
     }
@@ -121,11 +103,8 @@ export async function getProfitabilityDashboard(
           revenueCop,
           staffingCostCop,
           assignedDedicationPercent: staffing
-            .filter((s: StaffingRow) => s.accountId === accountId)
-            .reduce(
-              (acc: number, s: StaffingRow) => acc + s.dedicationPercent,
-              0,
-            ),
+            .filter((s) => s.accountId === accountId)
+            .reduce((acc, s) => acc + s.dedicationPercent, 0),
           adSpendCop: adSpendMap.get(accountId) ?? 0,
           adSpendIncludedInMargin: false as const,
           marginCop,
@@ -146,8 +125,7 @@ export async function getProfitabilityDashboard(
       totalAssignedPercent,
       unassignedCostCop: Math.round(totalPayrollCop - assignedTotal),
       activeEmployees,
-      assumption: "equal-cost" as const,
-      costScope: "colombia-only" as const,
+      assumption: "per-employee-cost" as const,
       accounts,
     };
   });

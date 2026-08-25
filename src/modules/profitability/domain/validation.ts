@@ -3,7 +3,7 @@ import { z } from "zod";
 export const staffingInputSchema = z
   .object({
     accountId: z.uuid(),
-    alegraEmployeeId: z.string().trim().min(1).max(100),
+    employeeId: z.uuid(),
     dedicationPercent: z.number().int().min(1).max(100),
     validFrom: z.iso.date().nullish(),
     validTo: z.iso.date().nullish(),

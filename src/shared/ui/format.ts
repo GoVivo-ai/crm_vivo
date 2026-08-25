@@ -24,6 +24,18 @@ export function formatMoney(amount: number): string {
   return money.format(amount);
 }
 
+const accountingMoney = new Intl.NumberFormat(LOCALE, {
+  style: "currency",
+  currency: BASE_CURRENCY,
+  currencySign: "accounting",
+  maximumFractionDigits: 0,
+});
+
+/** Estilo contable: los negativos van entre paréntesis — finanzas los tiene. */
+export function formatAccountingMoney(amount: number): string {
+  return accountingMoney.format(amount);
+}
+
 /** Para cabeceras de columna y KPIs donde el monto completo no cabe. */
 export function formatCompactMoney(amount: number): string {
   return compactMoney.format(amount);

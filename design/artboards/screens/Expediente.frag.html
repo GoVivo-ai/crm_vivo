@@ -1,0 +1,137 @@
+{"title":"Equipo · Laura Pinzón","crumb":"Expediente de empleado","active":"Equipo","minh":1290}
+      <style>
+        .tab{padding:0 2px 10px;font:700 13px 'Nunito Sans',sans-serif;color:var(--muted)}
+        .tab.on{color:var(--navy);font-weight:800;background:linear-gradient(90deg,#04D98B,#F2E205) bottom/100% 3px no-repeat}
+        .stat{display:flex;flex-direction:column;gap:5px}
+        .frow{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px solid var(--line)}
+        .frow:last-child{border-bottom:0}
+        .frow .k{font:600 12.5px 'Nunito Sans',sans-serif;color:var(--muted);flex-shrink:0}
+        .frow .v{font:700 13px 'Nunito Sans',sans-serif;color:var(--ink);text-align:right}
+        .afi{display:flex;flex-direction:column;gap:4px;padding:10px 12px;background:#F6F7F9;border-radius:10px;min-width:0}
+        .afi b{font:800 12.5px 'Nunito Sans',sans-serif;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .talla{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 10px;background:#F6F7F9;border-radius:12px;flex:1}
+        .talla b{font:800 22px 'Nunito',sans-serif;color:var(--navy)}
+        .doc{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+        .doc:last-child{border-bottom:0}
+      </style>
+
+      <!-- Cabecera de persona -->
+      <div class="card" style="padding:20px 24px;display:flex;align-items:center;gap:18px">
+        <div style="width:56px;height:56px;border-radius:999px;background:var(--green-tint);color:var(--green-ink);display:flex;align-items:center;justify-content:center;font:800 19px 'Nunito',sans-serif;flex-shrink:0">LP</div>
+        <div style="min-width:0">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font:800 20px 'Nunito',sans-serif;color:var(--navy)">Laura Pinzón Herrera</span>
+            <span class="badge b-ok">Activa</span>
+            <span class="badge b-warn">Contrato vence en 21 días</span>
+          </div>
+          <div style="font:600 12.5px 'Nunito Sans',sans-serif;color:var(--muted);margin-top:3px">CRM Specialist · Cuentas · laura@govivo.ai · 310 442 8817 · En VIVO desde sep 2024</div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:26px;align-items:center">
+          <div class="stat"><span class="lbl">Antigüedad</span><span style="font:800 20px 'Nunito',sans-serif;color:var(--navy)">1 a · 11 m</span></div>
+          <div class="stat"><span class="lbl">Vacaciones disp.</span><span style="font:800 20px 'Nunito',sans-serif;color:var(--navy)">7 días</span></div>
+          <div class="stat"><span class="lbl">Expediente</span><span style="font:800 20px 'Nunito',sans-serif;color:var(--gold)">4 de 6</span></div>
+          <div class="btn ghost">Editar</div>
+        </div>
+      </div>
+
+      <div style="display:flex;border-bottom:1px solid var(--border);gap:22px;padding:0 2px">
+        <div class="tab on">Resumen</div>
+        <div class="tab">Contractual</div>
+        <div class="tab">Personal y dotación</div>
+        <div class="tab">Compensación</div>
+        <div class="tab">Documentos</div>
+        <div class="tab">Ausencias</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:16px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+          <!-- Contractual -->
+          <div class="card">
+            <div class="card-h"><h2>Contractual</h2><span style="margin-left:auto;font:700 12px 'Nunito Sans',sans-serif;color:var(--green-ink)">Editar sección →</span></div>
+            <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:0 28px;padding:8px 20px 6px">
+              <div class="frow"><span class="k">Tipo de contrato</span><span class="v">Término fijo</span></div>
+              <div class="frow"><span class="k">Jornada</span><span class="v">Tiempo completo</span></div>
+              <div class="frow"><span class="k">Inicio</span><span class="v">16 sep 2024</span></div>
+              <div class="frow"><span class="k">Fin</span><span class="v" style="color:var(--gold)">15 sep 2026 · en 21 días</span></div>
+              <div class="frow"><span class="k">Cargo</span><span class="v">CRM Specialist</span></div>
+              <div class="frow"><span class="k">Área</span><span class="v">Cuentas</span></div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(4, minmax(0, 1fr));gap:10px;padding:10px 20px 18px">
+              <div class="afi"><span class="lbl" style="font-size:9.5px">EPS</span><b>Sanitas</b></div>
+              <div class="afi"><span class="lbl" style="font-size:9.5px">Pensión (AFP)</span><b>Porvenir</b></div>
+              <div class="afi"><span class="lbl" style="font-size:9.5px">ARL</span><b>Sura · riesgo I</b></div>
+              <div class="afi"><span class="lbl" style="font-size:9.5px">Caja compens.</span><b>Compensar</b></div>
+            </div>
+          </div>
+
+          <!-- Personal y dotación -->
+          <div class="card">
+            <div class="card-h"><h2>Personal y dotación</h2><span class="badge b-mut" style="margin-left:auto">Visible para gestión</span></div>
+            <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:0 28px;padding:8px 20px 6px">
+              <div class="frow"><span class="k">Nacimiento</span><span class="v">14 mar 1994 · 32 años</span></div>
+              <div class="frow"><span class="k">Documento</span><span class="v">CC ····4821</span></div>
+              <div class="frow"><span class="k">Dirección</span><span class="v">Cra 15 #93-44, Bogotá</span></div>
+              <div class="frow"><span class="k">RH</span><span class="v"><span class="badge b-bad" style="font-size:11px">O+</span></span></div>
+              <div class="frow" style="grid-column:1 / -1"><span class="k">Contacto de emergencia</span><span class="v">Marta Herrera (madre) · 301 228 9917</span></div>
+            </div>
+            <div style="display:flex;gap:10px;padding:10px 20px 18px">
+              <div class="talla"><span class="lbl" style="font-size:9.5px">Camisa</span><b>S</b></div>
+              <div class="talla"><span class="lbl" style="font-size:9.5px">Pantalón</span><b>8</b></div>
+              <div class="talla"><span class="lbl" style="font-size:9.5px">Calzado</span><b>37</b></div>
+              <div style="flex:2.4;display:flex;align-items:center;padding:0 6px;font:600 11.5px/1.55 'Nunito Sans',sans-serif;color:var(--faint)">Tallas para dotación y regalos de la empresa. Última entrega: kit de marca · dic 2025.</div>
+            </div>
+          </div>
+
+          <!-- Compensación -->
+          <div class="card">
+            <div class="card-h"><h2>Compensación</h2><span class="badge b-info" style="margin-left:auto"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Solo finanzas y gestión</span></div>
+            <div style="display:flex;align-items:flex-end;gap:26px;padding:12px 20px 4px">
+              <div><span class="lbl">Salario base</span><div style="font:800 26px 'Nunito',sans-serif;color:var(--navy);font-variant-numeric:tabular-nums;margin-top:2px">$4.800.000<span style="font:700 13px 'Nunito Sans',sans-serif;color:var(--muted)"> COP/mes</span></div></div>
+              <div style="padding-bottom:4px"><span class="lbl">Auxilios recurrentes</span><div style="font:700 13px 'Nunito Sans',sans-serif;margin-top:4px">Conectividad $120.000 · Alimentación $180.000</div></div>
+            </div>
+            <table class="tbl" style="margin-top:6px">
+              <thead><tr><th>Periodo</th><th>Pagado</th><th class="r">Neto</th><th>Fuente</th></tr></thead>
+              <tbody>
+                <tr><td style="font-weight:700">Ago 2026 · 1.ª quincena</td><td style="color:var(--muted)">15 ago</td><td class="r" style="font-weight:800">$2.640.000</td><td><span class="badge b-mut">Manual</span></td></tr>
+                <tr><td style="font-weight:700">Jul 2026 · 2.ª quincena</td><td style="color:var(--muted)">30 jul</td><td class="r" style="font-weight:800">$2.640.000</td><td><span class="badge b-mut">Manual</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+          <!-- Checklist expediente -->
+          <div class="card" style="border-color:rgba(140,122,10,.35)">
+            <div class="card-h"><h2>Completitud del expediente</h2><span class="badge b-warn" style="margin-left:auto">4 de 6</span></div>
+            <div style="padding:10px 20px 6px">
+              <div style="height:8px;border-radius:99px;background:#EEF1F6;overflow:hidden"><div style="width:67%;height:100%;background:linear-gradient(90deg,#04D98B,#F2E205)"></div></div>
+            </div>
+            <div style="padding:8px 20px 16px;display:flex;flex-direction:column">
+              <div class="doc"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#069B66" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M20 6 9 17l-5-5"></path></svg><span style="font:700 12.5px 'Nunito Sans',sans-serif;flex:1">Hoja de vida</span><span style="font:600 11px 'Nunito Sans',sans-serif;color:var(--faint)">sep 2024</span></div>
+              <div class="doc"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#069B66" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M20 6 9 17l-5-5"></path></svg><span style="font:700 12.5px 'Nunito Sans',sans-serif;flex:1">Cédula</span><span style="font:600 11px 'Nunito Sans',sans-serif;color:var(--faint)">sep 2024</span></div>
+              <div class="doc"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#069B66" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M20 6 9 17l-5-5"></path></svg><span style="font:700 12.5px 'Nunito Sans',sans-serif;flex:1">Certificados de afiliación</span><span style="font:600 11px 'Nunito Sans',sans-serif;color:var(--faint)">oct 2024</span></div>
+              <div class="doc"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#069B66" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M20 6 9 17l-5-5"></path></svg><span style="font:700 12.5px 'Nunito Sans',sans-serif;flex:1">Acuerdo de confidencialidad</span><span style="font:600 11px 'Nunito Sans',sans-serif;color:var(--faint)">oct 2024</span></div>
+              <div class="doc"><span style="width:14px;height:14px;border:1.5px dashed #C6CFDD;border-radius:99px;flex-shrink:0"></span><span style="font:700 12.5px 'Nunito Sans',sans-serif;flex:1;color:var(--gold)">Contrato firmado</span><span style="font:800 11.5px 'Nunito Sans',sans-serif;color:var(--green-ink)">Subir →</span></div>
+              <div class="doc"><span style="width:14px;height:14px;border:1.5px dashed #C6CFDD;border-radius:99px;flex-shrink:0"></span><span style="font:700 12.5px 'Nunito Sans',sans-serif;flex:1;color:var(--gold)">Examen médico de ingreso</span><span style="font:800 11.5px 'Nunito Sans',sans-serif;color:var(--green-ink)">Subir →</span></div>
+            </div>
+          </div>
+
+          <!-- Ausencias -->
+          <div class="card">
+            <div class="card-h"><h2>Ausencias</h2><span style="margin-left:auto;font:700 12px 'Nunito Sans',sans-serif;color:var(--green-ink)">Ver todas →</span></div>
+            <div style="padding:12px 20px 16px;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:700 12.5px 'Nunito Sans',sans-serif">Saldo 2026</span><span style="font:800 14px 'Nunito',sans-serif;color:var(--navy)">7 de 15 días</span></div>
+              <div style="height:8px;border-radius:99px;background:#EEF1F6;overflow:hidden;display:flex;gap:2px"><div style="width:33%;background:var(--navy)"></div><div style="width:20%;background:var(--yellow)"></div><div style="flex:1;background:var(--green)"></div></div>
+              <div style="font:600 12px 'Nunito Sans',sans-serif;color:var(--muted)">Próxima: vacaciones 7–11 sep · pendiente de aprobación</div>
+            </div>
+          </div>
+
+          <!-- Notas internas -->
+          <div class="card">
+            <div class="card-h"><h2>Notas internas</h2><span class="badge b-mut" style="margin-left:auto">Solo gestión</span></div>
+            <div style="padding:12px 20px 16px;font:600 12.5px/1.6 'Nunito Sans',sans-serif;color:var(--muted)">
+              Renovación de contrato en conversación — Laura pidió revisar el auxilio de conectividad. Seguimiento: reunión 1:1 el 2 sep.
+            </div>
+          </div>
+        </div>
+      </div>

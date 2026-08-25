@@ -110,6 +110,15 @@
       "page": "pantallas"
     },
     {
+      "file": "Expediente.dc.html",
+      "title": "Expediente de empleado",
+      "x": 1560,
+      "y": 6110,
+      "w": 1440,
+      "h": 1290,
+      "page": "pantallas"
+    },
+    {
       "file": "Sistema.dc.html",
       "title": "Sistema visual",
       "x": 0,

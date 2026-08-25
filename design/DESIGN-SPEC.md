@@ -460,3 +460,74 @@ que cambia es la envolvente del dialog:
 - Accesibilidad: verde de texto siempre `#069B66` (no `#04D98B`) sobre blanco;
   amarillo jamás como texto ni con texto encima; estados nunca solo-color
   (siempre icono o palabra).
+
+## 14. Expediente de empleado (propuesta — pendiente de aprobación de Victor)
+
+Artboard: `design/artboards/Expediente.dc.html` (fragmento fuente en
+`screens/Expediente.frag.html`).
+
+**Página propia** `/people/[id]`, no un dialog: el expediente es la "Cuenta 360 de
+una persona" y hereda ese vocabulario — cabecera + tabs + grid 3fr/2fr.
+
+**Cabecera de persona**: avatar 56px (tinta + iniciales), nombre 20px Nunito 800 +
+badges (estado Activa/Vacaciones/Retirada; alerta de contrato en warn cuando vence
+<45 días), meta línea (cargo · área · correo · teléfono · "En VIVO desde…").
+Stats a la derecha según rol: Antigüedad (calculada), Vacaciones disponibles,
+Completitud del expediente ("4 de 6", en gold si incompleto; con
+people_compensation se suma Salario base). Acción "Editar".
+
+**Tabs**: Resumen · Contractual · Personal y dotación · Compensación (solo
+people_compensation) · Documentos · Ausencias. El artboard muestra el RESUMEN, que
+reúne lo esencial de las cuatro áreas; cada tab profundiza con el mismo patrón de
+tarjetas. La edición es POR SECCIÓN (cada card tiene "Editar sección →" que abre un
+Lomo del área Equipo con solo esos campos) — nunca un formulario plano de 30 campos.
+
+**Columna principal (3fr)**:
+1. *Contractual*: pares clave/valor a 2 columnas (tipo de contrato: Término fijo /
+   Indefinido / Prestación de servicios / Obra-labor; jornada; inicio/fin — el fin
+   en `--gold` con "en N días" cuando aplica la alerta existente; cargo; área) +
+   fila de 4 chips de afiliación (EPS · AFP/Pensión · ARL con nivel de riesgo ·
+   Caja de compensación) como bloques `#F6F7F9` r10 con eyebrow.
+2. *Personal y dotación*: nacimiento SIEMPRE como "fecha · edad calculada"
+   ("14 mar 1994 · 32 años" — la edad jamás se guarda, se deriva); documento
+   ENMASCARADO ("CC ····4821", completo solo tras write); dirección; contacto de
+   emergencia (nombre + parentesco + teléfono); RH como badge rojo. **Tallas como
+   tokens grandes** (Camisa/Pantalón/Calzado en tiles `#F6F7F9` r12, cifra Nunito
+   800 22px) — es dato operativo de dotación, se le da presencia, con nota de
+   último kit entregado.
+3. *Compensación*: candado visible (badge b-info "Solo finanzas y gestión");
+   salario base 26px tabular + moneda; auxilios/bonos recurrentes en línea;
+   mini-tabla de últimos pagos (periodo/fecha/neto/chip de fuente) que enlaza al
+   historial existente.
+
+**Columna lateral (2fr)**:
+4. *Completitud del expediente* (card con borde warn si incompleta): barra de
+   progreso con el gradiente firma + checklist — ítems completos con check verde y
+   fecha, faltantes con círculo punteado `#C6CFDD`, label en `--gold` y acción
+   "Subir →". Lista canónica: hoja de vida, cédula, certificados de afiliación,
+   acuerdo de confidencialidad, contrato firmado, examen médico de ingreso
+   (extensible por tipo de contrato). El conteo "N de M" alimenta la cabecera y
+   las alertas del Home/Equipo.
+5. *Ausencias*: saldo del año con la barra segmentada de Vacaciones + próxima
+   ausencia.
+6. *Notas internas* (badge "Solo gestión"): texto libre de seguimiento.
+
+**Matriz de visibilidad (respeta la minimización de PII vigente)**:
+- `people_directory` read (todos los activos): cabecera sin stats sensibles —
+  nombre, cargo, área, correo, estado, cumpleaños como día/mes (sin año ni edad).
+  Los tabs restringidos ni se pintan.
+- `people_directory` write (management/admin): + Contractual completo,
+  afiliaciones, Personal y dotación (documento completo solo aquí), Documentos,
+  checklist y notas internas.
+- `people_compensation` (finance/management/admin): + tab y card Compensación y el
+  stat de salario. El guard es de servidor; la UI además no monta la sección.
+- El propio empleado ve su expediente completo EXCEPTO notas internas (y
+  compensación solo lectura).
+
+**Estados vacíos**: campo sin dato = "—" (nunca inventar); sección vacía = mensaje
+honesto + CTA "Completar sección →" (solo write); expediente recién creado abre
+con la checklist en 0 de M como guía de onboarding.
+
+**Captura**: los Lomos de sección usan el tile del área Equipo (tinta navy
+`#E7EBF3`); los selects cortos (tipo de contrato, jornada, RH) son segmented o
+select según la regla §12.3; tallas como inputs cortos de 3 columnas.

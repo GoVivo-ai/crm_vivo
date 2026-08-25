@@ -201,7 +201,8 @@ Orden de lectura fijo:
    El veredicto y la frase se calculan de los datos (caja/margen/alertas).
 2. **Franja FINANZAS · TESORERÍA** (ancho completo — domina; lleva el único gradiente
    firma de la página): grid `1.5fr 1fr 1.2fr` con divisores `--line`:
-   caja disponible (42px + sparkline 45d + cobertura en meses + proyección 30d) ·
+   caja disponible (42px + sparkline de saldo mensual, §nota-datos + cobertura en
+   meses + proyección 30d) ·
    resultado del mes (26px verde + margen y delta) · cartera (26px + badge de vencida
    + accionable rojo "Gestionar cobro a X →").
 3. **Franja COMERCIAL (3fr) + CLIENTES·OPERACIÓN (2fr)**:
@@ -222,6 +223,24 @@ Cada franja abre igual: punto 8px del color del área + label uppercase + **vere
 (badge Bien/Atención/Problema) + link "Abrir módulo →" a la derecha. El cuerpo de cada
 franja es de naturaleza DISTINTA (cifras / funnel / semáforo / personas / spend).
 Regla editorial: **ningún dato sin verbo** — todo problema trae su acción.
+
+**Nota-datos (ajustes acordados 2026-08-25 sobre huecos del contrato de datos):**
+- Sparkline de caja: no hay serie diaria — se pinta el **saldo al cierre de mes,
+  últimos 12 m**, reconstruido hacia atrás desde el saldo actual restando el flujo
+  neto de cada mes (línea, no barras: la historia es la trayectoria del saldo). Si la
+  reconstrucción no es confiable (multi-moneda), fallback: flujo neto mensual como
+  BARRAS (nunca línea) con label explícito.
+- Semáforo de clientes: mientras backend no exponga salud por cuenta
+  (`getClientsHealthList`), chips de CONTEO por bucket ("N sanas / N atención /
+  N riesgo") — interino; el objetivo de diseño son chips con NOMBRE (el valor está en
+  saber CUÁL cuenta está mal). El accionable de cuenta en riesgo sí exige nombre.
+- Marketing: sin serie temporal de spend — mini-barras = **top-5 campañas por
+  inversión** en la rampa teal, ordenadas ascendente izq→der (la más oscura = mayor
+  spend), con label explícito.
+- Cumpleaños/aniversarios: no existen en datos hoy; la franja Equipo muestra hechos
+  reales (ausencias por aprobar, contratos por vencer). Se reinstauran cuando el
+  módulo People (expediente) los aporte.
+- Todo dato faltante se etiqueta honesto en la UI; nunca se simula.
 
 ## 11. Notas por pantalla
 

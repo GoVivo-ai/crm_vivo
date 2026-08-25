@@ -7,6 +7,7 @@ import {
   getSyncStatus,
 } from "@/modules/finance/application/finance-actions";
 import { InvoiceForm } from "@/modules/finance/ui/invoice-form";
+import { RequiresWrite } from "@/shared/ui/requires-write";
 import { AgingChart } from "@/modules/finance/ui/aging-chart";
 import { BillingChart } from "@/modules/finance/ui/billing-chart";
 import { CashflowChart } from "@/modules/finance/ui/cashflow-chart";
@@ -68,7 +69,9 @@ export default async function FinancePage() {
           >
             Ver facturas
           </Link>
-          <InvoiceForm accounts={accountOptions} />
+          <RequiresWrite resource="finance">
+            <InvoiceForm accounts={accountOptions} />
+          </RequiresWrite>
         </div>
       </div>
 

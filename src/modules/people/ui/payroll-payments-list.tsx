@@ -6,8 +6,11 @@ import { formatCurrency } from "@/shared/ui/format";
 /** Pagos de nómina recientes (people_compensation). */
 export function PayrollPaymentsList({
   payments,
+  canWrite,
 }: {
   payments: PayrollPayment[];
+  /** people_compensation:write — sin él no se renderiza borrar. */
+  canWrite: boolean;
 }) {
   if (payments.length === 0) {
     return (
@@ -36,12 +39,14 @@ export function PayrollPaymentsList({
           <span className="font-mono text-sm">
             {formatCurrency(p.amount, p.currencyCode)}
           </span>
-          <DeleteRecordButton
-            action={deletePayrollPayment}
-            id={p.id}
-            confirmText={`¿Borrar el pago de ${p.employeeName ?? "?"} (${p.period})?`}
-            successMessage="Pago borrado"
-          />
+          {canWrite && (
+            <DeleteRecordButton
+              action={deletePayrollPayment}
+              id={p.id}
+              confirmText={`¿Borrar el pago de ${p.employeeName ?? "?"} (${p.period})?`}
+              successMessage="Pago borrado"
+            />
+          )}
         </li>
       ))}
     </ul>

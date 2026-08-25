@@ -11,6 +11,7 @@ import { DirectoryTable } from "@/modules/people/ui/directory-table";
 import { EmployeeForm } from "@/modules/people/ui/profile-form";
 import { PayrollChart } from "@/modules/people/ui/payroll-chart";
 import { ActionError } from "@/shared/ui/action-error";
+import { RequiresWrite, hasWrite } from "@/shared/ui/requires-write";
 import { EmptyState } from "@/shared/ui/empty-state";
 
 export default async function PeoplePage() {
@@ -20,11 +21,13 @@ export default async function PeoplePage() {
   const seesCompensation =
     user !== null && can(user.role, "people_compensation", "read");
 
-  const [directory, payroll, recentPayments] = await Promise.all([
-    getTeamDirectory(),
-    seesCompensation ? getPayrollCostSeries() : null,
-    seesCompensation ? listRecentPayrollPayments() : null,
-  ]);
+  const [directory, payroll, recentPayments, compensationWrite] =
+    await Promise.all([
+      getTeamDirectory(),
+      seesCompensation ? getPayrollCostSeries() : null,
+      seesCompensation ? listRecentPayrollPayments() : null,
+      hasWrite("people_compensation"),
+    ]);
   if (!directory.ok) return <ActionError message={directory.error} />;
   const employeeOptions = directory.data
     .filter((m) => m.active)
@@ -66,7 +69,9 @@ export default async function PeoplePage() {
             <h2 className="text-sm font-semibold">
               Costo de nómina · últimos 12 meses
             </h2>
-            <PayrollPaymentForm employees={employeeOptions} />
+            <RequiresWrite resource="people_compensation">
+              <PayrollPaymentForm employees={employeeOptions} />
+            </RequiresWrite>
           </div>
           {payroll.ok ? (
             <PayrollChart
@@ -83,7 +88,10 @@ export default async function PeoplePage() {
         <section className="rounded-lg border bg-card p-4">
           <h2 className="mb-3 text-sm font-semibold">Pagos recientes</h2>
           {recentPayments.ok ? (
-            <PayrollPaymentsList payments={recentPayments.data} />
+            <PayrollPaymentsList
+              payments={recentPayments.data}
+              canWrite={compensationWrite}
+            />
           ) : (
             <p className="text-sm text-muted-foreground">
               {recentPayments.error}

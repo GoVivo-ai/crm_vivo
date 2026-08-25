@@ -23,10 +23,16 @@ const STATUS_LABELS: Record<Invoice["status"], string> = {
 type InvoicesTableProps = {
   invoices: Invoice[];
   accounts: { id: string; name: string }[];
+  /** finance:write — sin él no se renderizan editar/borrar. */
+  canWrite: boolean;
 };
 
 /** Facturas de ingreso; las manuales se editan/borran, QB solo lectura. */
-export function InvoicesTable({ invoices, accounts }: InvoicesTableProps) {
+export function InvoicesTable({
+  invoices,
+  accounts,
+  canWrite,
+}: InvoicesTableProps) {
   return (
     <Table>
       <TableHeader>
@@ -76,7 +82,7 @@ export function InvoicesTable({ invoices, accounts }: InvoicesTableProps) {
               <SourceBadge source={invoice.source} />
             </TableCell>
             <TableCell className="text-right">
-              {invoice.source === "manual" && (
+              {canWrite && invoice.source === "manual" && (
                 <span className="inline-flex items-center gap-1">
                   <InvoiceForm invoice={invoice} accounts={accounts} />
                   <DeleteRecordButton

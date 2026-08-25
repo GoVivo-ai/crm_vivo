@@ -5,6 +5,7 @@ import { BankAccountForm } from "@/modules/treasury/ui/bank-account-form";
 import { TransactionForm } from "@/modules/treasury/ui/transaction-form";
 import { TransactionsTable } from "@/modules/treasury/ui/transactions-table";
 import { ActionError } from "@/shared/ui/action-error";
+import { RequiresWrite, hasWrite } from "@/shared/ui/requires-write";
 import { EmptyState } from "@/shared/ui/empty-state";
 import { Kpi } from "@/shared/ui/kpi";
 import { SyncStatus } from "@/shared/ui/sync-status";
@@ -25,9 +26,10 @@ function Panel({
 }
 
 export default async function TreasuryPage() {
-  const [position, syncStatus] = await Promise.all([
+  const [position, syncStatus, canWrite] = await Promise.all([
     getTreasuryPosition(),
     getSyncStatus(),
+    hasWrite("treasury"),
   ]);
   if (!position.ok) return <ActionError message={position.error} />;
 
@@ -50,8 +52,10 @@ export default async function TreasuryPage() {
             }
             error={quickbooks?.status === "error" ? quickbooks.error : null}
           />
-          <BankAccountForm />
-          <TransactionForm accounts={accountOptions} />
+          <RequiresWrite resource="treasury">
+            <BankAccountForm />
+            <TransactionForm accounts={accountOptions} />
+          </RequiresWrite>
         </div>
       </div>
 
@@ -86,10 +90,16 @@ export default async function TreasuryPage() {
           <EmptyState
             title="Sin cuentas bancarias"
             hint="Crea tus cuentas con su saldo actual, o conecta QuickBooks para traerlas."
-            action={<BankAccountForm />}
+            action={
+              canWrite ? (
+                <RequiresWrite resource="treasury">
+                  <BankAccountForm />
+                </RequiresWrite>
+              ) : undefined
+            }
           />
         ) : (
-          <BankAccountsTable accounts={accounts} />
+          <BankAccountsTable accounts={accounts} canWrite={canWrite} />
         )}
       </Panel>
 
@@ -100,7 +110,10 @@ export default async function TreasuryPage() {
             hint="Registra entradas y salidas con + Movimiento — alimentan el flujo de caja."
           />
         ) : (
-          <TransactionsTable transactions={recentTransactions} />
+          <TransactionsTable
+            transactions={recentTransactions}
+            canWrite={canWrite}
+          />
         )}
       </Panel>
     </div>

@@ -16,8 +16,11 @@ import { formatMoney } from "@/shared/ui/format";
 /** Últimos movimientos registrados; entradas en verde, salidas en tinta. */
 export function TransactionsTable({
   transactions,
+  canWrite,
 }: {
   transactions: BankTransactionView[];
+  /** treasury:write — sin él no se renderiza borrar. */
+  canWrite: boolean;
 }) {
   return (
     <Table>
@@ -59,12 +62,14 @@ export function TransactionsTable({
                 </span>
               </TableCell>
               <TableCell className="text-right">
-                <DeleteRecordButton
-                  action={deleteBankTransaction}
-                  id={tx.id}
-                  confirmText={`¿Borrar el movimiento del ${tx.date} por ${formatMoney(tx.amount)}?`}
-                  successMessage="Movimiento borrado"
-                />
+                {canWrite && (
+                  <DeleteRecordButton
+                    action={deleteBankTransaction}
+                    id={tx.id}
+                    confirmText={`¿Borrar el movimiento del ${tx.date} por ${formatMoney(tx.amount)}?`}
+                    successMessage="Movimiento borrado"
+                  />
+                )}
               </TableCell>
             </TableRow>
           );

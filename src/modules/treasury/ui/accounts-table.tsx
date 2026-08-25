@@ -21,8 +21,11 @@ const TYPE_LABELS: Record<string, string> = {
 /** Cuentas con saldo propio y consolidado; las manuales se editan aquí. */
 export function BankAccountsTable({
   accounts,
+  canWrite,
 }: {
   accounts: BankAccountView[];
+  /** treasury:write — sin él no se renderiza editar. */
+  canWrite: boolean;
 }) {
   return (
     <Table>
@@ -74,7 +77,7 @@ export function BankAccountsTable({
               <SourceBadge source={account.source} />
             </TableCell>
             <TableCell className="text-right">
-              {account.source === "manual" && (
+              {canWrite && account.source === "manual" && (
                 <BankAccountForm account={account} />
               )}
             </TableCell>

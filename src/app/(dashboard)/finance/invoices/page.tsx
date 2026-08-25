@@ -1,6 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { listAccounts } from "@/modules/crm/application/accounts-actions";
+import { RequiresWrite, hasWrite } from "@/shared/ui/requires-write";
 import { listInvoices } from "@/modules/finance/application/invoices-actions";
 import { InvoiceForm } from "@/modules/finance/ui/invoice-form";
 import { InvoicesTable } from "@/modules/finance/ui/invoices-table";
@@ -17,9 +18,10 @@ export default async function InvoicesPage({
       ? (params.status as "open" | "paid" | "void")
       : null;
 
-  const [invoicesResult, accountsResult] = await Promise.all([
+  const [invoicesResult, accountsResult, canWrite] = await Promise.all([
     listInvoices({ status }),
     listAccounts(),
+    hasWrite("finance"),
   ]);
   if (!invoicesResult.ok)
     return <ActionError message={invoicesResult.error} />;
@@ -56,7 +58,9 @@ export default async function InvoicesPage({
               Filtrar
             </button>
           </form>
-          <InvoiceForm accounts={accounts} />
+          <RequiresWrite resource="finance">
+            <InvoiceForm accounts={accounts} />
+          </RequiresWrite>
         </div>
       </div>
 
@@ -64,11 +68,15 @@ export default async function InvoicesPage({
         <EmptyState
           title="Sin facturas"
           hint="Registra tu primera factura de ingreso o conecta QuickBooks para traerlas."
-          action={<InvoiceForm accounts={accounts} />}
+          action={canWrite ? <InvoiceForm accounts={accounts} /> : undefined}
         />
       ) : (
         <div className="overflow-x-auto rounded-lg border bg-card">
-          <InvoicesTable invoices={invoicesResult.data} accounts={accounts} />
+          <InvoicesTable
+            invoices={invoicesResult.data}
+            accounts={accounts}
+            canWrite={canWrite}
+          />
         </div>
       )}
     </div>

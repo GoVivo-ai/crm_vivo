@@ -5,9 +5,13 @@ import { ExpenseForm } from "@/modules/purchases/ui/expense-form";
 import { ExpensesTable } from "@/modules/purchases/ui/expenses-table";
 import { ActionError } from "@/shared/ui/action-error";
 import { EmptyState } from "@/shared/ui/empty-state";
+import { RequiresWrite, hasWrite } from "@/shared/ui/requires-write";
 
 export default async function ExpensesPage() {
-  const result = await listExpenses();
+  const [result, canWrite] = await Promise.all([
+    listExpenses(),
+    hasWrite("purchases"),
+  ]);
   if (!result.ok) return <ActionError message={result.error} />;
 
   return (
@@ -20,18 +24,26 @@ export default async function ExpensesPage() {
       </Link>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold">Gastos registrados</h1>
-        <ExpenseForm />
+        <RequiresWrite resource="purchases">
+          <ExpenseForm />
+        </RequiresWrite>
       </div>
 
       {result.data.length === 0 ? (
         <EmptyState
           title="Sin gastos"
           hint="Registra tu primer gasto o conecta QuickBooks para traerlos."
-          action={<ExpenseForm />}
+          action={
+            canWrite ? (
+              <RequiresWrite resource="purchases">
+                <ExpenseForm />
+              </RequiresWrite>
+            ) : undefined
+          }
         />
       ) : (
         <div className="overflow-x-auto rounded-lg border bg-card">
-          <ExpensesTable expenses={result.data} />
+          <ExpensesTable expenses={result.data} canWrite={canWrite} />
         </div>
       )}
     </div>

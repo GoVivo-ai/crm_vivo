@@ -21,7 +21,14 @@ const STATUS_LABELS: Record<Expense["status"], string> = {
 };
 
 /** Gastos registrados; los manuales se editan/borran, QB solo lectura. */
-export function ExpensesTable({ expenses }: { expenses: Expense[] }) {
+export function ExpensesTable({
+  expenses,
+  canWrite,
+}: {
+  expenses: Expense[];
+  /** purchases:write — sin él no se renderizan editar/borrar. */
+  canWrite: boolean;
+}) {
   return (
     <Table>
       <TableHeader>
@@ -67,7 +74,7 @@ export function ExpensesTable({ expenses }: { expenses: Expense[] }) {
               <SourceBadge source={expense.source} />
             </TableCell>
             <TableCell className="text-right">
-              {expense.source === "manual" && (
+              {canWrite && expense.source === "manual" && (
                 <span className="inline-flex items-center gap-1">
                   <ExpenseForm expense={expense} />
                   <DeleteRecordButton

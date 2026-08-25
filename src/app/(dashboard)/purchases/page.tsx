@@ -12,6 +12,7 @@ import {
   ProviderTable,
 } from "@/modules/purchases/ui/spend-tables";
 import { ActionError } from "@/shared/ui/action-error";
+import { RequiresWrite } from "@/shared/ui/requires-write";
 import { SyncStatus } from "@/shared/ui/sync-status";
 
 function Panel({
@@ -73,7 +74,9 @@ export default async function PurchasesPage({
           >
             Ver gastos
           </Link>
-          <ExpenseForm />
+          <RequiresWrite resource="purchases">
+            <ExpenseForm />
+          </RequiresWrite>
         </div>
       </div>
 

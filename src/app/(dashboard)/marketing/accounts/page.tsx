@@ -24,7 +24,6 @@ export default async function AdAccountsPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-semibold">Cuentas publicitarias</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Vincula cada cuenta de ads con su cliente para poder filtrar el
           dashboard por cliente.

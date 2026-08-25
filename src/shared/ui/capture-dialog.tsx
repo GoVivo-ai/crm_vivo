@@ -46,6 +46,8 @@ export function CaptureDialogContent({
     <DialogContent
       className={cn(
         "grid gap-0 overflow-hidden p-0 shadow-[0_32px_80px_-28px_rgba(1,22,64,0.55)] duration-200 data-open:zoom-in-[0.97]",
+        // Móvil: sheet de borde inferior con la misma cabecera (§12.1).
+        "max-sm:top-auto! max-sm:bottom-0! max-sm:left-0! max-sm:w-full! max-sm:max-w-full! max-sm:translate-x-0! max-sm:translate-y-0! max-sm:rounded-b-none! max-sm:max-h-[92dvh] max-sm:overflow-y-auto",
         wide ? "sm:max-w-[680px]" : "sm:max-w-[560px]",
         // Lomo vertical en pantallas anchas; cabecera horizontal en <1100px.
         "min-[1100px]:grid-cols-[var(--lomo-w)_3px_1fr]",
@@ -123,12 +125,17 @@ export function CaptureLomo({
           <Icon className="size-4" />
         </span>
         <div className="min-w-0 max-[1099px]:flex-1">
-          <p className="mt-2.5 text-[10px] font-extrabold tracking-[0.16em] text-white/55 uppercase max-[1099px]:mt-0">
-            {module}
-          </p>
-          <DialogTitle className="font-[family-name:var(--font-display)] text-[15px] leading-tight font-extrabold text-white">
-            {title}
-          </DialogTitle>
+          {/* Rótulos vacíos = lomo neutro (descarte de borrador, §12.4). */}
+          {module && (
+            <p className="mt-2.5 text-[10px] font-extrabold tracking-[0.16em] text-white/55 uppercase max-[1099px]:mt-0">
+              {module}
+            </p>
+          )}
+          {title && (
+            <DialogTitle className="font-[family-name:var(--font-display)] text-[15px] leading-tight font-extrabold text-white">
+              {title}
+            </DialogTitle>
+          )}
         </div>
         <div className="mt-auto min-w-0 pt-4 max-[1099px]:mt-0 max-[1099px]:pt-0 max-[1099px]:text-right">
           <p className="text-[9.5px] font-extrabold tracking-[0.14em] text-white/55 uppercase">

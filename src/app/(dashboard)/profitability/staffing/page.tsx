@@ -32,7 +32,6 @@ export default async function StaffingPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-semibold">Asignaciones</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Quién trabaja para qué cliente y con qué % de dedicación — la base
           del costo de personal en Rentabilidad.

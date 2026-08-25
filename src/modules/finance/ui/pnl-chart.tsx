@@ -16,6 +16,7 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import type { PnlPoint } from "@/modules/finance/domain/types";
+import { ChartEmpty } from "@/shared/ui/chart-empty";
 import {
   formatAccountingMoney,
   formatCompactMoney,
@@ -39,6 +40,18 @@ const monthLabel = (m: string) =>
  * propios). Dominio sin recorte en cero: hay meses con pérdida real.
  */
 export function PnlChart({ series }: { series: PnlPoint[] }) {
+  if (
+    series.every(
+      (p) => p.incomeCop === 0 && p.expensesCop === 0 && p.payrollCop === 0,
+    )
+  ) {
+    return (
+      <ChartEmpty
+        text="Aún sin resultado mensual."
+        hint="Con ingresos y gastos registrados, la serie aparece aquí."
+      />
+    );
+  }
   return (
     <ChartContainer config={config} className="h-56 w-full">
       <BarChart data={series} margin={{ left: 8, right: 8 }}>

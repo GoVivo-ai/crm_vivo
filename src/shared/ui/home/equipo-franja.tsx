@@ -26,7 +26,11 @@ export function EquipoFranja({
   );
 
   const verdict: Veredicto =
-    (pendingLeaveCount ?? 0) > 0 || expiring.length > 0 ? "atencion" : "bien";
+    members.length === 0
+      ? "sindatos"
+      : (pendingLeaveCount ?? 0) > 0 || expiring.length > 0
+        ? "atencion"
+        : "bien";
 
   return (
     <Franja

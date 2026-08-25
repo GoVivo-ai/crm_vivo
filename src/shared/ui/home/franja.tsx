@@ -2,18 +2,21 @@ import Link from "next/link";
 import type { Route } from "next";
 import { cn } from "@/lib/utils";
 
-export type Veredicto = "bien" | "atencion" | "problema";
+export type Veredicto = "bien" | "atencion" | "problema" | "sindatos";
 
 const VERDICT_STYLES: Record<Veredicto, string> = {
   bien: "bg-health-ok/10 text-health-ok",
   atencion: "bg-health-warn/10 text-health-warn",
   problema: "bg-health-critical/10 text-health-critical",
+  // Neutro b-mut: sin datos no hay juicio (M4).
+  sindatos: "bg-[#EEF1F6] text-[#5A6B85]",
 };
 
 const VERDICT_LABELS: Record<Veredicto, string> = {
   bien: "Bien",
   atencion: "Atención",
   problema: "Problema",
+  sindatos: "Sin datos",
 };
 
 export function VerdictBadge({ verdict }: { verdict: Veredicto }) {

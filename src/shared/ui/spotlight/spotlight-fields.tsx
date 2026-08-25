@@ -51,13 +51,19 @@ export function SpotlightFields({
   /** Ambigüedad del parseo (≥2 coincidencias) = combobox abierto. */
   autoOpenEntity?: boolean;
 }) {
+  // Formateo en vivo: se edita en dígitos, se ve $1.200.000 (m2).
+  const amountDisplay =
+    values.amountStr === ""
+      ? ""
+      : new Intl.NumberFormat("es-CO").format(Number(values.amountStr));
   const amountField = (
     <Field label={`Monto (${values.currency})`}>
       <Input
-        type="number"
-        min={1}
-        value={values.amountStr}
-        onChange={(e) => set({ amountStr: e.target.value })}
+        inputMode="numeric"
+        value={amountDisplay}
+        onChange={(e) =>
+          set({ amountStr: e.target.value.replace(/\D/g, "") })
+        }
         aria-label={`Monto en ${values.currency}`}
       />
     </Field>

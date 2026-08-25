@@ -14,7 +14,6 @@ export default async function IntegrationsPage() {
     <div className="flex flex-col gap-5">
       <OAuthCallbackToast />
       <div>
-        <h1 className="text-2xl font-semibold">Integraciones</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Credenciales de las fuentes externas. Se guardan cifradas; aquí
           nunca se muestran completas.

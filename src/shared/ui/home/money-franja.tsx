@@ -6,10 +6,7 @@ import type {
 } from "@/modules/finance/domain/types";
 import type { TreasuryPosition } from "@/modules/treasury/domain/types";
 import { Franja, type Veredicto } from "@/shared/ui/home/franja";
-import {
-  formatAccountingMoney,
-  formatCompactMoney,
-} from "@/shared/ui/format";
+import { formatAccountingMoney, formatCompactMoney } from "@/shared/ui/format";
 
 function Sparkline({ points }: { points: number[] }) {
   if (points.length < 2) return null;
@@ -21,7 +18,10 @@ function Sparkline({ points }: { points: number[] }) {
   const step = W / (points.length - 1);
   const y = (v: number) => H - ((v - min) / span) * (H - 6) - 3;
   const line = points
-    .map((v, i) => `${i === 0 ? "M" : "L"}${(i * step).toFixed(1)} ${y(v).toFixed(1)}`)
+    .map(
+      (v, i) =>
+        `${i === 0 ? "M" : "L"}${(i * step).toFixed(1)} ${y(v).toFixed(1)}`,
+    )
     .join(" ");
   return (
     <svg
@@ -78,15 +78,16 @@ export function MoneyFranja({
 
   // Cobertura: caja / gasto mensual promedio (gastos+nómina, 3 meses).
   const monthlyBurn = avgBurn(finance);
-  const coverage =
-    cash !== null && monthlyBurn > 0 ? cash / monthlyBurn : null;
+  const coverage = cash !== null && monthlyBurn > 0 ? cash / monthlyBurn : null;
 
   const verdict: Veredicto =
-    (cash !== null && cash < 0) || (net !== null && net < 0)
-      ? "problema"
-      : overdue > 0 || (coverage !== null && coverage < 1)
-        ? "atencion"
-        : "bien";
+    cash === null && net === null && overdue === 0
+      ? "sindatos"
+      : (cash !== null && cash < 0) || (net !== null && net < 0)
+        ? "problema"
+        : overdue > 0 || (coverage !== null && coverage < 1)
+          ? "atencion"
+          : "bien";
 
   return (
     <Franja

@@ -40,7 +40,13 @@ export function ClientesFranja({
       .sort((a, b) => (a.marginCop ?? 0) - (b.marginCop ?? 0))[0] ?? red[0];
 
   const verdict: Veredicto =
-    red.length > 0 ? "problema" : yellow.length > 0 ? "atencion" : "bien";
+    chips.length === 0 && summary.activeClients === 0
+      ? "sindatos"
+      : red.length > 0
+        ? "problema"
+        : yellow.length > 0
+          ? "atencion"
+          : "bien";
 
   return (
     <Franja
@@ -51,7 +57,7 @@ export function ClientesFranja({
       linkLabel="Abrir Clientes"
     >
       <p className="font-[family-name:var(--font-display)] text-[26px] leading-none font-extrabold tabular-nums">
-        {summary.activeClients}
+        {summary.activeClients}{" "}
         <span className="ml-1.5 text-sm font-bold text-muted-foreground">
           clientes activos
         </span>
@@ -76,8 +82,8 @@ export function ClientesFranja({
             ))}
           </div>
           <p className="mt-2 text-[11.5px] font-semibold text-muted-foreground">
-            {green.length} sana{green.length === 1 ? "" : "s"} ·{" "}
-            {yellow.length} atención · {red.length} riesgo
+            {green.length} sana{green.length === 1 ? "" : "s"} · {yellow.length}{" "}
+            atención · {red.length} riesgo
           </p>
         </>
       ) : (

@@ -20,7 +20,6 @@ export default async function ServicesPage() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold">Servicios</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Catálogo de la agencia; el fee real se pacta al contratar por
             cliente.

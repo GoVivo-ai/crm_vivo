@@ -8,6 +8,7 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import type { AgingBucket } from "@/modules/finance/domain/types";
+import { ChartEmpty } from "@/shared/ui/chart-empty";
 import { formatCompactMoney, formatMoney } from "@/shared/ui/format";
 
 const config = {
@@ -27,6 +28,14 @@ const BUCKET_LABELS: Record<string, string> = {
  * (una sola tinta); la antigüedad la da el eje, no el color.
  */
 export function AgingChart({ aging }: { aging: AgingBucket[] }) {
+  if (aging.every((b) => b.amountCop === 0)) {
+    return (
+      <ChartEmpty
+        text="Sin cartera por cobrar."
+        hint="Las facturas abiertas pintan aquí su antigüedad."
+      />
+    );
+  }
   return (
     <ChartContainer config={config} className="h-56 w-full">
       <BarChart data={aging} margin={{ left: 8, right: 8 }}>

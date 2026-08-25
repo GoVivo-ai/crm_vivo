@@ -31,6 +31,8 @@ export function ConfirmDialog({
   onOpenChange,
   objectName,
   eyebrow = "Irreversible",
+  lomoModule = "Confirmar",
+  lomoTitle = "Acción destructiva",
 }: {
   /** Elemento que abre el dialog; omítelo en modo controlado. */
   trigger?: React.ReactElement;
@@ -49,6 +51,9 @@ export function ConfirmDialog({
   objectName?: string;
   /** "Irreversible" para borrar cosas reales; "Sin guardar" para borradores. */
   eyebrow?: string;
+  /** Rótulos del lomo; vacíos ("") en el descarte — rótulo neutro (§12.4). */
+  lomoModule?: string;
+  lomoTitle?: string;
   /** Contenido extra (p.ej. nota de rechazo) entre el cuerpo y las acciones. */
   children?: React.ReactNode;
 }) {
@@ -65,8 +70,8 @@ export function ConfirmDialog({
       >
         <CaptureLomo
           icon={TriangleAlert}
-          module="Confirmar"
-          title="Acción destructiva"
+          module={lomoModule}
+          title={lomoTitle}
           tone="red"
           eyebrowBottom={eyebrow}
           bottomHighlight={objectName ?? " "}

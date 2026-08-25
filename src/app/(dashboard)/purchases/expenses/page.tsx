@@ -22,8 +22,7 @@ export default async function ExpensesPage() {
       >
         <ArrowLeft className="size-3.5" /> Gastos y compras
       </Link>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold">Gastos registrados</h1>
+      <div className="flex flex-wrap items-center justify-end gap-3">
         <RequiresWrite resource="purchases">
           <ExpenseForm />
         </RequiresWrite>

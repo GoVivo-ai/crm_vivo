@@ -42,19 +42,29 @@ export default async function DashboardHome() {
   const today = now.toISOString().slice(0, 10);
   const currentMonth = today.slice(0, 7);
 
-  const [finance, cashflow, treasury, board, clients, clientsHealth, marketing, team, payroll, leave] =
-    await Promise.all([
-      has("finance") ? getFinanceDashboard() : null,
-      has("finance") ? getCashflowSeries(12) : null,
-      has("treasury") ? getTreasuryPosition() : null,
-      has("crm") ? getPipelineBoard() : null,
-      has("clients") ? getClientsSummary() : null,
-      has("clients") ? getClientsHealthList() : null,
-      has("marketing") ? getMarketingDashboard({}) : null,
-      has("people_directory") ? getTeamDirectory() : null,
-      seesPayroll ? getPayrollCostSeries() : null,
-      isApprover ? listAllLeaveRequests() : null,
-    ]);
+  const [
+    finance,
+    cashflow,
+    treasury,
+    board,
+    clients,
+    clientsHealth,
+    marketing,
+    team,
+    payroll,
+    leave,
+  ] = await Promise.all([
+    has("finance") ? getFinanceDashboard() : null,
+    has("finance") ? getCashflowSeries(12) : null,
+    has("treasury") ? getTreasuryPosition() : null,
+    has("crm") ? getPipelineBoard() : null,
+    has("clients") ? getClientsSummary() : null,
+    has("clients") ? getClientsHealthList() : null,
+    has("marketing") ? getMarketingDashboard({}) : null,
+    has("people_directory") ? getTeamDirectory() : null,
+    seesPayroll ? getPayrollCostSeries() : null,
+    isApprover ? listAllLeaveRequests() : null,
+  ]);
 
   const financeData = finance?.ok ? finance.data : null;
   const treasuryData = treasury?.ok ? treasury.data : null;
@@ -104,8 +114,15 @@ export default async function DashboardHome() {
       <div className="flex flex-wrap items-end gap-4 px-0.5">
         <div className="min-w-0">
           <h1 className="text-2xl font-extrabold tracking-tight">
-            {dateLine[0].toUpperCase() + dateLine.slice(1)} — la empresa está{" "}
-            <span className={cn(TONE[verdict.tone])}>{verdict.word}</span>.
+            {dateLine[0].toUpperCase() + dateLine.slice(1)} —{" "}
+            {verdict.noData ? (
+              <>aún sin datos para el veredicto.</>
+            ) : (
+              <>
+                la empresa está{" "}
+                <span className={cn(TONE[verdict.tone])}>{verdict.word}</span>.
+              </>
+            )}
           </h1>
           <p className="mt-1.5 text-[13px] font-semibold text-muted-foreground">
             {verdict.phrase}

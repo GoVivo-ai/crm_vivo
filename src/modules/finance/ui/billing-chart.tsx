@@ -8,6 +8,7 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import type { MonthlyBilling } from "@/modules/finance/domain/types";
+import { ChartEmpty } from "@/shared/ui/chart-empty";
 import { formatCompactMoney, formatMoney } from "@/shared/ui/format";
 
 const config = {
@@ -23,6 +24,14 @@ function monthLabel(month: string): string {
 
 /** Facturación mensual, últimos 12 meses (serie única, sin leyenda). */
 export function BillingChart({ billing }: { billing: MonthlyBilling[] }) {
+  if (billing.every((m) => m.totalCop === 0)) {
+    return (
+      <ChartEmpty
+        text="Aún sin facturación registrada."
+        hint="Registra tu primera factura para ver la serie mensual."
+      />
+    );
+  }
   return (
     <ChartContainer config={config} className="h-56 w-full">
       <BarChart data={billing} margin={{ left: 8, right: 8 }}>

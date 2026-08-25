@@ -55,7 +55,6 @@ export default async function PurchasesPage({
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold">Gastos y compras</h1>
           <p className="mt-1 text-xs text-muted-foreground">
             Periodo: {period.from} → {period.to}
           </p>

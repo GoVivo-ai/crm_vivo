@@ -31,11 +31,13 @@ export function MarketingFranja({
   const maxSpend = Math.max(...top.map((c) => c.spend), 1);
 
   const verdict: Veredicto =
-    totals.leads === 0 && spendEntries.length > 0
-      ? "atencion"
-      : leadsDelta !== null && leadsDelta < -20
+    totals.leads === 0 && spendEntries.length === 0
+      ? "sindatos"
+      : totals.leads === 0 && spendEntries.length > 0
         ? "atencion"
-        : "bien";
+        : leadsDelta !== null && leadsDelta < -20
+          ? "atencion"
+          : "bien";
 
   return (
     <Franja

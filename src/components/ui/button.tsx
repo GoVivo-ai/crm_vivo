@@ -8,7 +8,11 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/80",
+        // Primario del sistema (§6): VERDE con texto navy, 800.
+        default:
+          "bg-[#04D98B] font-extrabold text-[#011640] hover:bg-[#03C47D]",
+        // Navy sólido: máximo 1 por vista (§6) — uso excepcional.
+        navy: "bg-[#011640] font-extrabold text-white hover:bg-[#0A2352]",
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:

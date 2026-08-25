@@ -187,6 +187,11 @@
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.48);
 }
+/* Rail colapsado (§4): sin labels de grupo (el display:flex de arriba
+ * ganaba al utility hidden — por eso se veían truncados). */
+[data-collapsible="icon"] .vivo-group-label {
+  display: none;
+}
 .vivo-group-label::before {
   content: "";
   width: 12px;

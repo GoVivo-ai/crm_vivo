@@ -21,6 +21,8 @@ export function DiscardGuardDialog({
       confirmLabel="Descartar cambios"
       cancelLabel="Seguir editando"
       eyebrow="Sin guardar"
+      lomoModule=""
+      lomoTitle=""
       onConfirm={onDiscard}
     />
   );

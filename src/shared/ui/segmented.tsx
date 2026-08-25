@@ -23,7 +23,7 @@ export function Segmented<T extends string>({
     <div
       role="radiogroup"
       aria-label={ariaLabel}
-      className="flex w-fit gap-0.5 rounded-full bg-[#EEF1F6] p-[3px]"
+      className="flex w-fit max-w-full flex-wrap gap-0.5 rounded-full bg-[#EEF1F6] p-[3px]"
     >
       {options.map((option) => {
         const active = option.value === value;

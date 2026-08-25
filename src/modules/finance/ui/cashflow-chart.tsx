@@ -16,6 +16,7 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import type { CashflowPoint } from "@/modules/finance/domain/types";
+import { ChartEmpty } from "@/shared/ui/chart-empty";
 import {
   formatAccountingMoney,
   formatCompactMoney,
@@ -37,6 +38,14 @@ const monthLabel = (m: string) =>
  * Dominio sin recorte en cero; el tooltip desglosa entradas y salidas.
  */
 export function CashflowChart({ series }: { series: CashflowPoint[] }) {
+  if (series.every((p) => p.inflowCop === 0 && p.outflowCop === 0)) {
+    return (
+      <ChartEmpty
+        text="Aún sin flujo de caja."
+        hint="Registra movimientos de tesorería para ver el flujo neto."
+      />
+    );
+  }
   return (
     <ChartContainer config={config} className="h-56 w-full">
       <BarChart data={series} margin={{ left: 8, right: 8 }}>

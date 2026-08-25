@@ -41,9 +41,12 @@ export function UserMenu({ name, email, roleLabel, initials }: UserMenuProps) {
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate text-[12.5px] font-extrabold">{name}</p>
-            <p className="truncate text-[10.5px] font-semibold text-muted-foreground">
-              {email}
-            </p>
+            {/* Sin nombre, name = correo (layout): no lo repetimos. */}
+            {email !== name && (
+              <p className="truncate text-[10.5px] font-semibold text-muted-foreground">
+                {email}
+              </p>
+            )}
           </div>
           {/* Sobre panel claro el chip va en --green-tint (no el rgba del navy). */}
           <span className="shrink-0 rounded-full bg-[#E6F9F1] px-2 py-0.5 text-[9px] font-extrabold tracking-[0.08em] text-[#069B66] uppercase">

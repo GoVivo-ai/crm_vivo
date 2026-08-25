@@ -127,8 +127,22 @@ export function AppSidebar({ allowed, sync, user }: AppSidebarProps) {
           </SidebarGroup>
         ))}
       </SidebarContent>
-      <SidebarFooter className="gap-2 group-data-[collapsible=icon]:hidden">
-        <div className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5">
+      <SidebarFooter className="gap-2">
+        {/* Rail colapsado (§4): pulso condensado + avatar 30px. */}
+        <div className="hidden flex-col items-center gap-3 pb-1 group-data-[collapsible=icon]:flex">
+          <span
+            className="vivo-sb-pulse"
+            data-state={sync.state}
+            title={`${sync.title} · ${sync.detail}`}
+          />
+          <span
+            className="grid size-[30px] place-items-center rounded-full bg-gradient-to-br from-[#04D98B] to-[#F2E205] font-[family-name:var(--font-display)] text-[11px] font-extrabold text-[#011640]"
+            title={`${user.name} · ${user.roleLabel}`}
+          >
+            {user.initials}
+          </span>
+        </div>
+        <div className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 group-data-[collapsible=icon]:hidden">
           <span className="vivo-sb-pulse" data-state={sync.state} aria-hidden />
           <div className="min-w-0">
             <p className="truncate text-[11.5px] font-extrabold text-white">
@@ -139,7 +153,7 @@ export function AppSidebar({ allowed, sync, user }: AppSidebarProps) {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2.5 rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5">
+        <div className="flex items-center gap-2.5 rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5 group-data-[collapsible=icon]:hidden">
           <span className="grid size-8 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[#04D98B] to-[#F2E205] font-[family-name:var(--font-display)] text-xs font-extrabold text-[#011640]">
             {user.initials}
           </span>
@@ -147,9 +161,12 @@ export function AppSidebar({ allowed, sync, user }: AppSidebarProps) {
             <p className="truncate text-[12.5px] font-extrabold text-white">
               {user.name}
             </p>
-            <p className="truncate text-[10.5px] font-semibold text-white/50">
-              {user.email}
-            </p>
+            {/* Sin nombre, name = correo (layout): no lo repetimos. */}
+            {user.email !== user.name && (
+              <p className="truncate text-[10.5px] font-semibold text-white/50">
+                {user.email}
+              </p>
+            )}
           </div>
           <span className="shrink-0 rounded-full bg-[#04D98B]/15 px-2 py-0.5 text-[9px] font-extrabold tracking-[0.08em] text-[#04D98B] uppercase">
             {user.roleLabel}

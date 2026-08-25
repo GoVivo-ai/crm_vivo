@@ -2,6 +2,8 @@ export type GlobalVerdict = {
   word: "sana" | "estable" | "en riesgo";
   tone: "ok" | "warn" | "critical";
   phrase: string;
+  /** true = cero señales: el titular no emite juicio (M4). */
+  noData: boolean;
 };
 
 export type VerdictInputs = {
@@ -60,9 +62,19 @@ export function computeVerdict(i: VerdictInputs): GlobalVerdict {
           warnings.length === 1 ? "Pide gestión hoy" : "Piden gestión hoy"
         }: ${warnings.join(", ")}.`;
 
+  const noData =
+    i.cashCop === null &&
+    i.coverageMonths === null &&
+    i.netIncomeCop === null &&
+    i.overdueCop === 0 &&
+    i.riskyProjects === 0 &&
+    i.pendingLeave === 0 &&
+    i.expiringContracts === 0;
+
   return {
     word,
     tone: critical ? "critical" : word === "sana" ? "ok" : "warn",
     phrase,
+    noData,
   };
 }

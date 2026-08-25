@@ -44,7 +44,7 @@ export function ComercialFranja({
   ).length;
 
   const verdict: Veredicto =
-    dealCount === 0 ? "atencion" : overdueDeals > 0 ? "atencion" : "bien";
+    dealCount === 0 ? "sindatos" : overdueDeals > 0 ? "atencion" : "bien";
 
   return (
     <Franja

@@ -37,7 +37,9 @@ export function StageColumn({ stage, accountNames, today }: StageColumnProps) {
             {stage.deals.length}
           </span>
         </div>
-        <span className="font-mono text-xs font-medium text-muted-foreground">
+        {/* Suma en Nunito Sans tabular — la mono es para cifras de datos,
+         * no para totales de cabecera (M6). */}
+        <span className="text-xs font-semibold text-muted-foreground tabular-nums">
           {formatCompactMoney(stageTotal(stage))}
         </span>
       </header>
@@ -53,6 +55,13 @@ export function StageColumn({ stage, accountNames, today }: StageColumnProps) {
           items={stage.deals.map((d) => d.id)}
           strategy={verticalListSortingStrategy}
         >
+          {/* Columna vacía: slot punteado del artboard — la creación real
+           * vive en el botón "+ Nuevo negocio" de la página (M6). */}
+          {stage.deals.length === 0 && !stage.isWon && !stage.isLost && (
+            <div className="grid h-16 place-items-center rounded-[12px] border-2 border-dashed border-[#C6CFDD] text-xs font-bold text-muted-foreground">
+              + Nuevo negocio
+            </div>
+          )}
           {stage.deals.map((deal) => (
             <DealCard
               key={deal.id}

@@ -7,6 +7,7 @@ import {
   summarizeCashFlow,
   summarizePnl,
 } from "@/integrations/alegra/reports-client";
+import { toReadableSyncError } from "@/integrations/shared/errors";
 
 /**
  * Snapshot diario de cartera (receivables) calculado desde la cache
@@ -91,7 +92,7 @@ export async function upsertReportSnapshots(): Promise<{
     const tree = await fetchProfitAndLoss(monthStart, today);
     set.pnl = { from: monthStart, to: today, totals: summarizePnl(tree), tree };
   } catch (error) {
-    errors.pnl = error instanceof Error ? error.message : String(error);
+    errors.pnl = toReadableSyncError(error);
   }
 
   try {
@@ -103,7 +104,7 @@ export async function upsertReportSnapshots(): Promise<{
       sections,
     };
   } catch (error) {
-    errors.cashflow = error instanceof Error ? error.message : String(error);
+    errors.cashflow = toReadableSyncError(error);
   }
 
   if (Object.keys(set).length > 0) {

@@ -2,6 +2,7 @@ import { and, eq, sql } from "drizzle-orm";
 import { db } from "@/shared/database/db";
 import { adAccounts, syncedCampaignMetrics } from "@/modules/marketing/schema";
 import { runSync, type SyncStats } from "@/integrations/shared/sync-run";
+import { toReadableSyncError } from "@/integrations/shared/errors";
 import { sleep, PACE_MS } from "@/integrations/shared/paced";
 import { windsorGet } from "@/integrations/windsor/windsor-client";
 import { mapMetricRow } from "@/integrations/windsor/mappers";
@@ -132,8 +133,7 @@ export async function syncWindsor(): Promise<{
       try {
         upserted[connector.connector] = await syncConnector(cache, connector);
       } catch (error) {
-        errors[connector.connector] =
-          error instanceof Error ? error.message : String(error);
+        errors[connector.connector] = toReadableSyncError(error);
       }
       await sleep(PACE_MS);
     }

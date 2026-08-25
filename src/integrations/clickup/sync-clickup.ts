@@ -2,6 +2,7 @@ import { eq, isNotNull } from "drizzle-orm";
 import { db } from "@/shared/database/db";
 import { projects } from "@/modules/clients/schema";
 import { runSync, type SyncStats } from "@/integrations/shared/sync-run";
+import { toReadableSyncError } from "@/integrations/shared/errors";
 import { fetchListTasks } from "@/integrations/clickup/clickup-client";
 import type {
   ClickUpTask,
@@ -65,8 +66,7 @@ export async function syncClickUp(): Promise<{
           .where(eq(projects.id, project.id));
         synced++;
       } catch (error) {
-        errors[project.id] =
-          error instanceof Error ? error.message : String(error);
+        errors[project.id] = toReadableSyncError(error);
       }
     }
 

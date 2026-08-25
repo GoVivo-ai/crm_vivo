@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { toReadableSyncError } from "@/integrations/shared/errors";
 
 /**
  * Valida `Authorization: Bearer $CRON_SECRET` en las rutas de cron.
@@ -19,8 +20,9 @@ export function requireCronSecret(request: Request): NextResponse | null {
 }
 
 export function cronErrorResponse(error: unknown): NextResponse {
+  // Mensaje sanitizado: nunca URLs con query ni headers (credenciales).
   return NextResponse.json(
-    { error: error instanceof Error ? error.message : String(error) },
+    { error: toReadableSyncError(error) },
     { status: 500 },
   );
 }

@@ -7,14 +7,34 @@ import {
   wrap,
 } from "cockatiel";
 
+/**
+ * Reduce una URL a origin+path para mensajes de error: NUNCA query string
+ * ni headers — la api_key de Windsor viaja como query param y el Basic
+ * Auth de Alegra en Authorization; ninguno debe llegar a logs, sync_runs
+ * ni respuestas HTTP.
+ */
+function sanitizeUrl(url: string): string {
+  try {
+    const parsed = new URL(url);
+    return `${parsed.origin}${parsed.pathname}`;
+  } catch {
+    return url.split("?")[0];
+  }
+}
+
 export class HttpError extends Error {
+  /** origin+path de la request, sin query (sanitizada). */
+  public readonly url: string;
+
   constructor(
     public readonly status: number,
-    public readonly url: string,
+    url: string,
     message?: string,
   ) {
-    super(message ?? `HTTP ${status} en ${url}`);
+    const safeUrl = sanitizeUrl(url);
+    super(message ?? `HTTP ${status} en ${safeUrl}`);
     this.name = "HttpError";
+    this.url = safeUrl;
   }
 }
 

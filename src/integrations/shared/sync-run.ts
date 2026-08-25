@@ -1,6 +1,7 @@
 import { desc, eq } from "drizzle-orm";
 import { db } from "@/shared/database/db";
 import { syncRuns } from "@/shared/database/sync-runs.schema";
+import { toReadableSyncError } from "@/integrations/shared/errors";
 
 type SyncSource = "alegra" | "clickup" | "windsor";
 
@@ -33,7 +34,7 @@ export async function runSync(
       .set({
         status: "error",
         finishedAt: new Date(),
-        error: error instanceof Error ? error.message : String(error),
+        error: toReadableSyncError(error),
       })
       .where(eq(syncRuns.id, run.id));
     throw error;

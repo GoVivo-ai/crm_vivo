@@ -226,13 +226,13 @@
 .vivo-pill:hover svg {
   opacity: 1;
 }
-.vivo-pill[data-active="true"],
-.vivo-pill[data-active="true"]:hover {
+.vivo-pill[data-active],
+.vivo-pill[data-active]:hover {
   background: transparent;
   color: #011640;
   font-weight: 800;
 }
-.vivo-pill[data-active="true"] svg {
+.vivo-pill[data-active] svg {
   color: #069b66;
   opacity: 1;
 }
@@ -264,15 +264,15 @@
   border-radius: 999px;
   background: #ffffff;
 }
-.vivo-pill[data-active="true"] .vivo-odot {
+.vivo-pill[data-active] .vivo-odot {
   display: flex;
 }
 /* Colapsado (68px): el anillo pasa a vivir bajo el icono. */
-.group[data-collapsible="icon"] .vivo-pill[data-active="true"] {
+.group[data-collapsible="icon"] .vivo-pill[data-active] {
   position: relative;
   overflow: visible;
 }
-.group[data-collapsible="icon"] .vivo-pill[data-active="true"] .vivo-odot {
+.group[data-collapsible="icon"] .vivo-pill[data-active] .vivo-odot {
   position: absolute;
   left: 50%;
   bottom: -9px;
@@ -282,7 +282,7 @@
   height: 8px;
 }
 .group[data-collapsible="icon"]
-  .vivo-pill[data-active="true"]
+  .vivo-pill[data-active]
   .vivo-odot::after {
   width: 3px;
   height: 3px;

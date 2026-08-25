@@ -49,16 +49,27 @@ export async function saveRunStats(
   await db.update(syncRuns).set({ stats }).where(eq(syncRuns.id, runId));
 }
 
-/** Stats del último run terminado de una fuente (para retomar cursores). */
+/**
+ * Stats del último run terminado de una fuente (para retomar cursores).
+ * `scope` separa corridas que comparten source (alegra core vs erp): cada
+ * sync escribe stats.scope y aquí se filtra para no pisar cursores ajenos.
+ * Runs antiguos sin scope cuentan como "core".
+ */
 export async function getLastStats(
   source: SyncSource,
+  scope = "core",
 ): Promise<SyncStats | null> {
   const rows = await db
     .select({ stats: syncRuns.stats, status: syncRuns.status })
     .from(syncRuns)
     .where(eq(syncRuns.source, source))
     .orderBy(desc(syncRuns.startedAt))
-    .limit(5);
-  const finished = rows.find((r) => r.status !== "running");
+    .limit(20);
+  const finished = rows.find(
+    (r) =>
+      r.status !== "running" &&
+      (((r.stats as SyncStats | null)?.scope as string | undefined) ??
+        "core") === scope,
+  );
   return (finished?.stats as SyncStats | null) ?? null;
 }

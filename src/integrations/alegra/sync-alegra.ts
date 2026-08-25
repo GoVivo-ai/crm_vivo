@@ -1,6 +1,8 @@
 import { sql } from "drizzle-orm";
 import { db } from "@/shared/database/db";
 import { syncedInvoices, syncedPayments } from "@/modules/finance/schema";
+import { syncedSupplierPayments } from "@/modules/purchases/schema";
+import { mapSupplierPayment } from "@/integrations/alegra/mappers-erp";
 import {
   getLastStats,
   runSync,
@@ -63,6 +65,33 @@ async function upsertInvoices(invoices: AlegraInvoice[]): Promise<number> {
   return invoices.length;
 }
 
+/** F6: los pagos type=out de la MISMA paginación van a supplier_payments. */
+async function upsertSupplierPayments(
+  payments: AlegraPayment[],
+): Promise<number> {
+  const outgoing = payments.filter((p) => p.type === "out");
+  if (outgoing.length === 0) return 0;
+  await db
+    .insert(syncedSupplierPayments)
+    .values(outgoing.map(mapSupplierPayment))
+    .onConflictDoUpdate({
+      target: syncedSupplierPayments.alegraPaymentId,
+      set: {
+        alegraProviderId: sql`excluded.alegra_provider_id`,
+        providerName: sql`excluded.provider_name`,
+        date: sql`excluded.date`,
+        amount: sql`excluded.amount`,
+        categories: sql`excluded.categories`,
+        billIds: sql`excluded.bill_ids`,
+        bankAccount: sql`excluded.bank_account`,
+        costCenter: sql`excluded.cost_center`,
+        raw: sql`excluded.raw`,
+        syncedAt: sql`excluded.synced_at`,
+      },
+    });
+  return outgoing.length;
+}
+
 async function upsertPayments(payments: AlegraPayment[]): Promise<number> {
   const incoming = payments.filter((p) => p.type === "in");
   if (incoming.length === 0) return 0;
@@ -96,10 +125,11 @@ export async function syncAlegra(): Promise<{
   stats: SyncStats;
 }> {
   return runSync("alegra", async (runId) => {
-    const prev = ((await getLastStats("alegra")) ?? {}) as AlegraCursor;
+    const prev = ((await getLastStats("alegra", "core")) ?? {}) as AlegraCursor;
     const cursor: AlegraCursor = { ...prev };
     let invoicesSynced = 0;
     let paymentsSynced = 0;
+    let supplierPaymentsSynced = 0;
 
     // 1) Facturas: backfill completo o ventana incremental por fecha.
     const invoiceParams: Record<string, string | number> = {
@@ -123,7 +153,7 @@ export async function syncAlegra(): Promise<{
       if (!cursor.invoicesBackfillDone) {
         cursor.invoicesCursor = page.nextStart;
         if (page.isLast) cursor.invoicesBackfillDone = true;
-        await saveRunStats(runId, { ...cursor, invoicesSynced });
+        await saveRunStats(runId, { scope: "core", ...cursor, invoicesSynced });
       }
     }
 
@@ -144,10 +174,17 @@ export async function syncAlegra(): Promise<{
       paymentPages,
     )) {
       paymentsSynced += await upsertPayments(page.items);
+      supplierPaymentsSynced += await upsertSupplierPayments(page.items);
       if (!cursor.paymentsBackfillDone) {
         cursor.paymentsCursor = page.nextStart;
         if (page.isLast) cursor.paymentsBackfillDone = true;
-        await saveRunStats(runId, { ...cursor, invoicesSynced, paymentsSynced });
+        await saveRunStats(runId, {
+          scope: "core",
+          ...cursor,
+          invoicesSynced,
+          paymentsSynced,
+          supplierPaymentsSynced,
+        });
       }
     }
 
@@ -156,6 +193,14 @@ export async function syncAlegra(): Promise<{
     const snapshot = await upsertReceivablesSnapshot();
     const reports = await upsertReportSnapshots();
 
-    return { ...cursor, invoicesSynced, paymentsSynced, snapshot, reports };
+    return {
+      scope: "core",
+      ...cursor,
+      invoicesSynced,
+      paymentsSynced,
+      supplierPaymentsSynced,
+      snapshot,
+      reports,
+    };
   });
 }

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getProfitabilityDashboard } from "@/modules/profitability/application/profitability-dashboard-action";
 import { ProfitabilityTable } from "@/modules/profitability/ui/profitability-table";
 import { ActionError } from "@/shared/ui/action-error";
@@ -13,6 +14,7 @@ export default async function ProfitabilityPage() {
     totalPayrollCop,
     totalAssignedPercent,
     unassignedCostCop,
+    revenueUnassignedCop,
     activeEmployees,
     accounts,
   } = result.data;
@@ -26,7 +28,7 @@ export default async function ProfitabilityPage() {
         </p>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         <Kpi
           label="Costo de nómina del periodo"
           value={totalPayrollCop}
@@ -46,11 +48,27 @@ export default async function ProfitabilityPage() {
           detail={`% del total · ${activeEmployees} personas activas`}
         />
         <Kpi
+          label="Ingresos sin cuenta asignada"
+          value={revenueUnassignedCop}
+          kind="accounting"
+          detail="facturas solo con nombre de cliente"
+        />
+        <Kpi
           label="Clientes con margen"
           value={accounts.length}
           kind="count"
         />
       </div>
+
+      {revenueUnassignedCop > 0 && (
+        <p className="text-xs text-muted-foreground">
+          Hay facturación sin cuenta CRM vinculada — no entra al margen por
+          cliente.{" "}
+          <Link href="/finance/invoices" className="underline">
+            Revisar facturas
+          </Link>
+        </p>
+      )}
 
       {accounts.length === 0 ? (
         <EmptyState

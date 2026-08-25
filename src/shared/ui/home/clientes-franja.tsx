@@ -1,39 +1,44 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import type { ClientHealthChip } from "@/modules/clients/application/clients-health-action";
 import type { ClientsSummary } from "@/modules/clients/application/clients-summary-action";
 import { Franja, type Veredicto } from "@/shared/ui/home/franja";
+import { formatAccountingMoney } from "@/shared/ui/format";
 
-const HEALTH_CHIP: Record<
-  "green" | "yellow" | "red",
-  { label: string; className: string }
-> = {
-  green: { label: "sanas", className: "bg-health-ok/10 text-health-ok" },
-  yellow: {
-    label: "atención",
-    className: "bg-health-warn/10 text-health-warn",
-  },
-  red: {
-    label: "riesgo",
-    className: "bg-health-critical/10 text-health-critical",
-  },
+const BUCKET_STYLES: Record<ClientHealthChip["bucket"], string> = {
+  green: "bg-health-ok/10 text-health-ok",
+  yellow: "bg-health-warn/10 text-health-warn",
+  red: "bg-health-critical/10 text-health-critical",
 };
 
-/** Franja Clientes: semáforo de salud de proyectos + accionable. */
+function chipTitle(chip: ClientHealthChip): string {
+  const base =
+    "Salud operativa de sus proyectos, ajustada por rentabilidad de los últimos 3 meses";
+  return chip.marginCop !== undefined
+    ? `${base}. Margen: ${formatAccountingMoney(chip.marginCop)}`
+    : `${base}. Sin señal de rentabilidad aún (bucket operativo).`;
+}
+
+/** Franja Clientes: semáforo POR CUENTA (nombre + bucket) + accionable. */
 export function ClientesFranja({
   summary,
-  worstAccountName = null,
+  chips,
 }: {
   summary: ClientsSummary;
-  /** Peor cuenta por margen (si el rol ve rentabilidad) — da nombre al
-   *  accionable de rescate, como exige el spec. */
-  worstAccountName?: string | null;
+  chips: ClientHealthChip[];
 }) {
-  const { projectsByHealth, activeClients } = summary;
-  const risky = projectsByHealth.red;
-  const warning = projectsByHealth.yellow;
+  const red = chips.filter((c) => c.bucket === "red");
+  const yellow = chips.filter((c) => c.bucket === "yellow");
+  const green = chips.filter((c) => c.bucket === "green");
+
+  // Peor cuenta: la roja con menor margen conocido; si no, la primera roja.
+  const worst =
+    red
+      .filter((c) => c.marginCop !== undefined)
+      .sort((a, b) => (a.marginCop ?? 0) - (b.marginCop ?? 0))[0] ?? red[0];
 
   const verdict: Veredicto =
-    risky > 0 ? "problema" : warning > 0 ? "atencion" : "bien";
+    red.length > 0 ? "problema" : yellow.length > 0 ? "atencion" : "bien";
 
   return (
     <Franja
@@ -44,55 +49,56 @@ export function ClientesFranja({
       linkLabel="Abrir Clientes"
     >
       <p className="font-[family-name:var(--font-display)] text-[26px] leading-none font-extrabold tabular-nums">
-        {activeClients}
+        {summary.activeClients}
         <span className="ml-1.5 text-sm font-bold text-muted-foreground">
           clientes activos
         </span>
       </p>
 
-      <div className="mt-3 flex flex-wrap gap-1.5">
-        {(Object.keys(HEALTH_CHIP) as Array<keyof typeof HEALTH_CHIP>).map(
-          (health) => {
-            const count = projectsByHealth[health];
-            if (count === 0) return null;
-            const chip = HEALTH_CHIP[health];
-            return (
-              <span
-                key={health}
+      {chips.length > 0 ? (
+        <>
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {[...red, ...yellow, ...green].map((chip) => (
+              <Link
+                key={chip.accountId}
+                href={`/clients/${chip.accountId}`}
+                title={chipTitle(chip)}
                 className={cn(
-                  "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-extrabold",
-                  chip.className,
+                  "inline-flex max-w-44 items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-extrabold hover:opacity-80",
+                  BUCKET_STYLES[chip.bucket],
                 )}
               >
-                <span className="size-1.5 rounded-full bg-current" />
-                {count} {health === "green" ? "proyectos " : ""}
-                {chip.label}
-              </span>
-            );
-          },
-        )}
-        {projectsByHealth.unknown > 0 && (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 text-[11.5px] font-bold text-muted-foreground">
-            {projectsByHealth.unknown} sin datos
-          </span>
-        )}
-      </div>
-
-      {(risky > 0 || warning > 0) && (
-        <Link
-          href="/clients"
-          className={cn(
-            "mt-3 inline-block text-xs font-extrabold hover:underline",
-            risky > 0 ? "text-health-critical" : "text-health-warn",
-          )}
-        >
-          {risky > 0
-            ? worstAccountName
-              ? `Rescatar ${worstAccountName} →`
-              : `Rescatar ${risky} proyecto${risky === 1 ? "" : "s"} en riesgo →`
-            : `Revisar ${warning} proyecto${warning === 1 ? "" : "s"} en atención →`}
-        </Link>
+                <span className="size-1.5 shrink-0 rounded-full bg-current" />
+                <span className="truncate">{chip.accountName}</span>
+              </Link>
+            ))}
+          </div>
+          <p className="mt-2 text-[11.5px] font-semibold text-muted-foreground">
+            {green.length} sana{green.length === 1 ? "" : "s"} ·{" "}
+            {yellow.length} atención · {red.length} riesgo
+          </p>
+        </>
+      ) : (
+        <p className="mt-3 text-[11.5px] font-semibold text-muted-foreground">
+          Sin cuentas activas con proyectos todavía.
+        </p>
       )}
+
+      {worst ? (
+        <Link
+          href={`/clients/${worst.accountId}`}
+          className="mt-2.5 inline-block text-xs font-extrabold text-health-critical hover:underline"
+        >
+          Rescatar {worst.accountName} →
+        </Link>
+      ) : yellow.length > 0 ? (
+        <Link
+          href={`/clients/${yellow[0].accountId}`}
+          className="mt-2.5 inline-block text-xs font-extrabold text-health-warn hover:underline"
+        >
+          Revisar {yellow[0].accountName} →
+        </Link>
+      ) : null}
     </Franja>
   );
 }

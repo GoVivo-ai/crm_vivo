@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { getClientsHealthList } from "@/modules/clients/application/clients-health-action";
 import { getClientsSummary } from "@/modules/clients/application/clients-summary-action";
 import { getPipelineBoard } from "@/modules/crm/application/deals-actions";
 import {
@@ -13,7 +14,6 @@ import {
   getPayrollCostSeries,
   getTeamDirectory,
 } from "@/modules/people/application/team-actions";
-import { getProfitabilityDashboard } from "@/modules/profitability/application/profitability-dashboard-action";
 import { getTreasuryPosition } from "@/modules/treasury/application/treasury-actions";
 import { ClientesFranja } from "@/shared/ui/home/clientes-franja";
 import { ComercialFranja } from "@/shared/ui/home/comercial-franja";
@@ -42,25 +42,19 @@ export default async function DashboardHome() {
   const today = now.toISOString().slice(0, 10);
   const currentMonth = today.slice(0, 7);
 
-  const [finance, cashflow, treasury, board, clients, marketing, team, payroll, leave] =
+  const [finance, cashflow, treasury, board, clients, clientsHealth, marketing, team, payroll, leave] =
     await Promise.all([
       has("finance") ? getFinanceDashboard() : null,
       has("finance") ? getCashflowSeries(12) : null,
       has("treasury") ? getTreasuryPosition() : null,
       has("crm") ? getPipelineBoard() : null,
       has("clients") ? getClientsSummary() : null,
+      has("clients") ? getClientsHealthList() : null,
       has("marketing") ? getMarketingDashboard({}) : null,
       has("people_directory") ? getTeamDirectory() : null,
       seesPayroll ? getPayrollCostSeries() : null,
       isApprover ? listAllLeaveRequests() : null,
     ]);
-  const profitability = has("profitability")
-    ? await getProfitabilityDashboard({})
-    : null;
-  const worstAccountName =
-    profitability?.ok === true && profitability.data.accounts.length > 0
-      ? profitability.data.accounts.at(-1)!.accountName
-      : null;
 
   const financeData = finance?.ok ? finance.data : null;
   const treasuryData = treasury?.ok ? treasury.data : null;
@@ -142,7 +136,7 @@ export default async function DashboardHome() {
             <div className={cn(board?.ok ? "lg:col-span-2" : "lg:col-span-5")}>
               <ClientesFranja
                 summary={clients.data}
-                worstAccountName={worstAccountName}
+                chips={clientsHealth?.ok ? clientsHealth.data : []}
               />
             </div>
           )}

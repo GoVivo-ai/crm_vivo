@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import type { ActionResult } from "@/shared/actions/result";
 import { actionError } from "@/shared/actions/result";
+import { DomainRuleError } from "@/shared/actions/errors";
 import type { Deal, PipelineBoard } from "@/modules/crm/domain/types";
 import {
   dealInputSchema,
@@ -19,6 +20,14 @@ export async function getPipelineBoard(
   ownerId?: string,
 ): Promise<ActionResult<PipelineBoard>> {
   return runCrmAction("read", () => repo.getBoard(ownerId ?? null));
+}
+
+export async function getDeal(id: string): Promise<ActionResult<Deal>> {
+  return runCrmAction("read", async () => {
+    const deal = await repo.findDealById(id);
+    if (!deal) throw new DomainRuleError("Deal no encontrado");
+    return deal;
+  });
 }
 
 export async function createDeal(

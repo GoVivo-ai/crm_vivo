@@ -80,6 +80,10 @@ export const deals = pgTable("deals", {
   currency: text("currency").notNull().default("COP"),
   expectedCloseDate: date("expected_close_date"),
   position: integer("position").notNull().default(0),
+  // Para "días en etapa" del Kanban; se resetea al mover de etapa.
+  stageEnteredAt: timestamp("stage_entered_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
   closedAt: timestamp("closed_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()

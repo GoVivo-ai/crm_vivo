@@ -106,7 +106,15 @@ export async function moveDeal(
       .where(and(eq(deals.stageId, stageId), gte(deals.position, position))),
     db
       .update(deals)
-      .set({ stageId, position, closedAt, updatedAt: new Date() })
+      .set({
+        stageId,
+        position,
+        closedAt,
+        // Resetea "días en etapa" solo si realmente cambia de etapa
+        // (reordenar dentro de la misma columna no cuenta).
+        stageEnteredAt: sql`CASE WHEN ${deals.stageId} <> ${stageId} THEN now() ELSE ${deals.stageEnteredAt} END`,
+        updatedAt: new Date(),
+      })
       .where(eq(deals.id, dealId))
       .returning(),
   ]);

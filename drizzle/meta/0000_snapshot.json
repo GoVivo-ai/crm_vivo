@@ -1,5 +1,5 @@
 {
-  "id": "ec0ae091-efd3-4249-af60-8f7e1345c87c",
+  "id": "6f129983-690b-4493-8bf9-49c74e4bd81b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -697,6 +697,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": 0
+        },
+        "stage_entered_at": {
+          "name": "stage_entered_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         },
         "closed_at": {
           "name": "closed_at",

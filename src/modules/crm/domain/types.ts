@@ -50,6 +50,8 @@ export type Deal = {
   currency: string;
   expectedCloseDate: string | null; // YYYY-MM-DD
   position: number;
+  /** Cuándo entró a la etapa actual — para "días en etapa" del Kanban. */
+  stageEnteredAt: Date;
   closedAt: Date | null;
   createdAt: Date;
 };

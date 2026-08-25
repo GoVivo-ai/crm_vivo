@@ -47,7 +47,13 @@ export async function convertDealAtomic(params: {
       .where(and(eq(deals.stageId, wonStageId), gte(deals.position, 0))),
     db
       .update(deals)
-      .set({ stageId: wonStageId, position: 0, closedAt, updatedAt: closedAt })
+      .set({
+        stageId: wonStageId,
+        position: 0,
+        closedAt,
+        stageEnteredAt: sql`CASE WHEN ${deals.stageId} <> ${wonStageId} THEN now() ELSE ${deals.stageEnteredAt} END`,
+        updatedAt: closedAt,
+      })
       .where(eq(deals.id, dealId))
       .returning(),
     db

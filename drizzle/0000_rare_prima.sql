@@ -99,6 +99,7 @@ CREATE TABLE "deals" (
 	"currency" text DEFAULT 'COP' NOT NULL,
 	"expected_close_date" date,
 	"position" integer DEFAULT 0 NOT NULL,
+	"stage_entered_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"closed_at" timestamp with time zone,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL

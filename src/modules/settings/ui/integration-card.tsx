@@ -10,6 +10,7 @@ import { runSyncNow } from "@/modules/settings/application/run-sync-now-action";
 import type { IntegrationStatus } from "@/modules/settings/domain/types";
 import { IntegrationStatusLine } from "@/modules/settings/ui/integration-status-line";
 import type { IntegrationMeta } from "@/modules/settings/ui/integrations-catalog";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
 
 type IntegrationCardProps = {
@@ -53,12 +54,6 @@ export function IntegrationCard({ meta, status, today }: IntegrationCardProps) {
   }
 
   function onDisconnect() {
-    if (
-      !window.confirm(
-        `¿Desconectar ${meta.label}? Podrás volver a conectar cuando quieras.`,
-      )
-    )
-      return;
     submit(
       () => clearIntegrationCredentials({ integration: meta.integration }),
       { successMessage: `${meta.label} desconectado` },
@@ -146,15 +141,23 @@ export function IntegrationCard({ meta, status, today }: IntegrationCardProps) {
           </>
         )}
         {status.configured && (
-          <Button
-            variant="ghost"
-            size="sm"
-            disabled={pending}
-            className="text-muted-foreground hover:text-destructive"
-            onClick={onDisconnect}
-          >
-            Desconectar
-          </Button>
+          <ConfirmDialog
+            trigger={
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={pending}
+                className="text-muted-foreground hover:text-destructive"
+              >
+                Desconectar
+              </Button>
+            }
+            title={`¿Desconectar ${meta.label}?`}
+            body="La sincronización se detiene hasta volver a conectar. Los datos ya sincronizados se conservan."
+            confirmLabel={`Desconectar ${meta.label}`}
+            pending={pending}
+            onConfirm={onDisconnect}
+          />
         )}
       </div>
 

@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { ReceiptText } from "lucide-react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  CaptureDialogBody,
+  CaptureDialogContent,
+  CaptureDialogFooter,
+  CaptureDialogHeader,
+} from "@/shared/ui/capture-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -30,6 +31,8 @@ export function ExpenseForm({ expense }: { expense?: Expense }) {
   const { submit, pending, fieldErrors } = useActionSubmit<Expense>();
   const editing = expense !== undefined;
   const today = new Date().toISOString().slice(0, 10);
+  const formRef = useRef<HTMLFormElement>(null);
+  const keepOpenRef = useRef(false);
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -52,7 +55,14 @@ export function ExpenseForm({ expense }: { expense?: Expense }) {
       () => (editing ? updateExpense(expense.id, input) : createExpense(input)),
       {
         successMessage: editing ? "Gasto actualizado" : "Gasto registrado",
-        onSuccess: () => setOpen(false),
+        onSuccess: () => {
+          if (keepOpenRef.current) {
+            keepOpenRef.current = false;
+            formRef.current?.reset();
+          } else {
+            setOpen(false);
+          }
+        },
       },
     );
   }
@@ -64,13 +74,15 @@ export function ExpenseForm({ expense }: { expense?: Expense }) {
       >
         {editing ? "Editar" : "+ Registrar gasto"}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>
-            {editing ? "Editar gasto" : "Registrar gasto"}
-          </DialogTitle>
-        </DialogHeader>
-        <form onSubmit={onSubmit} className="flex flex-col gap-4">
+      <CaptureDialogContent>
+        <CaptureDialogHeader
+          icon={ReceiptText}
+          tint="blue"
+          title={editing ? "Editar gasto" : "Registrar gasto"}
+          subtitle="Egreso · Gastos y compras"
+        />
+        <form ref={formRef} onSubmit={onSubmit}>
+          <CaptureDialogBody>
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="providerName">Proveedor</Label>
@@ -175,11 +187,21 @@ export function ExpenseForm({ expense }: { expense?: Expense }) {
               />
             </div>
           </div>
-          <Button type="submit" disabled={pending}>
-            {pending ? "Guardando…" : "Guardar gasto"}
-          </Button>
+          </CaptureDialogBody>
+          <CaptureDialogFooter
+            submitLabel="Guardar gasto"
+            pending={pending}
+            onSaveAnother={
+              editing
+                ? undefined
+                : () => {
+                    keepOpenRef.current = true;
+                    formRef.current?.requestSubmit();
+                  }
+            }
+          />
         </form>
-      </DialogContent>
+      </CaptureDialogContent>
     </Dialog>
   );
 }

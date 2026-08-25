@@ -16,6 +16,7 @@ import {
   deleteStaffing,
 } from "@/modules/profitability/application/staffing-actions";
 import type { StaffingAssignment } from "@/modules/profitability/domain/types";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { FieldError } from "@/shared/ui/field-error";
 import { NativeSelect } from "@/shared/ui/native-select";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
@@ -54,12 +55,6 @@ export function StaffingManager({
   }
 
   function onDelete(assignment: StaffingAssignment) {
-    if (
-      !window.confirm(
-        `¿Eliminar la asignación de ${assignment.employeeName ?? "?"} en ${assignment.accountName ?? "?"}?`,
-      )
-    )
-      return;
     submit(() => deleteStaffing(assignment.id), {
       successMessage: "Asignación eliminada",
     });
@@ -146,15 +141,23 @@ export function StaffingManager({
                 {a.validTo ? ` · hasta ${a.validTo}` : ""}
               </p>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              disabled={pending}
-              className="text-muted-foreground hover:text-destructive"
-              onClick={() => onDelete(a)}
-            >
-              Eliminar
-            </Button>
+            <ConfirmDialog
+              trigger={
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  disabled={pending}
+                  className="text-muted-foreground hover:text-destructive"
+                >
+                  Eliminar
+                </Button>
+              }
+              title={`¿Eliminar la asignación de ${a.employeeName ?? "?"} en ${a.accountName ?? "?"}?`}
+              body="Su costo dejará de prorratearse a este cliente desde el periodo vigente."
+              confirmLabel="Eliminar asignación"
+              pending={pending}
+              onConfirm={() => onDelete(a)}
+            />
           </li>
         ))}
       </ul>

@@ -1,14 +1,15 @@
 "use client";
 
+import { Landmark } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  CaptureDialogBody,
+  CaptureDialogContent,
+  CaptureDialogFooter,
+  CaptureDialogHeader,
+} from "@/shared/ui/capture-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -57,13 +58,15 @@ export function BankAccountForm({ account }: { account?: BankAccountView }) {
       >
         {editing ? "Editar" : "+ Cuenta bancaria"}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>
-            {editing ? `Editar · ${account.name}` : "Nueva cuenta bancaria"}
-          </DialogTitle>
-        </DialogHeader>
-        <form onSubmit={onSubmit} className="flex flex-col gap-4">
+      <CaptureDialogContent>
+        <CaptureDialogHeader
+          icon={Landmark}
+          tint="neutral"
+          title={editing ? `Editar · ${account.name}` : "Nueva cuenta bancaria"}
+          subtitle="Bancos · Tesorería"
+        />
+        <form onSubmit={onSubmit}>
+          <CaptureDialogBody>
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="name">Nombre</Label>
@@ -112,11 +115,10 @@ export function BankAccountForm({ account }: { account?: BankAccountView }) {
             />
             Cuenta activa (suma a la posición)
           </label>
-          <Button type="submit" disabled={pending}>
-            {pending ? "Guardando…" : "Guardar cuenta"}
-          </Button>
+          </CaptureDialogBody>
+          <CaptureDialogFooter submitLabel="Guardar cuenta" pending={pending} />
         </form>
-      </DialogContent>
+      </CaptureDialogContent>
     </Dialog>
   );
 }

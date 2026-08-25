@@ -28,7 +28,8 @@ export function useActionSubmit<T>() {
         opts.onSuccess?.(result.data);
       } else {
         setFieldErrors(result.fieldErrors ?? {});
-        toast.error(result.error);
+        // §12.5: el error persiste hasta que el usuario lo cierre.
+        toast.error(result.error, { duration: Infinity });
       }
     });
   }

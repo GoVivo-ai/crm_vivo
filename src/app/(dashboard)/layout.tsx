@@ -114,7 +114,15 @@ export default async function DashboardLayout({ children }: LayoutProps<"/">) {
         />
         <main className="flex-1 p-6">{children}</main>
       </SidebarInset>
-      <Toaster position="bottom-right" />
+      {/* Toast de marca (§12.5): navy, máx 3, error con X persistente. */}
+      <Toaster
+        position="bottom-right"
+        visibleToasts={3}
+        closeButton
+        toastOptions={{
+          className: "vivo-toast",
+        }}
+      />
     </SidebarProvider>
   );
 }

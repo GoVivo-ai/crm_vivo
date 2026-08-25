@@ -43,8 +43,10 @@ export function PayrollPaymentsList({
             <DeleteRecordButton
               action={deletePayrollPayment}
               id={p.id}
-              confirmText={`¿Borrar el pago de ${p.employeeName ?? "?"} (${p.period})?`}
-              successMessage="Pago borrado"
+              title={`¿Borrar el pago de ${p.employeeName ?? "?"} (${p.period})?`}
+              body="Deja de contar en el costo de nómina y en rentabilidad. Esta acción no se puede deshacer."
+              confirmLabel="Borrar pago"
+              successMessage={`Pago de ${p.employeeName ?? "nómina"} borrado`}
             />
           )}
         </li>

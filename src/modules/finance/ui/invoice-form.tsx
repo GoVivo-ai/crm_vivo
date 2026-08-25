@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { FileText } from "lucide-react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  CaptureDialogBody,
+  CaptureDialogContent,
+  CaptureDialogFooter,
+  CaptureDialogHeader,
+} from "@/shared/ui/capture-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -40,6 +41,8 @@ export function InvoiceForm({
   const [currency, setCurrency] = useState(invoice?.currencyCode ?? "COP");
   const { submit, pending, fieldErrors } = useActionSubmit<Invoice>();
   const today = new Date().toISOString().slice(0, 10);
+  const formRef = useRef<HTMLFormElement>(null);
+  const keepOpenRef = useRef(false);
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -62,7 +65,14 @@ export function InvoiceForm({
       () => (invoice ? updateInvoice(invoice.id, input) : createInvoice(input)),
       {
         successMessage: invoice ? "Factura actualizada" : "Factura registrada",
-        onSuccess: () => setOpen(false),
+        onSuccess: () => {
+          if (keepOpenRef.current) {
+            keepOpenRef.current = false;
+            formRef.current?.reset();
+          } else {
+            setOpen(false);
+          }
+        },
       },
     );
   }
@@ -74,13 +84,15 @@ export function InvoiceForm({
       >
         {invoice ? "Editar" : triggerLabel}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>
-            {invoice ? "Editar factura" : "Registrar factura"}
-          </DialogTitle>
-        </DialogHeader>
-        <form onSubmit={onSubmit} className="flex flex-col gap-4">
+      <CaptureDialogContent>
+        <CaptureDialogHeader
+          icon={FileText}
+          tint="green"
+          title={invoice ? "Editar factura" : "Registrar factura"}
+          subtitle="Ingreso · Finanzas"
+        />
+        <form ref={formRef} onSubmit={onSubmit}>
+          <CaptureDialogBody>
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="accountId">Cliente (CRM)</Label>
@@ -182,11 +194,21 @@ export function InvoiceForm({
               defaultExchangeRate={invoice?.exchangeRate}
             />
           </div>
-          <Button type="submit" disabled={pending}>
-            {pending ? "Guardando…" : "Guardar factura"}
-          </Button>
+          </CaptureDialogBody>
+          <CaptureDialogFooter
+            submitLabel="Guardar factura"
+            pending={pending}
+            onSaveAnother={
+              invoice
+                ? undefined
+                : () => {
+                    keepOpenRef.current = true;
+                    formRef.current?.requestSubmit();
+                  }
+            }
+          />
         </form>
-      </DialogContent>
+      </CaptureDialogContent>
     </Dialog>
   );
 }

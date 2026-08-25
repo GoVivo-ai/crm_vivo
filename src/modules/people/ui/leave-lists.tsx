@@ -1,7 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import type { LeaveRequestView } from "@/modules/people/domain/types";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { decideLeaveRequest } from "@/modules/people/application/leave-actions";
 import {
   LEAVE_TYPE_LABELS,
@@ -54,6 +57,40 @@ export function MyLeaveList({
   );
 }
 
+/** Rechazo con nota (§12.4) — sustituye al window.prompt. */
+function RejectLeaveDialog({
+  request,
+  pending,
+  onReject,
+}: {
+  request: LeaveRequestView;
+  pending: boolean;
+  onReject: (note: string | null) => void;
+}) {
+  const [note, setNote] = useState("");
+  return (
+    <ConfirmDialog
+      trigger={
+        <Button size="sm" variant="outline" disabled={pending}>
+          Rechazar
+        </Button>
+      }
+      title={`¿Rechazar la solicitud de ${request.employeeName ?? "esta persona"}?`}
+      body={`${request.startDate} → ${request.endDate}. Quien solicitó verá el rechazo y tu nota.`}
+      confirmLabel="Rechazar solicitud"
+      pending={pending}
+      onConfirm={() => onReject(note.trim() || null)}
+    >
+      <Textarea
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        rows={2}
+        placeholder="Nota para quien solicitó (opcional)"
+      />
+    </ConfirmDialog>
+  );
+}
+
 /** Bandeja de aprobación (management/admin); nadie decide la propia:
  * las solicitudes del propio aprobador salen sin botones. */
 export function ApprovalsList({
@@ -67,11 +104,11 @@ export function ApprovalsList({
 }) {
   const { submit, pending } = useActionSubmit<unknown>();
 
-  function decide(id: string, decision: "approved" | "rejected") {
-    const decisionNote =
-      decision === "rejected"
-        ? window.prompt("Nota para quien solicitó (opcional):") || null
-        : null;
+  function decide(
+    id: string,
+    decision: "approved" | "rejected",
+    decisionNote: string | null = null,
+  ) {
     submit(
       () => decideLeaveRequest({ leaveRequestId: id, decision, decisionNote }),
       {
@@ -101,14 +138,11 @@ export function ApprovalsList({
               >
                 Aprobar
               </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={pending}
-                onClick={() => decide(r.id, "rejected")}
-              >
-                Rechazar
-              </Button>
+              <RejectLeaveDialog
+                request={r}
+                pending={pending}
+                onReject={(note) => decide(r.id, "rejected", note)}
+              />
             </span>
           ) : null}
         </RequestLine>

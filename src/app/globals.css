@@ -326,6 +326,58 @@
   }
 }
 
+/* ===== Toast de marca (§12.5): navy, tile de icono, acción verde ===== */
+.vivo-toast[data-sonner-toast] {
+  background: #011640 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 12px 32px -12px rgba(1, 22, 64, 0.25) !important;
+  max-width: 380px;
+}
+.vivo-toast [data-title] {
+  color: #ffffff;
+  font-weight: 700;
+}
+.vivo-toast [data-description] {
+  color: rgba(255, 255, 255, 0.7);
+}
+.vivo-toast [data-icon] {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+}
+.vivo-toast[data-type="success"] [data-icon] {
+  background: rgba(4, 217, 139, 0.16);
+  color: #04d98b;
+}
+.vivo-toast[data-type="error"] [data-icon] {
+  background: rgba(201, 58, 58, 0.25);
+  color: #f08a8a;
+}
+.vivo-toast [data-button] {
+  background: transparent;
+  color: #04d98b;
+  font-weight: 800;
+}
+.vivo-toast [data-close-button] {
+  background: #011640;
+  color: rgba(255, 255, 255, 0.7);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.vivo-toast :focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+/* Foco visible global del spec: outline verde 2px offset 2. */
+:focus-visible {
+  outline: 2px solid #04d98b;
+  outline-offset: 2px;
+}
+
 /* Pulso de sincronización — la firma de la UI: late cuando el dato es fresco. */
 @keyframes sync-pulse {
   0%,

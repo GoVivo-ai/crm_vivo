@@ -31,7 +31,8 @@ function DialogOverlay({
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
       className={cn(
-        "fixed inset-0 isolate z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+        // Scrim del spec §12: navy al 40%, sin blur.
+        "fixed inset-0 isolate z-50 bg-[rgba(1,22,64,0.40)] duration-160 data-open:animate-in data-open:fade-in-0 data-closed:duration-120 data-closed:animate-out data-closed:fade-out-0",
         className
       )}
       {...props}
@@ -53,7 +54,9 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          // Panel del spec §12: r16, borde --border, sombra de dialog,
+          // entrada 160ms fade+scale .98→1, salida 120ms; reduced-motion solo fade.
+          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-2xl border border-border bg-popover p-4 text-sm text-popover-foreground shadow-[0_24px_64px_-24px_rgba(1,22,64,0.35),0_4px_12px_-6px_rgba(1,22,64,0.12)] duration-160 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-[0.98] data-closed:duration-120 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-[0.98] motion-reduce:data-open:zoom-in-100 motion-reduce:data-closed:zoom-out-100",
           className
         )}
         {...props}

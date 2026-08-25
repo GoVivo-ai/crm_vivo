@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { endServiceForAccount } from "@/modules/clients/application/services-actions";
 import type { AccountService } from "@/modules/clients/domain/types";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
 
 type EndServiceButtonProps = {
@@ -20,21 +21,27 @@ export function EndServiceButton({
   const { submit, pending } = useActionSubmit<AccountService>();
 
   return (
-    <Button
-      variant="ghost"
-      size="sm"
-      disabled={pending}
-      className="text-muted-foreground hover:text-destructive"
-      onClick={() => {
-        if (!window.confirm(`¿Finalizar "${serviceName}" con fecha de hoy?`))
-          return;
+    <ConfirmDialog
+      trigger={
+        <Button
+          variant="ghost"
+          size="sm"
+          disabled={pending}
+          className="text-muted-foreground hover:text-destructive"
+        >
+          Finalizar
+        </Button>
+      }
+      title={`¿Finalizar "${serviceName}" hoy?`}
+      body="El servicio deja de sumar al MRR desde hoy; el histórico se conserva."
+      confirmLabel="Finalizar servicio"
+      pending={pending}
+      onConfirm={() =>
         submit(
           () => endServiceForAccount({ accountServiceId, endDate: today }),
-          { successMessage: "Servicio finalizado" },
-        );
-      }}
-    >
-      {pending ? "Finalizando…" : "Finalizar"}
-    </Button>
+          { successMessage: `Servicio ${serviceName} finalizado` },
+        )
+      }
+    />
   );
 }

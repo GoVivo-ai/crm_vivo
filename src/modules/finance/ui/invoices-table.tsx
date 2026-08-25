@@ -88,8 +88,10 @@ export function InvoicesTable({
                   <DeleteRecordButton
                     action={deleteInvoice}
                     id={invoice.id}
-                    confirmText={`¿Borrar la factura ${invoice.number ?? ""} de ${invoice.accountName ?? invoice.clientName ?? "?"}?`}
-                    successMessage="Factura borrada"
+                    title={`¿Borrar la factura ${invoice.number ?? "sin número"} de ${invoice.accountName ?? invoice.clientName ?? "?"}?`}
+                    body="Se borra el registro y deja de contar en facturación y cartera. Esta acción no se puede deshacer."
+                    confirmLabel="Borrar factura"
+                    successMessage={`Factura ${invoice.number ?? ""} borrada`.trim()}
                   />
                 </span>
               )}

@@ -66,7 +66,9 @@ export function TransactionsTable({
                   <DeleteRecordButton
                     action={deleteBankTransaction}
                     id={tx.id}
-                    confirmText={`¿Borrar el movimiento del ${tx.date} por ${formatMoney(tx.amount)}?`}
+                    title={`¿Borrar el movimiento del ${tx.date} por ${formatMoney(tx.amount)}?`}
+                    body="Deja de contar en el flujo de caja del mes. Esta acción no se puede deshacer."
+                    confirmLabel="Borrar movimiento"
                     successMessage="Movimiento borrado"
                   />
                 )}

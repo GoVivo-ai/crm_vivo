@@ -80,8 +80,10 @@ export function ExpensesTable({
                   <DeleteRecordButton
                     action={deleteExpense}
                     id={expense.id}
-                    confirmText={`¿Borrar el gasto de ${expense.providerName} del ${expense.txnDate}?`}
-                    successMessage="Gasto borrado"
+                    title={`¿Borrar el gasto de ${expense.providerName} del ${expense.txnDate}?`}
+                    body="Se borra el registro y deja de contar en gastos y cuentas por pagar. Esta acción no se puede deshacer."
+                    confirmLabel="Borrar gasto"
+                    successMessage={`Gasto de ${expense.providerName} borrado`}
                   />
                 </span>
               )}

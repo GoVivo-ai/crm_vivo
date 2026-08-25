@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { HandCoins } from "lucide-react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  CaptureDialogBody,
+  CaptureDialogContent,
+  CaptureDialogFooter,
+  CaptureDialogHeader,
+} from "@/shared/ui/capture-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createPayrollPayment } from "@/modules/people/application/team-actions";
@@ -26,6 +27,8 @@ export function PayrollPaymentForm({ employees }: { employees: Option[] }) {
   const { submit, pending, fieldErrors } = useActionSubmit<unknown>();
   const today = new Date().toISOString().slice(0, 10);
   const currentPeriod = today.slice(0, 7);
+  const formRef = useRef<HTMLFormElement>(null);
+  const keepOpenRef = useRef(false);
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -44,7 +47,14 @@ export function PayrollPaymentForm({ employees }: { employees: Option[] }) {
         }),
       {
         successMessage: "Pago de nómina registrado",
-        onSuccess: () => setOpen(false),
+        onSuccess: () => {
+          if (keepOpenRef.current) {
+            keepOpenRef.current = false;
+            formRef.current?.reset();
+          } else {
+            setOpen(false);
+          }
+        },
       },
     );
   }
@@ -52,16 +62,20 @@ export function PayrollPaymentForm({ employees }: { employees: Option[] }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={<Button size="sm" />}>+ Pago de nómina</DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Registrar pago de nómina</DialogTitle>
-        </DialogHeader>
+      <CaptureDialogContent>
+        <CaptureDialogHeader
+          icon={HandCoins}
+          tint="gold"
+          title="Registrar pago de nómina"
+          subtitle="Compensación · Equipo"
+        />
         {employees.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
+          <p className="px-6 pb-6 text-sm text-muted-foreground">
             Crea primero a las personas en el directorio.
           </p>
         ) : (
-          <form onSubmit={onSubmit} className="flex flex-col gap-4">
+          <form ref={formRef} onSubmit={onSubmit}>
+            <CaptureDialogBody>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="employeeId">Persona</Label>
               <NativeSelect id="employeeId" name="employeeId" required>
@@ -121,12 +135,18 @@ export function PayrollPaymentForm({ employees }: { employees: Option[] }) {
                 <Input id="notes" name="notes" />
               </div>
             </div>
-            <Button type="submit" disabled={pending}>
-              {pending ? "Registrando…" : "Registrar pago"}
-            </Button>
+            </CaptureDialogBody>
+            <CaptureDialogFooter
+              submitLabel="Registrar pago"
+              pending={pending}
+              onSaveAnother={() => {
+                keepOpenRef.current = true;
+                formRef.current?.requestSubmit();
+              }}
+            />
           </form>
         )}
-      </DialogContent>
+      </CaptureDialogContent>
     </Dialog>
   );
 }

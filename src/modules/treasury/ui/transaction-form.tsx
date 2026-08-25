@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { ArrowLeftRight } from "lucide-react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  CaptureDialogBody,
+  CaptureDialogContent,
+  CaptureDialogFooter,
+  CaptureDialogHeader,
+} from "@/shared/ui/capture-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createBankTransaction } from "@/modules/treasury/application/treasury-actions";
@@ -25,6 +26,8 @@ export function TransactionForm({ accounts }: { accounts: Option[] }) {
   const [direction, setDirection] = useState<"in" | "out">("in");
   const { submit, pending, fieldErrors } = useActionSubmit<unknown>();
   const today = new Date().toISOString().slice(0, 10);
+  const formRef = useRef<HTMLFormElement>(null);
+  const keepOpenRef = useRef(false);
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -40,7 +43,14 @@ export function TransactionForm({ accounts }: { accounts: Option[] }) {
         }),
       {
         successMessage: "Movimiento registrado",
-        onSuccess: () => setOpen(false),
+        onSuccess: () => {
+          if (keepOpenRef.current) {
+            keepOpenRef.current = false;
+            formRef.current?.reset();
+          } else {
+            setOpen(false);
+          }
+        },
       },
     );
   }
@@ -48,16 +58,20 @@ export function TransactionForm({ accounts }: { accounts: Option[] }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={<Button size="sm" />}>+ Movimiento</DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Registrar movimiento</DialogTitle>
-        </DialogHeader>
+      <CaptureDialogContent>
+        <CaptureDialogHeader
+          icon={ArrowLeftRight}
+          tint="neutral"
+          title="Registrar movimiento"
+          subtitle="Bancos · Tesorería"
+        />
         {accounts.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
+          <p className="px-6 pb-6 text-sm text-muted-foreground">
             Crea primero una cuenta bancaria.
           </p>
         ) : (
-          <form onSubmit={onSubmit} className="flex flex-col gap-4">
+          <form ref={formRef} onSubmit={onSubmit}>
+            <CaptureDialogBody>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="bankAccountId">Cuenta</Label>
               <NativeSelect id="bankAccountId" name="bankAccountId" required>
@@ -115,12 +129,18 @@ export function TransactionForm({ accounts }: { accounts: Option[] }) {
                 placeholder="Pago cliente X, nómina agosto…"
               />
             </div>
-            <Button type="submit" disabled={pending}>
-              {pending ? "Registrando…" : "Registrar"}
-            </Button>
+            </CaptureDialogBody>
+            <CaptureDialogFooter
+              submitLabel="Registrar movimiento"
+              pending={pending}
+              onSaveAnother={() => {
+                keepOpenRef.current = true;
+                formRef.current?.requestSubmit();
+              }}
+            />
           </form>
         )}
-      </DialogContent>
+      </CaptureDialogContent>
     </Dialog>
   );
 }

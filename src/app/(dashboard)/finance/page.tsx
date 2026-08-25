@@ -15,6 +15,7 @@ import { PnlChart } from "@/modules/finance/ui/pnl-chart";
 import { PnlTable } from "@/modules/finance/ui/pnl-table";
 import { StatTile } from "@/modules/finance/ui/stat-tile";
 import { ActionError } from "@/shared/ui/action-error";
+import { Kpi } from "@/shared/ui/kpi";
 import { SyncStatus } from "@/shared/ui/sync-status";
 
 function Panel({
@@ -75,27 +76,39 @@ export default async function FinancePage() {
         </div>
       </div>
 
-      {/* Ruptura de grilla (spec §del sistema): la primera card domina 1.5fr. */}
+      {/* Jerarquía del artboard Finanzas: Ingresos héroe · Gastos · Resultado
+          (distinguido por COLOR verde, no tamaño) · Cartera. */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
         <StatTile
-          label="Resultado neto del mes"
-          amount={pnlCurrentMonth?.netIncomeCop ?? null}
+          label="Ingresos del mes"
+          amount={pnlCurrentMonth?.incomeCop ?? null}
+          detail={lastMonth ? `${lastMonth.invoices} facturas` : undefined}
           emphasis
         />
         <StatTile
-          label="Facturación del mes"
-          amount={lastMonth?.totalCop ?? null}
-          detail={lastMonth ? `${lastMonth.invoices} facturas` : undefined}
+          label="Gastos del mes"
+          amount={
+            pnlCurrentMonth
+              ? pnlCurrentMonth.expensesCop + pnlCurrentMonth.payrollCop
+              : null
+          }
+          detail="gastos + nómina"
+        />
+        <Kpi
+          label="Resultado operativo"
+          value={pnlCurrentMonth?.netIncomeCop ?? null}
+          kind="accounting"
+          colorBySign
+          detail={
+            pnlCurrentMonth && pnlCurrentMonth.incomeCop > 0
+              ? `margen ${((pnlCurrentMonth.netIncomeCop / pnlCurrentMonth.incomeCop) * 100).toFixed(1)}%`
+              : undefined
+          }
         />
         <StatTile
           label="Cartera viva"
           amount={receivables.outstandingCop}
           detail={`${receivables.openInvoices} facturas abiertas`}
-        />
-        <StatTile
-          label="Flujo neto del mes"
-          amount={cashflowCurrentMonth?.netCop ?? null}
-          detail="desde movimientos bancarios"
         />
       </div>
 

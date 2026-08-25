@@ -7,8 +7,11 @@ type KpiProps = {
   label: string;
   /** null = sin dato (muestra —). */
   value: number | null;
-  /** money = COP; accounting = COP con negativos contables; count = entero. */
-  kind?: "money" | "accounting" | "count";
+  /** money = COP; accounting = negativos contables; count = entero;
+   *  percent = fracción (0.12 → 12 %). */
+  kind?: "money" | "accounting" | "count" | "percent";
+  /** Positivo en verde, negativo en rojo (p.ej. resultado operativo). */
+  colorBySign?: boolean;
   /** Moneda explícita para montos que no son COP. */
   currency?: string;
   detail?: string;
@@ -18,10 +21,12 @@ type KpiProps = {
 };
 
 function formatOptions(
-  kind: "money" | "accounting" | "count",
+  kind: "money" | "accounting" | "count" | "percent",
   currency: string,
 ): Format {
   if (kind === "count") return { maximumFractionDigits: 0 };
+  if (kind === "percent")
+    return { style: "percent", maximumFractionDigits: 1 };
   return {
     style: "currency",
     currency,
@@ -41,9 +46,11 @@ export function Kpi({
   currency = "COP",
   detail,
   size = "md",
+  colorBySign = false,
   className,
 }: KpiProps) {
   const negative = value !== null && value < 0;
+  const positiveGreen = colorBySign && value !== null && value > 0;
   return (
     <div
       className={cn(
@@ -59,6 +66,7 @@ export function Kpi({
           "font-[family-name:var(--font-display)] leading-none font-bold tabular-nums",
           size === "lg" ? "text-[36px]" : "text-2xl",
           negative && "text-health-critical",
+          positiveGreen && "text-health-ok",
         )}
       >
         {value === null ? (

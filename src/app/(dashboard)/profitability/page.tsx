@@ -18,6 +18,9 @@ export default async function ProfitabilityPage() {
     activeEmployees,
     accounts,
   } = result.data;
+  const totalRevenue = accounts.reduce((s, a) => s + a.revenueCop, 0);
+  const totalMargin = accounts.reduce((s, a) => s + a.marginCop, 0);
+  const avgMargin = totalRevenue > 0 ? totalMargin / totalRevenue : null;
 
   return (
     <div className="flex flex-col gap-4">
@@ -28,14 +31,15 @@ export default async function ProfitabilityPage() {
         </p>
       </div>
 
-      {/* Ruptura de grilla: la primera card domina 1.5fr. */}
+      {/* Jerarquía del artboard: Margen promedio héroe; costo de personal 4ª. */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-[1.5fr_1fr_1fr_1fr_1fr]">
         <Kpi
-          label="Costo de nómina del periodo"
-          value={totalPayrollCop}
-          kind="accounting"
+          label="Margen promedio"
+          value={avgMargin}
+          kind="percent"
           size="lg"
-          detail="serie: nómina (pagos registrados)"
+          colorBySign
+          detail="margen agregado / ingresos del periodo"
         />
         <Kpi
           label="Costo sin asignar (compañía)"
@@ -44,21 +48,22 @@ export default async function ProfitabilityPage() {
           detail="nómina no asignada a clientes"
         />
         <Kpi
-          label="Dedicación asignada"
-          value={totalAssignedPercent}
-          kind="count"
-          detail={`% del total · ${activeEmployees} personas activas`}
-        />
-        <Kpi
           label="Ingresos sin cuenta asignada"
           value={revenueUnassignedCop}
           kind="accounting"
           detail="facturas solo con nombre de cliente"
         />
         <Kpi
-          label="Clientes con margen"
-          value={accounts.length}
+          label="Costo de nómina del periodo"
+          value={totalPayrollCop}
+          kind="accounting"
+          detail="serie: nómina (pagos registrados)"
+        />
+        <Kpi
+          label="Dedicación asignada"
+          value={totalAssignedPercent}
           kind="count"
+          detail={`% del total · ${activeEmployees} personas activas`}
         />
       </div>
 

@@ -10,7 +10,9 @@
     "typecheck": "next typegen && tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
-    "db:seed": "tsx drizzle/seed.ts"
+    "db:seed": "tsx drizzle/seed.ts",
+    "db:seed-demo": "tsx scripts/seed-demo.mts",
+    "db:unseed-demo": "tsx scripts/unseed-demo.mts"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

@@ -425,8 +425,11 @@ Lomo, no su reemplazo: crea registros, nunca edita.
 - **Gramática de parseo**: `{tipo} {entidad} {monto} [fecha]` — tipo por palabra
   ("factura", "gasto"…) o tecla inicial; entidad por fuzzy match sin acentos contra
   clientes/personas/cuentas según el tipo; monto acepta atajos ("14.6" →
-  $14.600.000, "890k", "2.4m") y el token de moneda `usd` ("usd 500" → US$ 500;
-  sin token, COP); fecha natural opcional ("ayer", "15 sep", "15/08").
+  $14.600.000, "890k", "2.4m") y el token de moneda `usd` ("usd 500" → US$ 500
+  literal, sin atajos de millones; sin token, COP). Con `usd`, el panel muestra el
+  monto protagonista en USD y un campo **TRM (COP por USD)** obligatorio (el
+  backend normaliza con exchangeRate); el movimiento no la pide — hereda la moneda
+  de su cuenta. Fecha natural opcional ("ayer", "15 sep", "15/08").
   **Lo interpretado se muestra SIEMPRE en el panel antes de guardar** con la línea
   "Entendido del texto: … · corrige abajo si algo no es" — la barra jamás guarda a
   ciegas; ambigüedad (≥2 coincidencias) = aviso "N coincidencias — elige abajo" y

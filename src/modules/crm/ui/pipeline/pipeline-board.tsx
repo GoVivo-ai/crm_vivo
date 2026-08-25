@@ -28,22 +28,28 @@ import {
   type BoardStage,
 } from "@/modules/crm/ui/pipeline/board-state";
 import { DealCardContent } from "@/modules/crm/ui/pipeline/deal-card";
+import { DealForm } from "@/modules/crm/ui/pipeline/deal-form";
 import { StageColumn } from "@/modules/crm/ui/pipeline/stage-column";
 
 type PipelineBoardProps = {
   initialStages: BoardStage[];
   accountNames: Map<string, string>;
+  /** Opciones para el DealForm del slot vacío (M6). */
+  accountOptions: { id: string; name: string }[];
   today: string;
 };
 
 export function PipelineBoard({
   initialStages,
   accountNames,
+  accountOptions,
   today,
 }: PipelineBoardProps) {
   const router = useRouter();
   const [stages, setStages] = useState(initialStages);
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
+  // Slot "+ Nuevo negocio": abre el Lomo con la etapa preseleccionada.
+  const [newDealStageId, setNewDealStageId] = useState<string | null>(null);
   // Snapshot al iniciar el drag, para rollback si el server rechaza el move.
   const snapshot = useRef<BoardStage[]>(initialStages);
   const announcements = useBoardAnnouncements(stages);
@@ -132,9 +138,30 @@ export function PipelineBoard({
             stage={stage}
             accountNames={accountNames}
             today={today}
+            onNewDeal={setNewDealStageId}
           />
         ))}
       </div>
+      {newDealStageId !== null && (
+        <DealForm
+          key={newDealStageId}
+          hideTrigger
+          open
+          onOpenChange={(o) => {
+            if (!o) setNewDealStageId(null);
+          }}
+          initialStageId={newDealStageId}
+          accounts={accountOptions}
+          stages={stages.map((s) => ({
+            id: s.id,
+            name: s.name,
+            position: s.position,
+            probability: s.probability,
+            isWon: s.isWon,
+            isLost: s.isLost,
+          }))}
+        />
+      )}
       <DragOverlay>
         {/* Tarjeta destacada: ring verde mientras se arrastra (artboard). */}
         {activeDeal && (

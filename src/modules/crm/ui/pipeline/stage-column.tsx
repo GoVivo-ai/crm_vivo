@@ -17,9 +17,16 @@ type StageColumnProps = {
   stage: BoardStage;
   accountNames: Map<string, string>;
   today: string; // YYYY-MM-DD, calculado por el server para pureza de render
+  /** Abre el DealForm con esta etapa preseleccionada (slot vacío, M6). */
+  onNewDeal?: (stageId: string) => void;
 };
 
-export function StageColumn({ stage, accountNames, today }: StageColumnProps) {
+export function StageColumn({
+  stage,
+  accountNames,
+  today,
+  onNewDeal,
+}: StageColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id: stage.id });
 
   return (
@@ -55,12 +62,16 @@ export function StageColumn({ stage, accountNames, today }: StageColumnProps) {
           items={stage.deals.map((d) => d.id)}
           strategy={verticalListSortingStrategy}
         >
-          {/* Columna vacía: slot punteado del artboard — la creación real
-           * vive en el botón "+ Nuevo negocio" de la página (M6). */}
+          {/* Columna vacía: slot punteado clicable — abre el Lomo con la
+           * etapa preseleccionada (M6). */}
           {stage.deals.length === 0 && !stage.isWon && !stage.isLost && (
-            <div className="grid h-16 place-items-center rounded-[12px] border-2 border-dashed border-[#C6CFDD] text-xs font-bold text-muted-foreground">
+            <button
+              type="button"
+              onClick={() => onNewDeal?.(stage.id)}
+              className="grid h-16 place-items-center rounded-[12px] border-2 border-dashed border-[#C6CFDD] text-xs font-bold text-muted-foreground transition-colors hover:border-[#04D98B] hover:text-foreground focus-visible:outline-2 focus-visible:outline-[#04D98B]"
+            >
               + Nuevo negocio
-            </div>
+            </button>
           )}
           {stage.deals.map((deal) => (
             <DealCard

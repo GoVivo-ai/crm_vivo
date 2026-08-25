@@ -40,6 +40,7 @@ export default async function PipelinePage() {
       <PipelineBoard
         initialStages={stages}
         accountNames={accountNames}
+        accountOptions={accountOptions}
         today={today}
       />
     </div>

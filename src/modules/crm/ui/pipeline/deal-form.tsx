@@ -28,14 +28,29 @@ type Option = { id: string; name: string };
 type DealFormProps = {
   accounts: Option[];
   stages: PipelineStage[];
+  /** Etapa preseleccionada (slot "+ Nuevo negocio" del kanban). */
+  initialStageId?: string | null;
+  /** Modo controlado (lo abre el board); sin trigger propio. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  hideTrigger?: boolean;
 };
 
-export function DealForm({ accounts, stages }: DealFormProps) {
+export function DealForm({
+  accounts,
+  stages,
+  initialStageId = null,
+  open: controlledOpen,
+  onOpenChange,
+  hideTrigger = false,
+}: DealFormProps) {
   const openStages = stages.filter((s) => !s.isWon && !s.isLost);
-  const [open, setOpen] = useState(false);
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const open = controlledOpen ?? uncontrolledOpen;
+  const setOpen = onOpenChange ?? setUncontrolledOpen;
   const [accountId, setAccountId] = useState<string | null>(null);
   const [stageId, setStageId] = useState<string | null>(
-    openStages[0]?.id ?? null,
+    initialStageId ?? openStages[0]?.id ?? null,
   );
   const [currency, setCurrency] = useState("COP");
   const [amountStr, setAmountStr] = useState("");
@@ -81,7 +96,9 @@ export function DealForm({ accounts, stages }: DealFormProps) {
   return (
     <>
       <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
-        <DialogTrigger render={<Button size="sm" />}>Nuevo deal</DialogTrigger>
+        {!hideTrigger && (
+          <DialogTrigger render={<Button size="sm" />}>Nuevo deal</DialogTrigger>
+        )}
         <CaptureDialogContent>
           <CaptureLomo icon={Handshake} module="CRM" title={"Nuevo deal"} context={lomoContext} />
         <div className="flex min-w-0 flex-col">

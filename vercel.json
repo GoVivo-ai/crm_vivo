@@ -1,0 +1,7 @@
+{
+  "crons": [
+    { "path": "/api/cron/sync-alegra", "schedule": "0 */6 * * *" },
+    { "path": "/api/cron/sync-clickup", "schedule": "0 */6 * * *" },
+    { "path": "/api/cron/sync-windsor", "schedule": "0 6 * * *" }
+  ]
+}

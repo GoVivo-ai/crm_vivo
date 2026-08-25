@@ -1,12 +1,29 @@
 import type { Announcements, ScreenReaderInstructions } from "@dnd-kit/core";
+import { useEffect, useMemo, useRef } from "react";
 import {
   findDeal,
   findStageId,
   type BoardStage,
 } from "@/modules/crm/ui/pipeline/board-state";
 
-/** Anuncios aria-live del Kanban en español (dnd-kit trae inglés). */
-export function makeAnnouncements(
+/**
+ * Anuncios aria-live del Kanban en español (dnd-kit trae inglés), leyendo
+ * el tablero vigente vía ref. Los callbacks corren solo en eventos de drag,
+ * nunca en render, por eso el disable puntual de react-hooks/refs.
+ */
+export function useBoardAnnouncements(stages: BoardStage[]): Announcements {
+  const stagesRef = useRef(stages);
+  useEffect(() => {
+    stagesRef.current = stages;
+  }, [stages]);
+  return useMemo(
+    // eslint-disable-next-line react-hooks/refs -- la ref se lee en handlers de drag, no en render
+    () => makeAnnouncements(() => stagesRef.current),
+    [],
+  );
+}
+
+function makeAnnouncements(
   getStages: () => BoardStage[],
 ): Announcements {
   const dealTitle = (id: string | number) =>

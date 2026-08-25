@@ -10,7 +10,7 @@ import {
 } from "react";
 import { listAccountOptionsForInvoicing } from "@/modules/finance/application/account-options-action";
 import { getTeamDirectory } from "@/modules/people/application/team-actions";
-import { getTreasuryPosition } from "@/modules/treasury/application/treasury-actions";
+import { listBankAccountOptions } from "@/modules/treasury/application/treasury-actions";
 import type { SpotlightCatalog, SpotlightType } from "./parser";
 import { SpotlightOverlay } from "./spotlight-overlay";
 
@@ -52,7 +52,7 @@ export function SpotlightProvider({
     void Promise.all([
       listAccountOptionsForInvoicing(),
       getTeamDirectory(),
-      getTreasuryPosition(),
+      listBankAccountOptions(),
     ]).then(([accountsR, teamR, treasuryR]) => {
       setCatalog({
         accounts: accountsR.ok
@@ -64,9 +64,7 @@ export function SpotlightProvider({
               .map((m) => ({ id: m.id, name: m.fullName }))
           : [],
         bankAccounts: treasuryR.ok
-          ? treasuryR.data.accounts
-              .filter((a) => a.isActive && a.source === "manual")
-              .map(({ id, name }) => ({ id, name }))
+          ? treasuryR.data.map(({ id, name }) => ({ id, name }))
           : [],
       });
     });

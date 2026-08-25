@@ -110,6 +110,9 @@ export function IntegrationCard({ meta, status }: IntegrationCardProps) {
             alt=""
             width={30}
             height={30}
+            // Logos de 30px (dos son SVG): el optimizador no aporta y
+            // devuelve 400 para SVG sin dangerouslyAllowSVG global.
+            unoptimized
             className="size-[30px] object-contain"
           />
         </span>

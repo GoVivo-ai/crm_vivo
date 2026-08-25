@@ -166,6 +166,7 @@ export async function syncQuickbooks(): Promise<{
     // desde el cursor anterior en la próxima corrida.
     const lastSyncedAt =
       Object.keys(errors).length === 0 ? startedAt : prev.lastSyncedAt;
-    return { lastSyncedAt, counts, errors };
+    const rowsProcessed = Object.values(counts).reduce((a, b) => a + b, 0);
+    return { lastSyncedAt, rowsProcessed, counts, errors };
   });
 }

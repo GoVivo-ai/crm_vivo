@@ -134,6 +134,13 @@ export async function syncMeta(): Promise<{
         `Todas las cuentas fallaron: ${JSON.stringify(errors)}`,
       );
     }
-    return { accounts: accounts.length, upserted, errors, windowDays: WINDOW_DAYS };
+    const rowsProcessed = Object.values(upserted).reduce((a, b) => a + b, 0);
+    return {
+      accounts: accounts.length,
+      rowsProcessed,
+      upserted,
+      errors,
+      windowDays: WINDOW_DAYS,
+    };
   });
 }

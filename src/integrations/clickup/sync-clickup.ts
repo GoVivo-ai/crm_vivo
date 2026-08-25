@@ -70,6 +70,11 @@ export async function syncClickUp(): Promise<{
       }
     }
 
-    return { projectsLinked: linked.length, projectsSynced: synced, errors };
+    return {
+      projectsLinked: linked.length,
+      projectsSynced: synced,
+      rowsProcessed: synced,
+      errors,
+    };
   });
 }

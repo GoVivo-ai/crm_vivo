@@ -7,26 +7,40 @@ import { resilientFetch } from "@/shared/http/resilient-fetch";
 // declara GET con requestBody, que fetch no permite).
 const REPORTS_BASE_URL = "https://mcp.alegra.com/tools";
 
-/** Nodo del árbol del Estado de Resultados. */
+/**
+ * Nodo del Estado de Resultados (shape REAL capturado vía MCP 2026-08-25;
+ * más rico que el ejemplo de la doc). El array raíz intercala cuentas
+ * (type/balance/isRoot) con filas de resumen isUtility ("Utilidad bruta",
+ * "Pérdida neta"...) e isTotal por sección. `balance` de cuentas es la
+ * MAGNITUD (positiva); el signo va en nature (credit/debit). En datos
+ * reales "Costos" llega como type "expense" (no "cost").
+ */
 export interface PnlNode {
   name: string;
+  id?: string;
+  code?: string | null;
   section?: number;
-  type: "income" | "cost" | "productionCost" | "expense";
-  balance: string;
-  contableCode?: string;
+  type?: "income" | "cost" | "productionCost" | "expense";
+  nature?: "credit" | "debit";
+  balance?: string;
+  isRoot?: boolean;
+  isUtility?: boolean;
+  isTotal?: boolean;
+  level?: number;
+  periods?: { from: string; to: string; balance: string | number }[];
   children?: PnlNode[];
 }
 
-/** Sección del flujo de caja (5 fijas) con desglose mensual. */
+/**
+ * Sección del flujo de caja (5 fijas, shape validado vía MCP). El balance
+ * top-level de cada sección ya es el total; `children` desglosa por
+ * categoría contable (incluye partidas sin movimiento de efectivo).
+ */
 export interface CashFlowSection {
-  id:
-    | "INITIAL_CASH_AND_BANKS_BALANCE"
-    | "INCOME"
-    | "EXPENSES"
-    | "BALANCE_OF_THE_PERIOD"
-    | "FINAL_BALANCE_IN_CASH_AND_BANKS";
+  id: string;
   name: string;
   periods: { fromDate: string; toDate: string; balance: string }[];
+  children?: CashFlowSection[];
 }
 
 function authHeader(): string {
@@ -69,7 +83,11 @@ export function fetchCashFlow(
   });
 }
 
-/** Suma balances del árbol por tipo de cuenta (raíces, no dobles conteos). */
+/**
+ * Totales del P&L: suma solo cuentas raíz por tipo (magnitudes) y toma la
+ * utilidad neta de la fila isUtility de la última sección (la cifra
+ * autoritativa de contabilidad), con fallback a income − costos − gastos.
+ */
 export function summarizePnl(nodes: PnlNode[]): Record<string, number> {
   const totals: Record<string, number> = {
     income: 0,
@@ -78,10 +96,17 @@ export function summarizePnl(nodes: PnlNode[]): Record<string, number> {
     expense: 0,
   };
   for (const node of nodes) {
+    if (!node.type || node.isUtility || node.isTotal) continue;
     totals[node.type] = (totals[node.type] ?? 0) + Number(node.balance || 0);
   }
+
+  const utilityRows = nodes.filter((n) => n.isUtility && n.periods?.length);
+  const lastUtility = utilityRows[utilityRows.length - 1];
+  const reported = lastUtility?.periods?.[0]?.balance;
   totals.netIncome =
-    totals.income - totals.cost - totals.productionCost - totals.expense;
+    reported !== undefined
+      ? Number(reported)
+      : totals.income - totals.cost - totals.productionCost - totals.expense;
   return totals;
 }
 

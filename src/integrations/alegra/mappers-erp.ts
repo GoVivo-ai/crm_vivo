@@ -82,6 +82,11 @@ export function mapEmployee(
     area: employee.area ?? null,
     salary: num(employee.salary),
     status: employee.status ?? null,
+    email: employee.email ?? null,
+    phone: employee.phone ?? null,
+    hiredAt: employee.contract?.startDate ?? null,
+    // La API de Alegra NO expone fecha de nacimiento (verificado): null.
+    birthday: null,
     contract: employee.contract ?? null,
     raw: employee,
     syncedAt: new Date(),

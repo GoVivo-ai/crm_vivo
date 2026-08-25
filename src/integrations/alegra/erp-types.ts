@@ -57,7 +57,15 @@ export interface AlegraEmployee {
   position?: string | null;
   area?: string | null;
   salary?: number | null;
+  /** ⚠️ Poco fiable: hay empleados "active" con contract.endDate pasada. */
   status?: string | null;
   email?: string | null;
-  contract?: unknown;
+  phone?: string | null;
+  /** No existe fecha de nacimiento en la API (verificado 2026-08-25). */
+  contract?: {
+    startDate?: string;
+    endDate?: string;
+    type?: { value?: string; id?: number };
+    motive?: { value?: string; id?: number };
+  } | null;
 }

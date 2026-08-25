@@ -1,8 +1,18 @@
 export type Integration = "alegra" | "meta_ads" | "clickup";
 
 export type AlegraCredentials = { email: string; token: string };
-export type MetaAdsCredentials = { accessToken: string; businessId?: string };
-export type ClickupCredentials = { token: string };
+
+/** Tokens OAuth cifrados en BD. expiresAt ISO; meta guarda datos no
+ * sensibles del flujo (connectedAs, ids). */
+export type OAuthTokens = {
+  accessToken: string;
+  refreshToken?: string;
+  expiresAt?: string;
+  meta?: Record<string, unknown>;
+};
+
+export type MetaAdsCredentials = OAuthTokens & { businessId?: string };
+export type ClickupCredentials = OAuthTokens;
 
 export type IntegrationPayloadMap = {
   alegra: AlegraCredentials;
@@ -21,6 +31,14 @@ export type IntegrationStatus = {
   envFallbackAvailable: boolean;
   /** Pista no sensible, ej. "****1234" (email de Alegra / cola del token). */
   hint: string | null;
+  /** Cómo se conectó: OAuth (botón Conectar) o manual (solo Alegra). */
+  authMethod: "oauth" | "manual" | null;
+  /** Identidad no sensible del flujo OAuth ("Conectado como X"). */
+  connectedAs: string | null;
+  /** Vencimiento del token OAuth (ISO) si aplica. */
+  tokenExpiresAt: string | null;
+  /** true si el token OAuth ya venció: la card muestra "Reconectar". */
+  reconnectRequired: boolean;
   configuredAt: Date | null;
   lastTest: { ok: boolean; testedAt: Date; error: string | null } | null;
   /** Última corrida de sync_runs de la fuente correspondiente. */

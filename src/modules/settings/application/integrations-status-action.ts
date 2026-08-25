@@ -36,22 +36,45 @@ export async function getIntegrationsStatus(): Promise<
     ]);
 
     const result = {} as Record<Integration, IntegrationStatus>;
+    const payloadMeta = new Map<Integration, Record<string, unknown>>();
     for (const integration of INTEGRATIONS) {
       const row = rows.find((r) => r.integration === integration);
       let hint: string | null = null;
       if (row) {
         try {
-          hint = hintFor(integration, decryptPayload(row.payloadEncrypted));
+          const payload = decryptPayload<Record<string, unknown>>(
+            row.payloadEncrypted,
+          );
+          hint = hintFor(integration, payload);
+          payloadMeta.set(integration, {
+            ...(payload.meta as Record<string, unknown> | undefined),
+            expiresAt: payload.expiresAt,
+          });
         } catch {
           hint = null; // key rotada o dato corrupto: configurada, sin pista
         }
       }
       const lastRun = lastRuns[integration];
+      const meta = (payloadMeta.get(integration) ?? {}) as {
+        connectedAs?: string;
+        authMethod?: string;
+        expiresAt?: string;
+      };
+      const tokenExpiresAt = meta.expiresAt ?? null;
       result[integration] = {
         integration,
         configured: !!row,
         envFallbackAvailable: !row && envFallback(integration) !== null,
         hint,
+        authMethod: row
+          ? meta.authMethod === "oauth"
+            ? "oauth"
+            : "manual"
+          : null,
+        connectedAs: meta.connectedAs ?? null,
+        tokenExpiresAt,
+        reconnectRequired:
+          !!tokenExpiresAt && Date.parse(tokenExpiresAt) < Date.now(),
         configuredAt: row?.configuredAt ?? null,
         lastTest:
           row?.lastTestStatus && row.lastTestAt

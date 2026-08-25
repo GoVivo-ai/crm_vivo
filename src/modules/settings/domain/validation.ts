@@ -2,28 +2,13 @@ import { z } from "zod";
 
 export const integrationSchema = z.enum(["alegra", "meta_ads", "clickup"]);
 
+/** Carga manual: SOLO Alegra (su API no ofrece OAuth — email+token).
+ * meta_ads y clickup se conectan por OAuth (/api/oauth/[provider]/start). */
 export const credentialsInputSchema = z.discriminatedUnion("integration", [
   z.object({
     integration: z.literal("alegra"),
     credentials: z.object({
       email: z.email("Email inválido"),
-      token: z.string().trim().min(8, "Token demasiado corto").max(500),
-    }),
-  }),
-  z.object({
-    integration: z.literal("meta_ads"),
-    credentials: z.object({
-      accessToken: z
-        .string()
-        .trim()
-        .min(20, "Access token demasiado corto")
-        .max(1000),
-      businessId: z.string().trim().max(100).optional(),
-    }),
-  }),
-  z.object({
-    integration: z.literal("clickup"),
-    credentials: z.object({
       token: z.string().trim().min(8, "Token demasiado corto").max(500),
     }),
   }),

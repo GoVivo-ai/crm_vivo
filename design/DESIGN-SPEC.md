@@ -461,7 +461,7 @@ que cambia es la envolvente del dialog:
   amarillo jamás como texto ni con texto encima; estados nunca solo-color
   (siempre icono o palabra).
 
-## 14. Expediente de empleado (propuesta — pendiente de aprobación de Victor)
+## 14. Expediente de empleado (aprobado por Victor 2026-08-25)
 
 Artboard: `design/artboards/Expediente.dc.html` (fragmento fuente en
 `screens/Expediente.frag.html`).

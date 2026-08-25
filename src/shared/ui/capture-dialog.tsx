@@ -35,6 +35,7 @@ export function CaptureDialogContent({
   );
 }
 
+// Tintas de área — valores canónicos en DESIGN-SPEC.md §2.
 const TINTS = {
   green: "bg-[#E6F9F1] text-[#069B66]",
   blue: "bg-[#E8F0FB] text-[#1E5FBF]",

@@ -31,6 +31,24 @@ export async function findDealById(id: string): Promise<Deal | null> {
   return rows[0] ? toDeal(rows[0]) : null;
 }
 
+export async function listDealsForAccount(accountId: string): Promise<Deal[]> {
+  const rows = await db
+    .select()
+    .from(deals)
+    .where(eq(deals.accountId, accountId))
+    .orderBy(asc(deals.createdAt));
+  return rows.map(toDeal);
+}
+
+export async function findWonStage() {
+  const rows = await db
+    .select()
+    .from(pipelineStages)
+    .where(eq(pipelineStages.isWon, true))
+    .limit(1);
+  return rows[0] ? toStage(rows[0]) : null;
+}
+
 export async function findStageById(id: string) {
   const rows = await db
     .select()

@@ -26,6 +26,17 @@ export async function listContacts(filter: ListFilter): Promise<Contact[]> {
   return rows.map(toContact);
 }
 
+export async function listContactsForAccount(
+  accountId: string,
+): Promise<Contact[]> {
+  const rows = await db
+    .select()
+    .from(contacts)
+    .where(eq(contacts.accountId, accountId))
+    .orderBy(desc(contacts.createdAt));
+  return rows.map(toContact);
+}
+
 export async function findContactById(id: string): Promise<Contact | null> {
   const rows = await db
     .select()

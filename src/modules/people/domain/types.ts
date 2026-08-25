@@ -9,6 +9,8 @@ export type EmployeeDocument = {
   name: string;
   url: string;
   expiresAt?: string;
+  /** Cuándo se subió (ISO date) — para la checklist de completitud. */
+  uploadedAt?: string;
 };
 
 /** Directorio (people_directory) — SIN compensación y con minimización
@@ -22,6 +24,9 @@ export type TeamMember = {
   position: string | null;
   area: string | null;
   active: boolean;
+  /** Cumpleaños SIN año (minimización de PII aprobada) — derivado de
+   * birthDate en servidor; null si no hay fecha registrada. */
+  birthDayMonth: { day: number; month: number } | null;
   contractEndDate: string | null;
   documents: EmployeeDocument[];
   annualLeaveDays: number;

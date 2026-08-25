@@ -35,6 +35,7 @@ export const employeeInputSchema = z.object({
         name: z.string().trim().min(1).max(200),
         url: z.url(),
         expiresAt: z.iso.date().optional(),
+        uploadedAt: z.iso.date().optional(),
       }),
     )
     .max(50)

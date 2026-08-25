@@ -21,6 +21,12 @@ export function toTeamMember(row: EmployeeRow): TeamMember {
     position: row.position,
     area: row.area,
     active: row.active,
+    birthDayMonth: row.birthDate
+      ? {
+          day: Number(row.birthDate.slice(8, 10)),
+          month: Number(row.birthDate.slice(5, 7)),
+        }
+      : null,
     contractEndDate: row.contractEndDate,
     documents: (row.documents ?? []) as EmployeeDocument[],
     annualLeaveDays: row.annualLeaveDays,

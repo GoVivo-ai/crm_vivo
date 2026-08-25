@@ -7,10 +7,12 @@ import { runAction } from "@/modules/identity/application/run-action";
 import { parseInput } from "@/modules/crm/application/action-helpers";
 import type { Deal } from "@/modules/crm/domain/types";
 import * as dealsRepo from "@/modules/crm/infrastructure/deals-repository";
-import { setAccountStatus } from "@/modules/crm/infrastructure/accounts-repository";
 import type { AccountService } from "@/modules/clients/domain/types";
 import { convertDealSchema } from "@/modules/clients/domain/validation";
-import { insertAccountService } from "@/modules/clients/infrastructure/services-repository";
+import {
+  convertDealAtomic,
+  findExistingServiceIds,
+} from "@/modules/clients/infrastructure/convert-deal-repository";
 
 export type ConvertDealResult = {
   deal: Deal;
@@ -20,8 +22,8 @@ export type ConvertDealResult = {
 
 /**
  * Caso de uso de Fase 2: al ganar un deal, la cuenta pasa a cliente activo.
- * Mueve el deal a la etapa ganada (closedAt = ahora), marca la cuenta como
- * "active" y contrata los servicios indicados (opcional).
+ * Valida todo ANTES de escribir y ejecuta las escrituras (deal→etapa
+ * ganada, cuenta→active, alta de servicios) en un único batch atómico.
  * Permiso: crm write — lo ejecuta ventas al cerrar la venta.
  */
 export async function convertDealToClient(
@@ -45,33 +47,29 @@ export async function convertDealToClient(
       );
     }
 
-    const movedDeal = await dealsRepo.moveDeal(
-      dealId,
-      wonStage.id,
-      0,
-      new Date(),
-    );
-    await setAccountStatus(deal.accountId, "active");
-
-    const contractedServices: AccountService[] = [];
-    for (const service of services) {
-      contractedServices.push(
-        await insertAccountService({
-          accountId: deal.accountId,
-          serviceId: service.serviceId,
-          monthlyFee: service.monthlyFee,
-          currency: service.currency,
-          startDate: service.startDate,
-        }),
+    const serviceIds = services.map((s) => s.serviceId);
+    const existing = new Set(await findExistingServiceIds(serviceIds));
+    const missing = serviceIds.filter((id) => !existing.has(id));
+    if (missing.length > 0) {
+      throw new DomainRuleError(
+        "Hay servicios que no existen en el catálogo; recarga e intenta de nuevo",
       );
     }
+
+    const result = await convertDealAtomic({
+      dealId,
+      accountId: deal.accountId,
+      wonStageId: wonStage.id,
+      servicesToContract: services,
+      closedAt: new Date(),
+    });
 
     revalidatePath("/crm");
     revalidatePath("/clients");
     return {
-      deal: movedDeal ?? deal,
+      deal: result.deal ?? deal,
       accountId: deal.accountId,
-      contractedServices,
+      contractedServices: result.contractedServices,
     };
   });
 }

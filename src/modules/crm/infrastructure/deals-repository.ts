@@ -90,7 +90,8 @@ export async function updateDealById(
 
 /**
  * Mueve un deal a una etapa/posición: abre hueco desplazando +1 los deals
- * con position >= destino y fija stage/position/closedAt del deal.
+ * con position >= destino y fija stage/position/closedAt del deal. Ambos
+ * UPDATEs viajan en un db.batch() (transacción implícita en neon-http).
  */
 export async function moveDeal(
   dealId: string,
@@ -98,14 +99,16 @@ export async function moveDeal(
   position: number,
   closedAt: Date | null,
 ): Promise<Deal | null> {
-  await db
-    .update(deals)
-    .set({ position: sql`${deals.position} + 1` })
-    .where(and(eq(deals.stageId, stageId), gte(deals.position, position)));
-  const rows = await db
-    .update(deals)
-    .set({ stageId, position, closedAt, updatedAt: new Date() })
-    .where(eq(deals.id, dealId))
-    .returning();
+  const [, rows] = await db.batch([
+    db
+      .update(deals)
+      .set({ position: sql`${deals.position} + 1` })
+      .where(and(eq(deals.stageId, stageId), gte(deals.position, position))),
+    db
+      .update(deals)
+      .set({ stageId, position, closedAt, updatedAt: new Date() })
+      .where(eq(deals.id, dealId))
+      .returning(),
+  ]);
   return rows[0] ? toDeal(rows[0]) : null;
 }

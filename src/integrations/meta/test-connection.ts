@@ -46,12 +46,24 @@ export async function testMetaConnection(
     }
     const body = (await response.json()) as { data?: { name?: string }[] };
     const first = body.data?.[0]?.name;
-    return {
-      ok: true,
-      message: first
-        ? `Conexión con Meta Ads verificada (cuenta: ${first})`
-        : "Conexión con Meta Ads verificada (sin cuentas visibles aún)",
-    };
+    const base = first
+      ? `Conexión con Meta Ads verificada (cuenta: ${first})`
+      : "Conexión con Meta Ads verificada (sin cuentas visibles aún)";
+
+    // Token OAuth por vencer (Meta no da refresh token; el provider
+    // re-exchange automáticamente, esto es visibilidad para el admin).
+    if (credentials.expiresAt) {
+      const daysLeft = Math.floor(
+        (new Date(credentials.expiresAt).getTime() - Date.now()) / 86_400_000,
+      );
+      if (daysLeft <= 15) {
+        return {
+          ok: true,
+          message: `${base} — el token vence en ${daysLeft} días`,
+        };
+      }
+    }
+    return { ok: true, message: base };
   } catch (error) {
     return { ok: false, message: describeNetworkError(error, "Meta Ads") };
   }

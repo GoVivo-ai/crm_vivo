@@ -71,6 +71,18 @@ const metricUpdateCols = {
 };
 
 /**
+ * Alta ligera de ad accounts (sin insights): pensada para el callback
+ * OAuth, donde solo queremos registrar las cuentas de inmediato.
+ */
+export async function discoverMetaAdAccounts(): Promise<number> {
+  const accounts = await fetchAdAccounts();
+  for (const account of accounts) {
+    await ensureAdAccount(account);
+  }
+  return accounts.length;
+}
+
+/**
  * Sync directo con la Meta Marketing API: descubre las ad accounts del
  * token (alta automática en ad_accounts) y upsertea insights campaña × día
  * de la ventana móvil por (platform, campaign_external_id, metric_date).

@@ -11,7 +11,10 @@ import { testMetaConnection } from "@/integrations/meta/test-connection";
 import { syncAlegra } from "@/integrations/alegra/sync-alegra";
 import { syncAlegraErp } from "@/integrations/alegra/sync-alegra-erp";
 import { syncClickUp } from "@/integrations/clickup/sync-clickup";
-import { syncMeta } from "@/integrations/meta/sync-meta";
+import {
+  discoverMetaAdAccounts,
+  syncMeta,
+} from "@/integrations/meta/sync-meta";
 import { toReadableSyncError } from "@/integrations/shared/errors";
 
 /**
@@ -40,6 +43,23 @@ export async function testConnection(
   } catch (error) {
     // Los tests no deberían lanzar; red de seguridad por contrato.
     return { ok: false, error: toReadableSyncError(error) };
+  }
+}
+
+/**
+ * Alta inmediata de ad accounts tras el callback OAuth de meta_ads —
+ * más ligera que un sync completo (sin insights). Nunca lanza.
+ */
+export async function discoverAdAccounts(): Promise<{
+  ok: boolean;
+  accounts: number;
+  error: string | null;
+}> {
+  try {
+    const accounts = await discoverMetaAdAccounts();
+    return { ok: true, accounts, error: null };
+  } catch (error) {
+    return { ok: false, accounts: 0, error: toReadableSyncError(error) };
   }
 }
 

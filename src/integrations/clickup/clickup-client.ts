@@ -18,7 +18,7 @@ async function authHeader(): Promise<string> {
       "No hay credenciales de ClickUp configuradas (ni en la app ni en env)",
     );
   }
-  return credentials.token;
+  return credentials.accessToken;
 }
 
 async function clickupGet<T>(

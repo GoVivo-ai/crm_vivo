@@ -17,7 +17,7 @@ export async function testClickUpConnection(
   try {
     const response = await fetch("https://api.clickup.com/api/v2/user", {
       headers: {
-        Authorization: credentials.token,
+        Authorization: credentials.accessToken,
         Accept: "application/json",
       },
       signal: AbortSignal.timeout(TEST_TIMEOUT_MS),

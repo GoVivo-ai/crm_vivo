@@ -1,9 +1,13 @@
+import { getCurrentUser } from "@/modules/identity/application/get-current-user";
 import { listUsers } from "@/modules/identity/application/users-admin-actions";
 import { UsersTable } from "@/modules/identity/ui/users-table";
 import { ActionError } from "@/shared/ui/action-error";
 
 export default async function SettingsPage() {
-  const result = await listUsers();
+  const [result, currentUser] = await Promise.all([
+    listUsers(),
+    getCurrentUser(),
+  ]);
   if (!result.ok) return <ActionError message={result.error} />;
 
   return (
@@ -15,7 +19,7 @@ export default async function SettingsPage() {
           cada persona.
         </p>
       </div>
-      <UsersTable users={result.data} />
+      <UsersTable users={result.data} currentUserId={currentUser?.id ?? ""} />
     </div>
   );
 }

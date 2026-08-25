@@ -28,7 +28,13 @@ const ROLE_LABELS: Record<Role, string> = {
   management: "Gerencia",
 };
 
-export function UsersTable({ users }: { users: ManagedUser[] }) {
+type UsersTableProps = {
+  users: ManagedUser[];
+  /** Fila propia deshabilitada: backend prohíbe auto-modificarse. */
+  currentUserId: string;
+};
+
+export function UsersTable({ users, currentUserId }: UsersTableProps) {
   const { submit, pending } = useActionSubmit<ManagedUser>();
 
   return (
@@ -43,7 +49,12 @@ export function UsersTable({ users }: { users: ManagedUser[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {users.map((user) => (
+          {users.map((user) => {
+            const isSelf = user.id === currentUserId;
+            const selfTitle = isSelf
+              ? "No puedes modificar tu propia cuenta"
+              : undefined;
+            return (
             <TableRow key={user.id}>
               <TableCell>
                 <div className="flex items-center gap-2.5">
@@ -67,7 +78,8 @@ export function UsersTable({ users }: { users: ManagedUser[] }) {
                 <NativeSelect
                   aria-label={`Rol de ${user.email}`}
                   value={user.role}
-                  disabled={pending}
+                  disabled={pending || isSelf}
+                  title={selfTitle}
                   className="w-40"
                   onChange={(e) =>
                     submit(
@@ -108,7 +120,8 @@ export function UsersTable({ users }: { users: ManagedUser[] }) {
                 <Button
                   variant={user.isActive ? "outline" : "default"}
                   size="sm"
-                  disabled={pending}
+                  disabled={pending || isSelf}
+                  title={selfTitle}
                   onClick={() =>
                     submit(
                       () =>
@@ -128,7 +141,8 @@ export function UsersTable({ users }: { users: ManagedUser[] }) {
                 </Button>
               </TableCell>
             </TableRow>
-          ))}
+            );
+          })}
         </TableBody>
       </Table>
     </div>

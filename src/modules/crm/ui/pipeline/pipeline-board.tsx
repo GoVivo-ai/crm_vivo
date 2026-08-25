@@ -14,9 +14,13 @@ import {
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { moveDealToStage } from "@/modules/crm/application/deals-actions";
+import {
+  makeAnnouncements,
+  screenReaderInstructions,
+} from "@/modules/crm/ui/pipeline/board-a11y";
 import {
   findDeal,
   findStageId,
@@ -42,6 +46,15 @@ export function PipelineBoard({
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
   // Snapshot al iniciar el drag, para rollback si el server rechaza el move.
   const snapshot = useRef<BoardStage[]>(initialStages);
+  // Ref sincronizada para que los anuncios aria-live lean el estado vigente.
+  const stagesRef = useRef<BoardStage[]>(initialStages);
+  useEffect(() => {
+    stagesRef.current = stages;
+  }, [stages]);
+  const announcements = useMemo(
+    () => makeAnnouncements(() => stagesRef.current),
+    [],
+  );
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -89,14 +102,20 @@ export function PipelineBoard({
       .deals.findIndex((d) => d.id === dealId);
     setStages(next);
 
-    void moveDealToStage({ dealId, stageId: to, position }).then((result) => {
-      if (result.ok) {
-        router.refresh();
-      } else {
+    void moveDealToStage({ dealId, stageId: to, position })
+      .then((result) => {
+        if (result.ok) {
+          router.refresh();
+        } else {
+          setStages(snapshot.current);
+          toast.error(result.error);
+        }
+      })
+      .catch(() => {
+        // Rechazo fuera del contrato (red caída, server down): rollback.
         setStages(snapshot.current);
-        toast.error(result.error);
-      }
-    });
+        toast.error("No se pudo mover el deal");
+      });
   }
 
   const activeDeal = activeDealId ? findDeal(stages, activeDealId) : null;
@@ -105,6 +124,7 @@ export function PipelineBoard({
     <DndContext
       sensors={sensors}
       collisionDetection={closestCorners}
+      accessibility={{ announcements, screenReaderInstructions }}
       onDragStart={onDragStart}
       onDragOver={onDragOver}
       onDragEnd={onDragEnd}

@@ -56,7 +56,8 @@ const MATRIX: Record<Role, Record<Resource, Grant>> = {
     crm: "ro",
     clients: "rw",
     finance: null,
-    marketing: null,
+    // rw para vincular cuentas publicitarias a clientes (setAdAccountLink).
+    marketing: "rw",
     settings: null,
   },
   finance: {

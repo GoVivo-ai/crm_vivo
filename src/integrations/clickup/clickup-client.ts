@@ -1,5 +1,6 @@
 import { resilientFetch } from "@/shared/http/resilient-fetch";
 import { PACE_MS, sleep } from "@/integrations/shared/paced";
+import { getIntegrationCredentials } from "@/modules/settings/application/get-integration-credentials";
 import type {
   ClickUpTask,
   ClickUpTasksPage,
@@ -9,12 +10,15 @@ const BASE_URL = "https://api.clickup.com/api/v2";
 /** Tope defensivo: ninguna lista de la agencia se acerca a 20 páginas. */
 const MAX_TASK_PAGES = 20;
 
-function authHeader(): string {
-  const token = process.env.CLICKUP_TOKEN;
-  if (!token) {
-    throw new Error("Falta CLICKUP_TOKEN");
+/** Token vía CredentialsProvider (BD cifrada, fallback a env). */
+async function authHeader(): Promise<string> {
+  const credentials = await getIntegrationCredentials("clickup");
+  if (!credentials) {
+    throw new Error(
+      "No hay credenciales de ClickUp configuradas (ni en la app ni en env)",
+    );
   }
-  return token;
+  return credentials.token;
 }
 
 async function clickupGet<T>(
@@ -26,7 +30,10 @@ async function clickupGet<T>(
     url.searchParams.set(key, value);
   }
   const response = await resilientFetch(url.toString(), {
-    headers: { Authorization: authHeader(), Accept: "application/json" },
+    headers: {
+      Authorization: await authHeader(),
+      Accept: "application/json",
+    },
   });
   return (await response.json()) as T;
 }

@@ -5,10 +5,7 @@ import {
   type ConnectionTestResult,
 } from "@/integrations/shared/test-connection";
 
-export interface AlegraCredentials {
-  email: string;
-  apiToken: string;
-}
+import type { AlegraCredentials } from "@/modules/settings/domain/types";
 
 /**
  * Test barato de credenciales de Alegra: GET /contacts?limit=1 con la Basic
@@ -19,7 +16,7 @@ export async function testAlegraConnection(
   credentials: AlegraCredentials,
 ): Promise<ConnectionTestResult> {
   const auth = Buffer.from(
-    `${credentials.email}:${credentials.apiToken}`,
+    `${credentials.email}:${credentials.token}`,
   ).toString("base64");
   try {
     const response = await fetch(

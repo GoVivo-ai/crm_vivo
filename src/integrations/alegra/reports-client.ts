@@ -1,4 +1,5 @@
 import { resilientFetch } from "@/shared/http/resilient-fetch";
+import { alegraAuthHeader } from "@/integrations/alegra/alegra-client";
 
 // Los reportes P&L y cashflow NO están en api.alegra.com/api/v1: viven en
 // el backend de reportes https://mcp.alegra.com/tools/* con la misma Basic
@@ -43,15 +44,6 @@ export interface CashFlowSection {
   children?: CashFlowSection[];
 }
 
-function authHeader(): string {
-  const email = process.env.ALEGRA_EMAIL;
-  const token = process.env.ALEGRA_API_TOKEN;
-  if (!email || !token) {
-    throw new Error("Faltan ALEGRA_EMAIL / ALEGRA_API_TOKEN");
-  }
-  return `Basic ${Buffer.from(`${email}:${token}`).toString("base64")}`;
-}
-
 async function reportsGet<T>(
   tool: string,
   params: Record<string, string>,
@@ -61,7 +53,10 @@ async function reportsGet<T>(
     url.searchParams.set(key, value);
   }
   const response = await resilientFetch(url.toString(), {
-    headers: { Authorization: authHeader(), Accept: "application/json" },
+    headers: {
+      Authorization: await alegraAuthHeader(),
+      Accept: "application/json",
+    },
   });
   return (await response.json()) as T;
 }

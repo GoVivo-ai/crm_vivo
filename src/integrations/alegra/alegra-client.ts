@@ -1,18 +1,27 @@
 import { resilientFetch } from "@/shared/http/resilient-fetch";
 import { PACE_MS, sleep } from "@/integrations/shared/paced";
+import { getIntegrationCredentials } from "@/modules/settings/application/get-integration-credentials";
 
 const BASE_URL = "https://api.alegra.com/api/v1";
 
 /** Alegra pagina con start/limit; 30 es el máximo permitido. */
 export const PAGE_SIZE = 30;
 
-function authHeader(): string {
-  const email = process.env.ALEGRA_EMAIL;
-  const token = process.env.ALEGRA_API_TOKEN;
-  if (!email || !token) {
-    throw new Error("Faltan ALEGRA_EMAIL / ALEGRA_API_TOKEN");
+/**
+ * Basic Auth desde el CredentialsProvider (BD cifrada con fallback a env).
+ * Se resuelve en cada corrida: rotación de credenciales sin redeploy.
+ * Compartido con reports-client.
+ */
+export async function alegraAuthHeader(): Promise<string> {
+  const credentials = await getIntegrationCredentials("alegra");
+  if (!credentials) {
+    throw new Error(
+      "No hay credenciales de Alegra configuradas (ni en la app ni en env)",
+    );
   }
-  return `Basic ${Buffer.from(`${email}:${token}`).toString("base64")}`;
+  return `Basic ${Buffer.from(
+    `${credentials.email}:${credentials.token}`,
+  ).toString("base64")}`;
 }
 
 export async function alegraGet<T>(
@@ -24,7 +33,10 @@ export async function alegraGet<T>(
     url.searchParams.set(key, String(value));
   }
   const response = await resilientFetch(url.toString(), {
-    headers: { Authorization: authHeader(), Accept: "application/json" },
+    headers: {
+      Authorization: await alegraAuthHeader(),
+      Accept: "application/json",
+    },
   });
   return (await response.json()) as T;
 }

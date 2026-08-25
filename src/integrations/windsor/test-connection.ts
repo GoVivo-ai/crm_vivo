@@ -5,9 +5,7 @@ import {
   type ConnectionTestResult,
 } from "@/integrations/shared/test-connection";
 
-export interface WindsorCredentials {
-  apiKey: string;
-}
+import type { WindsorCredentials } from "@/modules/settings/domain/types";
 
 /**
  * Test barato de la API key de Windsor.ai: query mínima de 1 día y 1 campo

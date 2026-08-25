@@ -5,16 +5,14 @@ import {
   type ConnectionTestResult,
 } from "@/integrations/shared/test-connection";
 
-export interface ClickUpCredentials {
-  token: string;
-}
+import type { ClickupCredentials } from "@/modules/settings/domain/types";
 
 /**
  * Test barato del token de ClickUp: GET /user devuelve el usuario dueño
  * del token. Credenciales por parámetro (no lee env ni provider).
  */
 export async function testClickUpConnection(
-  credentials: ClickUpCredentials,
+  credentials: ClickupCredentials,
 ): Promise<ConnectionTestResult> {
   try {
     const response = await fetch("https://api.clickup.com/api/v2/user", {

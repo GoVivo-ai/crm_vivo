@@ -7,8 +7,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getSyncStatus } from "@/modules/finance/application/finance-actions";
 import type { SyncSource } from "@/modules/finance/domain/types";
+import { listSyncRuns } from "@/modules/settings/application/sync-runs-action";
 
 const SOURCE_LABELS: Record<SyncSource, string> = {
   quickbooks: "QuickBooks",
@@ -37,23 +37,25 @@ const time = new Intl.DateTimeFormat("es-CO", {
   timeStyle: "short",
 });
 
-/** Última corrida de sync por fuente (el historial completo vendrá de
- * backend cuando exista listSyncRuns — no se simula). */
-export async function SyncRunsPanel() {
-  const result = await getSyncStatus();
-  if (!result.ok) return null;
+function duration(ms: number | null): string {
+  if (ms === null) return "—";
+  if (ms < 1000) return `${ms} ms`;
+  const s = ms / 1000;
+  return s < 60 ? `${s.toFixed(1)} s` : `${(s / 60).toFixed(1)} min`;
+}
 
-  const rows = (Object.keys(SOURCE_LABELS) as SyncSource[])
-    .map((source) => ({ source, run: result.data[source] }))
-    .filter((r) => r.run !== null);
+/** Historial de corridas de sincronización (listSyncRuns, solo admin). */
+export async function SyncRunsPanel() {
+  const result = await listSyncRuns({ limit: 20 });
+  if (!result.ok) return null;
 
   return (
     <section className="rounded-xl border bg-card p-5">
-      <h2 className="text-sm font-semibold">Últimas corridas</h2>
+      <h2 className="text-sm font-semibold">Historial de corridas</h2>
       <p className="mt-0.5 mb-2 text-xs text-muted-foreground">
-        La corrida más reciente de cada fuente.
+        Las 20 más recientes, con duración y filas procesadas.
       </p>
-      {rows.length === 0 ? (
+      {result.data.length === 0 ? (
         <p className="text-sm text-muted-foreground">
           Todavía no hay corridas — conecta una integración y sincroniza.
         </p>
@@ -64,17 +66,18 @@ export async function SyncRunsPanel() {
               <TableHead>Fuente</TableHead>
               <TableHead>Estado</TableHead>
               <TableHead>Inicio</TableHead>
-              <TableHead>Fin</TableHead>
+              <TableHead className="text-right">Duración</TableHead>
+              <TableHead className="text-right">Filas</TableHead>
               <TableHead>Detalle</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {rows.map(({ source, run }) => {
-              const badge = STATUS_BADGE[run!.status] ?? STATUS_BADGE.error;
+            {result.data.map((run) => {
+              const badge = STATUS_BADGE[run.status] ?? STATUS_BADGE.error;
               return (
-                <TableRow key={source}>
+                <TableRow key={run.id}>
                   <TableCell className="text-sm font-medium">
-                    {SOURCE_LABELS[source]}
+                    {SOURCE_LABELS[run.source as SyncSource] ?? run.source}
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline" className={badge.className}>
@@ -82,13 +85,16 @@ export async function SyncRunsPanel() {
                     </Badge>
                   </TableCell>
                   <TableCell className="font-mono text-xs">
-                    {time.format(run!.startedAt)}
+                    {time.format(run.startedAt)}
                   </TableCell>
-                  <TableCell className="font-mono text-xs">
-                    {run!.finishedAt ? time.format(run!.finishedAt) : "—"}
+                  <TableCell className="text-right font-mono text-xs">
+                    {duration(run.durationMs)}
+                  </TableCell>
+                  <TableCell className="text-right font-mono text-xs">
+                    {run.rowsProcessed ?? "—"}
                   </TableCell>
                   <TableCell className="max-w-72 truncate text-xs text-muted-foreground">
-                    {run!.error ?? "—"}
+                    {run.error ?? "—"}
                   </TableCell>
                 </TableRow>
               );

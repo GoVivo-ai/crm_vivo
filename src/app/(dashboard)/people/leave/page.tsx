@@ -4,6 +4,7 @@ import {
   getMyLeave,
   listAllLeaveRequests,
 } from "@/modules/people/application/leave-actions";
+import { LEAVE_DAY_UNIT } from "@/modules/people/domain/leave-days";
 import { ApprovalsList, MyLeaveList } from "@/modules/people/ui/leave-lists";
 import { LeaveRequestForm } from "@/modules/people/ui/leave-request-form";
 import { EmptyState } from "@/shared/ui/empty-state";
@@ -39,17 +40,20 @@ export default async function LeavePage() {
               label="Días al año"
               value={mine.data.balance.annualLeaveDays}
               kind="count"
+              detail={LEAVE_DAY_UNIT}
             />
             <Kpi
               label="Aprobados este año"
               value={mine.data.balance.approvedDaysThisYear}
               kind="count"
+              detail={LEAVE_DAY_UNIT}
             />
             <Kpi
               label="Disponibles"
               value={mine.data.balance.remainingDays}
               kind="count"
               size="lg"
+              detail={LEAVE_DAY_UNIT}
             />
           </div>
 
@@ -60,7 +64,7 @@ export default async function LeavePage() {
                 Sin solicitudes todavía. Pide tu primera ausencia arriba.
               </p>
             ) : (
-              <MyLeaveList requests={mine.data.requests} />
+              <MyLeaveList requests={mine.data.requests} unit={LEAVE_DAY_UNIT} />
             )}
           </section>
         </>
@@ -86,6 +90,7 @@ export default async function LeavePage() {
             <ApprovalsList
               requests={pendingApprovals}
               currentUserId={user?.id ?? ""}
+              unit={LEAVE_DAY_UNIT}
             />
           )}
         </section>

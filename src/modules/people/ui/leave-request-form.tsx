@@ -26,12 +26,21 @@ export function LeaveRequestForm() {
   const [endDate, setEndDate] = useState("");
   const { submit, pending, fieldErrors } = useActionSubmit<unknown>();
 
-  const days =
-    startDate && endDate && startDate <= endDate
-      ? Math.floor(
-          (Date.parse(endDate) - Date.parse(startDate)) / 86_400_000,
-        ) + 1
-      : null;
+  // Estimación L–V en cliente; el conteo definitivo (con festivos de
+  // Colombia) lo hace el server al enviar — la banda lo dice.
+  const weekdays = (() => {
+    if (!startDate || !endDate || startDate > endDate) return null;
+    let count = 0;
+    for (
+      let t = Date.parse(startDate);
+      t <= Date.parse(endDate);
+      t += 86_400_000
+    ) {
+      const dow = new Date(t).getUTCDay();
+      if (dow !== 0 && dow !== 6) count++;
+    }
+    return count;
+  })();
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -97,13 +106,16 @@ export function LeaveRequestForm() {
               <FieldError errors={fieldErrors.endDate} />
             </div>
           </div>
-          {days !== null && (
-            // Banda verde del spec: cálculo de días en vivo.
+          {weekdays !== null && (
+            // Banda verde del spec: días en vivo (L–V; festivos al enviar).
             <div
               aria-live="polite"
               className="rounded-lg bg-[#E6F9F1] px-3.5 py-2.5 text-[13px] font-extrabold text-[#069B66]"
             >
-              {days} día{days === 1 ? "" : "s"} calendario
+              {weekdays} día{weekdays === 1 ? "" : "s"} L–V
+              <span className="ml-1.5 font-semibold text-[#069B66]/70">
+                · los festivos se descuentan al enviar
+              </span>
             </div>
           )}
           <div className="flex flex-col gap-1.5">

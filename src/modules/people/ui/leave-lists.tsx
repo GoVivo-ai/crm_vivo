@@ -11,9 +11,12 @@ import { useActionSubmit } from "@/shared/ui/use-action-submit";
 
 function RequestLine({
   request,
+  unit,
   children,
 }: {
   request: LeaveRequestView;
+  /** LEAVE_DAY_UNIT del server — la unidad y el label viajan juntos. */
+  unit: string;
   children?: React.ReactNode;
 }) {
   return (
@@ -23,8 +26,7 @@ function RequestLine({
           {request.employeeName ?? "—"} · {LEAVE_TYPE_LABELS[request.type]}
         </p>
         <p className="text-xs text-muted-foreground">
-          {request.startDate} → {request.endDate} · {request.days} día
-          {request.days === 1 ? "" : "s"}
+          {request.startDate} → {request.endDate} · {request.days} {unit}
           {request.reason ? ` · ${request.reason}` : ""}
           {request.decisionNote ? ` · Nota: ${request.decisionNote}` : ""}
         </p>
@@ -36,11 +38,17 @@ function RequestLine({
 }
 
 /** Mis solicitudes — solo lectura. */
-export function MyLeaveList({ requests }: { requests: LeaveRequestView[] }) {
+export function MyLeaveList({
+  requests,
+  unit,
+}: {
+  requests: LeaveRequestView[];
+  unit: string;
+}) {
   return (
     <ul className="flex flex-col gap-2">
       {requests.map((r) => (
-        <RequestLine key={r.id} request={r} />
+        <RequestLine key={r.id} request={r} unit={unit} />
       ))}
     </ul>
   );
@@ -51,9 +59,11 @@ export function MyLeaveList({ requests }: { requests: LeaveRequestView[] }) {
 export function ApprovalsList({
   requests,
   currentUserId,
+  unit,
 }: {
   requests: LeaveRequestView[];
   currentUserId: string;
+  unit: string;
 }) {
   const { submit, pending } = useActionSubmit<unknown>();
 
@@ -74,7 +84,7 @@ export function ApprovalsList({
   return (
     <ul className="flex flex-col gap-2">
       {requests.map((r) => (
-        <RequestLine key={r.id} request={r}>
+        <RequestLine key={r.id} request={r} unit={unit}>
           {r.status === "requested" && r.requestedBy === currentUserId ? (
             <span
               className="rounded-full bg-secondary px-2 py-0.5 text-xs text-muted-foreground"

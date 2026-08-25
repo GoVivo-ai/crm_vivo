@@ -297,7 +297,85 @@ Regla editorial: **ningún dato sin verbo** — todo problema trae su acción.
   Gasto: centro de costo + cliente asociado opcional (alimenta rentabilidad) +
   dropzone de comprobante. Factura: "Guardar y crear otra" para carga en lote.
 
-## 12. Datos y convenciones
+## 12. Overlays (dialogs, menús, selects, confirmaciones, toasts)
+
+Los overlays son parte del sistema, no shadcn crudo. Artboard de referencia:
+`design/artboards/Overlays.dc.html`.
+
+**Base común**
+- Scrim: `rgba(1,22,64,.40)` (navy al 40%), sin blur.
+- Panel: blanco, borde `--border`; radio **16 en dialogs**, **12 en menús/popovers/
+  selects/toasts**. Sombra de dialog `0 24px 64px -24px rgba(1,22,64,.35),
+  0 4px 12px -6px rgba(1,22,64,.12)`; sombra de menú/popover/toast
+  `0 12px 32px -12px rgba(1,22,64,.25)`.
+- Motion: entrada 160ms ease-out (dialog: fade + scale .98→1; menú/select: fade +
+  translateY 4px desde el trigger; toast: fade + translateY 8px). Salida 120ms.
+  Con `prefers-reduced-motion`: solo fade.
+- A11y: **focus trap** en dialogs; foco visible SIEMPRE
+  `outline: 2px solid #04D98B; outline-offset: 2px` (sobre navy del toast: outline
+  blanco). Esc cierra todo; clic en scrim cierra menús/selects, y en dialogs con
+  cambios sin guardar pregunta antes ("¿Descartar cambios?" — patrón destructivo).
+
+**12.1 Dialog de captura (+ Registrar)**
+- 480–560px, radio 16, **hairline gradiente firma de 3px en el borde superior**
+  (cuando un overlay está abierto, esa es la única firma visible — el scrim cubre la
+  de la página).
+- Header (padding 20px 24px): tile de 34px radio 10 con el icono del módulo en su
+  tinta de área (factura verde, gasto azul, nómina ámbar, banco neutro) + título
+  Nunito 800 17px navy + subtítulo 12.5px `--muted` + chip de fuente ("Manual") y
+  botón X ghost circular 32px a la derecha.
+- Body: campos del §5 (inputs r10, foco verde con halo), gap 18px.
+- Footer: separador `--line`, acciones a la derecha — primario verde píldora con
+  verbo+objeto ("Guardar factura") + ghost "Cancelar"; en captura frecuente, ghost
+  "Guardar y crear otra" alineado a la izquierda. Foco inicial: primer campo.
+
+**12.2 Dropdown / menú contextual**
+- Panel radio 12, padding 6px, min-width 200px.
+- Ítem = **píldora, eco del sidebar**: radio 999, padding 8px 12px, Nunito Sans 600
+  13px `--ink`, icono 15px `--muted`. Hover/focus: fondo `#EEF1F6` (NUNCA verde — el
+  verde es acción, no hover), icono a `--ink`. Ítem destructivo: texto `--red`,
+  hover `--red-tint`.
+- Separadores 1px `--line` (margen 6px 8px); labels de grupo como eyebrow (§3).
+- Menú de usuario (UserButton): cabecera con avatar gradiente + nombre 800 +
+  correo `--muted` + chip de rol verde (idéntica a la tarjeta del sidebar), luego
+  ítems; "Cerrar sesión" como destructivo.
+
+**12.3 Select y opciones**
+- Trigger = input del §5 (r10, chevron `--faint`); abierto = estado de foco (borde
+  verde + halo).
+- Panel como menú (12.2). Opción hover `#EEF1F6`; **opción seleccionada: fondo
+  `--green-tint`, texto navy 800 y check verde a la derecha** (no píldora blanca —
+  esa es exclusiva del sidebar). Listas largas: búsqueda arriba dentro del panel
+  (input con icono search, autofocus).
+- **Cuándo segmented, cuándo select**: segmented (§6) para 2–4 opciones cortas,
+  mutuamente excluyentes y que merecen verse siempre (COP/USD, Pagada/Pendiente,
+  tipo de ausencia); select para ≥5 opciones, listas dinámicas (clientes, personas,
+  cuentas) o cualquier cosa con búsqueda. Un segmented jamás desborda: si no cabe,
+  es un select.
+
+**12.4 Confirmación destructiva (reemplaza window.confirm)**
+- Dialog 420px radio 16, SIN gradiente firma. Tile 40px `--red-tint` con icono
+  alerta `--red`; título Nunito 800 16px navy con el objeto concreto
+  ("¿Eliminar la factura FV-2041?"); cuerpo 13px `--muted` con la consecuencia real
+  y qué no se puede deshacer ("Se borra el registro y sus pagos asociados. Esta
+  acción no se puede deshacer.").
+- Acciones: ghost "Cancelar" (**foco inicial aquí**) + botón sólido ROJO píldora
+  (`#C93A3A`, texto blanco, hover `#B53232`) con verbo+objeto ("Eliminar factura")
+  — nunca "Aceptar", nunca verde. Enter no dispara el destructivo si el foco no está
+  en él. Para borrados irreversibles en lote, exigir además escribir el nombre.
+
+**12.5 Toast**
+- Abajo a la derecha, máx 380px, radio 12, **fondo navy `#011640` texto blanco**
+  (pieza de marca, se distingue de toda card). Icono en tile 26px: éxito check
+  `#04D98B` sobre `rgba(4,217,139,.16)`; error alerta `#F08A8A` sobre
+  `rgba(201,58,58,.25)`. Acción opcional en verde `#04D98B` 800 ("Deshacer",
+  "Reintentar").
+- Voz de marca: verbo + dato concreto, sin jerga técnica — "Factura FV-2041
+  guardada · $14.600.000" / "No se pudo sincronizar QuickBooks — revisa la
+  conexión". Éxito: 4s, `aria-live=polite`. Error: persistente con X,
+  `aria-live=assertive`. Máximo 3 apilados.
+
+## 13. Datos y convenciones
 
 - Manual-primero + sync QuickBooks/Meta/ClickUp cada 6h. Moneda COP y USD (TRM visible
   donde se consolida). Todos los datos de los mockups son de EJEMPLO.

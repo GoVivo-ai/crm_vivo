@@ -15,7 +15,8 @@
     { "file": "Vacaciones.dc.html", "title": "Vacaciones", "x": 0, "y": 4940, "w": 1440, "h": 1024, "page": "pantallas" },
     { "file": "Integraciones.dc.html", "title": "Integraciones", "x": 1560, "y": 4940, "w": 1440, "h": 1024, "page": "pantallas" },
     { "file": "Registrar.dc.html", "title": "Captura rápida", "x": 0, "y": 6110, "w": 1440, "h": 1120, "page": "pantallas" },
-    { "file": "Sistema.dc.html", "title": "Sistema visual", "x": 0, "y": 0, "w": 1440, "h": 1920, "page": "sistema" }
+    { "file": "Sistema.dc.html", "title": "Sistema visual", "x": 0, "y": 0, "w": 1440, "h": 1920, "page": "sistema" },
+    { "file": "Overlays.dc.html", "title": "Overlays", "x": 0, "y": 2060, "w": 1440, "h": 1340, "page": "sistema" }
   ],
   "annotations": [
     { "id": "direccion", "x": 0, "y": -440, "w": 460, "page": "pantallas", "text": "ERP VIVO — dirección de diseño\nMarca oficial: navy #011640 + verde energía #04D98B + amarillo puntual, Nunito/Nunito Sans. Sidebar navy (único bloque oscuro), contenido claro y denso, botones píldora como el logo, gradiente verde→amarillo como firma (1 vez por pantalla).\n\nTodas las cifras y nombres son datos de ejemplo. Edita lo que quieras aquí mismo y guarda; la página \"Sistema visual\" es la guía para frontend." },

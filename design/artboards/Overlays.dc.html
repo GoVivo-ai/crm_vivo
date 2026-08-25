@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&display=swap">
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Nunito Sans',system-ui,sans-serif;color:#0A1E3F;background:#F6F7F9;-webkit-font-smoothing:antialiased}
+    a{color:#069B66}a:hover{color:#045C3D}
+    .cap{font:700 10.5px 'Nunito Sans',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#8B99B0;display:block;margin-bottom:10px}
+    .dlg-shadow{box-shadow:0 24px 64px -24px rgba(1,22,64,.35),0 4px 12px -6px rgba(1,22,64,.12)}
+    .pop-shadow{box-shadow:0 12px 32px -12px rgba(1,22,64,.25)}
+    .fld{display:flex;flex-direction:column;gap:6px}
+    .fld label{font:700 12px 'Nunito Sans',sans-serif}
+    .in{height:40px;border:1px solid #E3E8F0;border-radius:10px;padding:0 13px;font:600 12.5px 'Nunito Sans',sans-serif;background:#fff;display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .in.ph{color:#8B99B0;justify-content:flex-start}
+    .in.focus{border:1.5px solid #04D98B;box-shadow:0 0 0 3px rgba(4,217,139,.15)}
+    .btn{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 18px;border-radius:999px;font:800 13px 'Nunito Sans',sans-serif;border:1px solid transparent}
+    .btn.pri{background:#04D98B;color:#011640}
+    .btn.ghost{border-color:#E3E8F0;color:#0A1E3F;background:#fff}
+    .btn.danger{background:#C93A3A;color:#fff}
+    .mi{display:flex;align-items:center;gap:9px;padding:8px 12px;border-radius:999px;font:600 13px 'Nunito Sans',sans-serif;color:#0A1E3F}
+    .mi svg{color:#5A6B85;flex-shrink:0}
+    .mi.hov{background:#EEF1F6}
+    .mi.hov svg{color:#0A1E3F}
+    .mi.danger{color:#C93A3A}
+    .mi.danger svg{color:#C93A3A}
+    .msep{height:1px;background:#EDF0F5;margin:6px 8px}
+    .badge{display:inline-flex;align-items:center;font:800 11px 'Nunito Sans',sans-serif;border-radius:999px;padding:4px 10px}
+  </style>
+</helmet>
+
+<div style="width:1440px;min-height:1280px;padding:40px 44px;display:flex;flex-direction:column;gap:26px;background:#F6F7F9">
+  <div style="display:flex;align-items:center;gap:14px">
+    <div>
+      <div style="font:800 22px 'Nunito',sans-serif;color:#011640">Overlays · ERP VIVO</div>
+      <div style="font:600 13px 'Nunito Sans',sans-serif;color:#5A6B85">Dialogs, menús, selects, confirmaciones y toasts — spec en DESIGN-SPEC.md §12.</div>
+    </div>
+    <div style="margin-left:auto;height:4px;width:220px;border-radius:99px;background:linear-gradient(90deg,#04D98B,#F2E205)"></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:520px 1fr;gap:32px;align-items:start">
+    <!-- 12.1 Dialog de captura -->
+    <div>
+      <span class="cap">12.1 · Dialog de captura (sobre scrim navy 40%)</span>
+      <div style="background:rgba(1,22,64,.40);border-radius:20px;padding:28px">
+        <div class="dlg-shadow" style="background:#fff;border:1px solid #E3E8F0;border-radius:16px;overflow:hidden">
+          <div style="height:3px;background:linear-gradient(90deg,#04D98B,#F2E205)"></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:20px 24px 14px">
+            <div style="width:34px;height:34px;border-radius:10px;background:#E6F9F1;color:#069B66;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><path d="M14 3v6h6"></path></svg></div>
+            <div style="min-width:0;flex:1">
+              <div style="font:800 17px 'Nunito',sans-serif;color:#011640">Registrar factura de ingreso</div>
+              <div style="font:600 12.5px 'Nunito Sans',sans-serif;color:#5A6B85">Se suma a Finanzas y a la cuenta del cliente.</div>
+            </div>
+            <span class="badge" style="color:#5A6B85;background:#EEF1F6">Manual</span>
+            <div style="width:32px;height:32px;border:1px solid #E3E8F0;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#5A6B85;flex-shrink:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg></div>
+          </div>
+          <div style="padding:6px 24px 20px;display:flex;flex-direction:column;gap:16px">
+            <div class="fld"><label>Cliente</label><div class="in focus">Grupo Andino S.A.S.<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8B99B0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></div></div>
+            <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:14px">
+              <div class="fld"><label>Monto</label><div class="in" style="justify-content:flex-start">$ 14.600.000</div></div>
+              <div class="fld"><label>Vence</label><div class="in" style="justify-content:flex-start">24 sep 2026</div></div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;border-top:1px solid #EDF0F5;padding:14px 24px">
+            <span style="font:800 12.5px 'Nunito Sans',sans-serif;color:#5A6B85">Guardar y crear otra</span>
+            <div style="margin-left:auto;display:flex;gap:10px">
+              <div class="btn ghost">Cancelar</div>
+              <div class="btn pri">Guardar factura</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12.2 + 12.3 Menús y select -->
+    <div style="display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start">
+      <div>
+        <span class="cap">12.2 · Menú contextual (hover = #EEF1F6, nunca verde)</span>
+        <div class="pop-shadow" style="width:216px;background:#fff;border:1px solid #E3E8F0;border-radius:12px;padding:6px">
+          <div class="mi"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>Editar factura</div>
+          <div class="mi hov"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>Duplicar</div>
+          <div class="mi"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg>Descargar PDF</div>
+          <div class="msep"></div>
+          <div class="mi danger"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14"></path></svg>Eliminar factura</div>
+        </div>
+      </div>
+      <div>
+        <span class="cap">Menú de usuario</span>
+        <div class="pop-shadow" style="width:248px;background:#fff;border:1px solid #E3E8F0;border-radius:12px;padding:6px">
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid #EDF0F5;margin-bottom:6px">
+            <span style="width:32px;height:32px;border-radius:999px;background:linear-gradient(135deg,#04D98B,#F2E205);color:#011640;display:flex;align-items:center;justify-content:center;font:800 12px 'Nunito',sans-serif">VS</span>
+            <div style="min-width:0;flex:1"><div style="font:800 12.5px 'Nunito Sans',sans-serif">Victor Sandoval</div><div style="font:600 10.5px 'Nunito Sans',sans-serif;color:#5A6B85">victor@govivo.ai</div></div>
+            <span class="badge" style="color:#069B66;background:#E6F9F1;font-size:9px;letter-spacing:.08em">ADMIN</span>
+          </div>
+          <div class="mi"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1-4 4-6 8-6s7 2 8 6"></path></svg>Mi perfil</div>
+          <div class="mi"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 8h10M18 8h2M4 16h4M12 16h8"></path><circle cx="16" cy="8" r="2"></circle><circle cx="10" cy="16" r="2"></circle></svg>Ajustes</div>
+          <div class="msep"></div>
+          <div class="mi danger"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg>Cerrar sesión</div>
+        </div>
+      </div>
+      <div>
+        <span class="cap">12.3 · Select abierto (seleccionada = tinta verde + check)</span>
+        <div style="width:248px">
+          <div class="in focus" style="border-radius:10px">Laura Pinzón<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8B99B0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"></path></svg></div>
+          <div class="pop-shadow" style="background:#fff;border:1px solid #E3E8F0;border-radius:12px;padding:6px;margin-top:6px">
+            <div style="display:flex;align-items:center;gap:8px;margin:2px 2px 6px;padding:7px 10px;border:1px solid #E3E8F0;border-radius:8px;color:#8B99B0;font:600 12px 'Nunito Sans',sans-serif"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6"></circle><path d="M20 20l-4-4"></path></svg>Buscar persona…</div>
+            <div class="mi" style="border-radius:8px">Daniel Mora</div>
+            <div class="mi" style="border-radius:8px;background:#E6F9F1;color:#011640;font-weight:800;display:flex;justify-content:space-between">Laura Pinzón<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#069B66" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></div>
+            <div class="mi hov" style="border-radius:8px">Julián Castro</div>
+            <div class="mi" style="border-radius:8px">Mariana Ruiz</div>
+          </div>
+          <div style="font:600 11px 'Nunito Sans',sans-serif;color:#8B99B0;margin-top:8px;line-height:1.6">Segmented (§6) para 2–4 opciones cortas siempre visibles; select para ≥5, listas dinámicas o búsqueda.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:520px 1fr;gap:32px;align-items:start">
+    <!-- 12.4 Confirmación destructiva -->
+    <div>
+      <span class="cap">12.4 · Confirmación destructiva (sin firma; foco inicial en Cancelar)</span>
+      <div style="background:rgba(1,22,64,.40);border-radius:20px;padding:28px">
+        <div class="dlg-shadow" style="width:420px;background:#fff;border:1px solid #E3E8F0;border-radius:16px;padding:24px">
+          <div style="display:flex;gap:14px">
+            <div style="width:40px;height:40px;border-radius:12px;background:#FAEAEA;color:#C93A3A;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8v5M12 16.5v.5"></path><circle cx="12" cy="12" r="9"></circle></svg></div>
+            <div style="min-width:0">
+              <div style="font:800 16px 'Nunito',sans-serif;color:#011640">¿Eliminar la factura FV-2041?</div>
+              <div style="font:600 13px/1.55 'Nunito Sans',sans-serif;color:#5A6B85;margin-top:6px">Se borra el registro y sus pagos asociados de Finanzas y de la cuenta de Grupo Andino. Esta acción no se puede deshacer.</div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px">
+            <div class="btn ghost" style="outline:2px solid #04D98B;outline-offset:2px">Cancelar</div>
+            <div class="btn danger">Eliminar factura</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12.5 Toasts -->
+    <div>
+      <span class="cap">12.5 · Toasts (navy de marca, abajo a la derecha)</span>
+      <div style="display:flex;flex-direction:column;gap:12px;max-width:380px">
+        <div class="pop-shadow" style="display:flex;align-items:center;gap:12px;background:#011640;color:#fff;border-radius:12px;padding:13px 16px">
+          <div style="width:26px;height:26px;border-radius:8px;background:rgba(4,217,139,.16);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#04D98B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></div>
+          <div style="min-width:0;flex:1"><div style="font:800 12.5px 'Nunito Sans',sans-serif">Factura FV-2041 guardada</div><div style="font:600 11.5px 'Nunito Sans',sans-serif;color:rgba(255,255,255,.6)">Grupo Andino · $14.600.000</div></div>
+          <span style="font:800 12px 'Nunito Sans',sans-serif;color:#04D98B;flex-shrink:0">Deshacer</span>
+        </div>
+        <div class="pop-shadow" style="display:flex;align-items:center;gap:12px;background:#011640;color:#fff;border-radius:12px;padding:13px 16px">
+          <div style="width:26px;height:26px;border-radius:8px;background:rgba(201,58,58,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F08A8A" stroke-width="2.2" stroke-linecap="round"><path d="M12 8v5M12 16.5v.5"></path><circle cx="12" cy="12" r="9"></circle></svg></div>
+          <div style="min-width:0;flex:1"><div style="font:800 12.5px 'Nunito Sans',sans-serif">No se pudo sincronizar QuickBooks</div><div style="font:600 11.5px 'Nunito Sans',sans-serif;color:rgba(255,255,255,.6)">Revisa la conexión en Ajustes · Integraciones</div></div>
+          <span style="font:800 12px 'Nunito Sans',sans-serif;color:#04D98B;flex-shrink:0">Reintentar</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+        </div>
+        <div style="font:600 11px 'Nunito Sans',sans-serif;color:#8B99B0;line-height:1.6">Éxito: 4 s, aria-live polite. Error: persistente con X, aria-live assertive. Máx. 3 apilados. Voz: verbo + dato concreto, sin jerga técnica.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

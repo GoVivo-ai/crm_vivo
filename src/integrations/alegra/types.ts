@@ -39,6 +39,12 @@ export interface AlegraPaymentInvoiceRef {
   amount?: number;
 }
 
+export interface AlegraPaymentCategory {
+  id: string | number;
+  name?: string;
+  total?: number;
+}
+
 export interface AlegraPayment {
   id: string | number;
   date?: string;
@@ -47,6 +53,8 @@ export interface AlegraPayment {
   status?: string;
   client?: AlegraClientRef | null;
   invoices?: AlegraPaymentInvoiceRef[];
+  /** Solo en pagos type=out: desglose contable (Salario por Pagar, Aportes…). */
+  categories?: AlegraPaymentCategory[];
   bankAccount?: { name?: string } | null;
   costCenter?: { code?: string; name?: string } | null;
   currency?: AlegraCurrency;

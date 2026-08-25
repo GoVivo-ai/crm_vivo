@@ -44,7 +44,11 @@ export interface CashFlowSection {
   children?: CashFlowSection[];
 }
 
-async function reportsGet<T>(
+/**
+ * GET genérico contra el backend de tools de Alegra (mcp.alegra.com/tools).
+ * Lo usan también banks y payroll (mismo host y Basic Auth que reports).
+ */
+export async function alegraToolsGet<T>(
   tool: string,
   params: Record<string, string>,
 ): Promise<T> {
@@ -65,14 +69,14 @@ export function fetchProfitAndLoss(
   from: string,
   to: string,
 ): Promise<PnlNode[]> {
-  return reportsGet<PnlNode[]>("reports__getProfitAndLoss", { from, to });
+  return alegraToolsGet<PnlNode[]>("reports__getProfitAndLoss", { from, to });
 }
 
 export function fetchCashFlow(
   dateFrom: string,
   dateTo: string,
 ): Promise<CashFlowSection[]> {
-  return reportsGet<CashFlowSection[]>("reports__getCashFlow", {
+  return alegraToolsGet<CashFlowSection[]>("reports__getCashFlow", {
     dateFrom,
     dateTo,
   });

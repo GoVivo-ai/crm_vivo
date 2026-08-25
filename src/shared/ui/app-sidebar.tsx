@@ -78,7 +78,16 @@ const NAV: NavItem[] = [
       { href: "/marketing/accounts", label: "Cuentas de ads" },
     ],
   },
-  { resource: "settings", href: "/settings", label: "Ajustes", icon: Settings2 },
+  {
+    resource: "settings",
+    href: "/settings",
+    label: "Ajustes",
+    icon: Settings2,
+    children: [
+      { href: "/settings", label: "Usuarios" },
+      { href: "/settings/integrations", label: "Integraciones" },
+    ],
+  },
 ];
 
 type AppSidebarProps = {

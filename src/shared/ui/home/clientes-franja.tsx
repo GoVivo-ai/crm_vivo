@@ -11,12 +11,14 @@ const BUCKET_STYLES: Record<ClientHealthChip["bucket"], string> = {
   red: "bg-health-critical/10 text-health-critical",
 };
 
+// marginCop puede faltar por rol (sin profitability:read) o por falta de
+// señal — el tooltip solo agrega la cifra cuando viaja, sin inferir nada.
 function chipTitle(chip: ClientHealthChip): string {
   const base =
     "Salud operativa de sus proyectos, ajustada por rentabilidad de los últimos 3 meses";
   return chip.marginCop !== undefined
     ? `${base}. Margen: ${formatAccountingMoney(chip.marginCop)}`
-    : `${base}. Sin señal de rentabilidad aún (bucket operativo).`;
+    : `${base}.`;
 }
 
 /** Franja Clientes: semáforo POR CUENTA (nombre + bucket) + accionable. */

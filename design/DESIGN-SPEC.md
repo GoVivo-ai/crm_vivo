@@ -299,10 +299,13 @@ Regla editorial: **ningún dato sin verbo** — todo problema trae su acción.
   Gasto: centro de costo + cliente asociado opcional (alimenta rentabilidad) +
   dropzone de comprobante. Factura: "Guardar y crear otra" para carga en lote.
 
-## 12. Overlays (dialogs, menús, selects, confirmaciones, toasts)
+## 12. Overlays — sistema "Lomo navy" + capa Spotlight (elegido por Victor 2026-08-25)
 
-Los overlays son parte del sistema, no shadcn crudo. Artboard de referencia:
-`design/artboards/Overlays.dc.html`.
+Los overlays son parte del sistema, no shadcn crudo. El sistema de dialogs es el
+**Lomo navy** (12.1/12.4) con el **Spotlight** como capa power-user de captura
+(12.6). Artboards de referencia: `design/artboards/LomoFactura.dc.html`,
+`LomoConfirmar.dc.html`, `SpotlightFactura.dc.html`, `SpotlightConfirmar.dc.html`
+(menús/selects/toasts siguen en `Overlays.dc.html`).
 
 **Base común**
 - Scrim: `rgba(1,22,64,.40)` (navy al 40%), sin blur.
@@ -318,18 +321,35 @@ Los overlays son parte del sistema, no shadcn crudo. Artboard de referencia:
   blanco). Esc cierra todo; clic en scrim cierra menús/selects, y en dialogs con
   cambios sin guardar pregunta antes ("¿Descartar cambios?" — patrón destructivo).
 
-**12.1 Dialog de captura (+ Registrar)**
-- 480–560px, radio 16, **hairline gradiente firma de 3px en el borde superior**
-  (cuando un overlay está abierto, esa es la única firma visible — el scrim cubre la
-  de la página).
-- Header (padding 20px 24px): tile de 34px radio 10 con el icono del módulo en su
-  tinta de área (factura verde, gasto azul, nómina ámbar, banco neutro) + título
-  Nunito 800 17px navy + subtítulo 12.5px `--muted` + chip de fuente ("Manual") y
-  botón X ghost circular 32px a la derecha.
-- Body: campos del §5 (inputs r10, foco verde con halo), gap 18px.
-- Footer: separador `--line`, acciones a la derecha — primario verde píldora con
-  verbo+objeto ("Guardar factura") + ghost "Cancelar"; en captura frecuente, ghost
-  "Guardar y crear otra" alineado a la izquierda. Foco inicial: primer campo.
+**12.1 Dialog "Lomo navy" (captura y edición)**
+La ventana es asimétrica: una franja estructural navy (el LOMO) + costura gradiente
++ cuerpo blanco. Es la firma del sistema — ningún dialog vuelve a ser un rectángulo
+blanco centrado.
+- Contenedor: 680px (formularios a 2 columnas) o 560px (1 columna); radio 16,
+  overflow hidden, sombra `0 32px 80px -28px rgba(1,22,64,.55)`, scrim navy 45%.
+- **Lomo** (150px en 680 / 130px en 560): fondo navy `#011640` con aura verde
+  `radial-gradient(220px 200px at -40px -30px, rgba(4,217,139,.20), transparent
+  70%)` e **isotipo** `logomark-white.png` como marca de agua (esquina inferior
+  derecha, desbordado, opacidad .10, rotación −12°). Contenido de arriba a abajo:
+  tile 36px radio 11 `rgba(4,217,139,.18)` con el icono del formulario en
+  `#04D98B`; eyebrow del módulo (800 10px, tracking .16em, blanco 55%); título
+  corto Nunito 800 15px blanco ("Nueva factura").
+- **Contexto vivo** (parte baja del lomo): eyebrow "Contexto vivo" + el dato
+  protagonista REFLEJADO mientras se escribe — monto Nunito 800 20px `#04D98B`
+  tabular + entidad (blanco 72%) + un hecho útil del módulo si existe (MRR actual,
+  saldo de la cuenta, últimos días de saldo; blanco 45%). Vacío: "—" en blanco 35%.
+  Se actualiza con transición de 150ms; nunca parpadea por tecla (debounce ~150ms).
+- **Costura**: 3px verticales `linear-gradient(180deg,#04D98B,#F2E205)` entre lomo
+  y cuerpo — la única firma visible con el overlay abierto.
+- **Cuerpo**: fila superior con chip de fuente ("Manual") y X ghost 32px; campos
+  del §5 (inputs r10, foco verde con halo), gap 15–16px; footer con separador
+  `--line` — "Guardar y crear otra" a la izquierda, ghost "Cancelar" + primario
+  verde verbo+objeto ("Guardar factura") a la derecha. Foco inicial: primer campo.
+- Motion: entrada 200ms ease-out (fade + scale .97→1); salida 120ms; reduced-motion
+  solo fade. Dirty guard (§12.4 con lomo rojo, "¿Descartar cambios?").
+- Responsive: <1100px el lomo colapsa a CABECERA horizontal (banda navy arriba con
+  tile + módulo + contexto vivo en línea, isotipo pequeño a la derecha, costura
+  horizontal debajo); en móvil, sheet de borde inferior con la misma cabecera.
 
 **12.2 Dropdown / menú contextual**
 - Panel radio 12, padding 6px, min-width 200px.
@@ -355,16 +375,21 @@ Los overlays son parte del sistema, no shadcn crudo. Artboard de referencia:
   cuentas) o cualquier cosa con búsqueda. Un segmented jamás desborda: si no cabe,
   es un select.
 
-**12.4 Confirmación destructiva (reemplaza window.confirm)**
-- Dialog 420px radio 16, SIN gradiente firma. Tile 40px `--red-tint` con icono
-  alerta `--red`; título Nunito 800 16px navy con el objeto concreto
-  ("¿Eliminar la factura FV-2041?"); cuerpo 13px `--muted` con la consecuencia real
-  y qué no se puede deshacer ("Se borra el registro y sus pagos asociados. Esta
-  acción no se puede deshacer.").
-- Acciones: ghost "Cancelar" (**foco inicial aquí**) + botón sólido ROJO píldora
-  (`#C93A3A`, texto blanco, hover `#B53232`) con verbo+objeto ("Eliminar factura")
-  — nunca "Aceptar", nunca verde. Enter no dispara el destructivo si el foco no está
-  en él. Para borrados irreversibles en lote, exigir además escribir el nombre.
+**12.4 Confirmación destructiva "lomo rojo" (reemplaza window.confirm)**
+Misma anatomía del 12.1 — identidad constante, severidad evidente:
+- Contenedor 520px radio 16. **Lomo 110px**: navy con **aura ROJA**
+  `radial-gradient(160px 150px at -30px -20px, rgba(201,58,58,.28), transparent
+  70%)`, isotipo al .08; tile 36px `rgba(201,58,58,.30)` con icono alerta
+  `#F08A8A`; abajo, eyebrow "Irreversible" (blanco 55%) y el **objeto en peligro
+  nombrado** en `#F08A8A` 800 13px ("FV-2041"). **Costura roja sólida `#C93A3A`**
+  (el gradiente firma jamás aparece en destructivo).
+- Cuerpo: título Nunito 800 16px navy con el objeto concreto ("¿Eliminar la factura
+  FV-2041?"); consecuencia real en 13px `--muted` y qué no se puede deshacer.
+- Acciones: ghost "Cancelar" (**foco inicial aquí**) + botón sólido rojo píldora
+  (`#C93A3A`, hover `#B53232`) con verbo+objeto — nunca "Aceptar", nunca verde.
+  Enter no dispara el destructivo si el foco no está en él. Borrados irreversibles
+  en lote exigen además escribir el nombre. El dirty guard usa este patrón
+  ("¿Descartar cambios?" / "Seguir editando" con foco inicial / "Descartar" rojo).
 
 **12.5 Toast**
 - Abajo a la derecha, máx 380px, radio 12, **fondo navy `#011640` texto blanco**
@@ -376,6 +401,44 @@ Los overlays son parte del sistema, no shadcn crudo. Artboard de referencia:
   guardada · $14.600.000" / "No se pudo sincronizar QuickBooks — revisa la
   conexión". Éxito: 4s, `aria-live=polite`. Error: persistente con X,
   `aria-live=assertive`. Máximo 3 apilados.
+
+**12.6 Spotlight — capa power-user de captura rápida**
+Captura teclado-primero sobre el lienzo completo. Es una CAPA sobre el sistema
+Lomo, no su reemplazo: crea registros, nunca edita.
+- **Invocación**: `Cmd/Ctrl+K` desde cualquier módulo. El botón "+ Registrar" del
+  topbar sigue abriendo el selector + dialog Lomo (vía mouse) y muestra el hint
+  `⌘K` para descubrir el atajo.
+- **Anatomía**: scrim `rgba(1,22,64,.74)` + aura verde
+  `radial-gradient(720px 420px at 50% 18%, rgba(4,217,139,.14), transparent 70%)`.
+  Barra de comando 720px en el tercio superior: vidrio blanco 10%, borde blanco
+  20%, radio 16, texto Nunito 800 17px blanco, caret verde de 2px, chips kbd de
+  tipo a la derecha (`F factura · G gasto · N nómina · S saldo`). Debajo, el panel
+  resultado: card blanca radio 20 con hairline gradiente, **monto protagonista a
+  44px** con la entidad interpretada como eyebrow, campos restantes en grid, pie
+  con hints ("Enter guarda · Tab siguiente campo · Esc cierra") y acciones.
+- **Gramática de parseo**: `{tipo} {entidad} {monto} [fecha]` — tipo por palabra
+  ("factura", "gasto"…) o tecla inicial; entidad por fuzzy match contra
+  clientes/personas/cuentas según el tipo; monto acepta atajos ("14.6" →
+  $14.600.000, "890k", "2.4m"); fecha natural opcional ("ayer", "15 sep").
+  **Lo interpretado se muestra SIEMPRE en el panel antes de guardar** con la línea
+  "Entendido del texto: … · corrige abajo si algo no es" — la barra jamás guarda a
+  ciegas; ambigüedad (dos clientes posibles) = combobox abierto en el campo.
+- **Cuándo NO aplica**: formularios largos (>~6 campos), con adjuntos (gasto con
+  comprobante) o cualquier edición — en esos casos Spotlight abre el dialog Lomo
+  con lo ya parseado precargado. Confirmaciones originadas EN Spotlight usan el
+  patrón sobre-lienzo (pregunta blanca centrada en el scrim, Cancelar con foco y
+  botón rojo; ver `SpotlightConfirmar.dc.html`); las demás siguen en 12.4.
+
+**12.7 Ruta de migración desde el sistema anterior**
+Lo construido sobrevive: menús (12.2), selects/combobox/segmented (12.3), toasts
+(12.5), dirty guard, `useActionSubmit` y los footers verbo+objeto NO cambian. Lo
+que cambia es la envolvente del dialog:
+1. `CaptureDialog` → Lomo navy: el tile del header se muda al lomo, el chip de
+   fuente y la X quedan en el cuerpo; añadir el contexto vivo (reflejo del campo
+   protagonista). Primero los 5 formularios de dinero, luego CRM/clientes/equipo.
+2. `ConfirmDialog` → lomo rojo (12.4) en todos los destructivos y en el descarte.
+3. Spotlight como feature aparte, DESPUÉS de estabilizar el Lomo (atajo global,
+   parser y precarga del Lomo largo).
 
 ## 13. Datos y convenciones
 

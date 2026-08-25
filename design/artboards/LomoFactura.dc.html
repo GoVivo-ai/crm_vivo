@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&display=swap">
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Nunito Sans',system-ui,sans-serif;color:#0A1E3F;-webkit-font-smoothing:antialiased}
+    a{color:#069B66}
+    .gcard{background:#fff;border:1px solid #E3E8F0;border-radius:14px}
+    .ghost{background:#EDF0F5;border-radius:8px}
+    .fld{display:flex;flex-direction:column;gap:6px}
+    .fld label{font:700 12px 'Nunito Sans',sans-serif}
+    .in{height:40px;border:1px solid #E3E8F0;border-radius:10px;padding:0 13px;font:600 13px 'Nunito Sans',sans-serif;background:#fff;display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .in.focus{border:1.5px solid #04D98B;box-shadow:0 0 0 3px rgba(4,217,139,.15)}
+    .seg{display:flex;background:#EEF1F6;border-radius:999px;padding:3px;gap:2px;width:fit-content}
+    .seg span{padding:6px 13px;border-radius:999px;font:700 12px 'Nunito Sans',sans-serif;color:#5A6B85}
+    .seg span.on{background:#fff;color:#011640;font-weight:800;box-shadow:0 1px 2px rgba(1,22,64,.12)}
+    .btn{display:inline-flex;align-items:center;height:38px;padding:0 18px;border-radius:999px;font:800 13px 'Nunito Sans',sans-serif;border:1px solid transparent}
+    .btn.pri{background:#04D98B;color:#011640}
+    .btn.ghosty{border-color:#E3E8F0;color:#0A1E3F;background:#fff}
+  </style>
+</helmet>
+
+<div style="width:1440px;height:900px;position:relative;overflow:hidden;background:#F6F7F9">
+  <!-- App de fondo -->
+  <div style="position:absolute;inset:0;display:flex">
+    <div style="width:236px;background:#011640;padding:22px 14px"><img src="logo-vivo-white.png" alt="" style="height:26px"><div style="margin-top:26px;display:flex;flex-direction:column;gap:10px"><div style="height:34px;border-radius:999px;background:rgba(255,255,255,.10)"></div><div style="height:34px;border-radius:999px;background:rgba(255,255,255,.06)"></div><div style="height:34px;border-radius:999px;background:rgba(255,255,255,.06)"></div></div></div>
+    <div style="flex:1;display:flex;flex-direction:column">
+      <div style="height:64px;background:#fff;border-bottom:1px solid #E3E8F0;display:flex;align-items:center;padding:0 28px;font:800 18px 'Nunito',sans-serif;color:#011640">Finanzas</div>
+      <div style="padding:24px 28px;display:flex;flex-direction:column;gap:18px">
+        <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:16px"><div class="gcard" style="height:120px"></div><div class="gcard" style="height:120px"></div><div class="gcard" style="height:120px"></div><div class="gcard" style="height:120px"></div></div>
+        <div class="gcard" style="height:420px;padding:20px"><div class="ghost" style="height:16px;width:220px"></div><div class="ghost" style="height:12px;margin-top:18px"></div><div class="ghost" style="height:12px;margin-top:12px"></div><div class="ghost" style="height:12px;margin-top:12px;width:70%"></div></div>
+      </div>
+    </div>
+  </div>
+  <div style="position:absolute;inset:0;background:rgba(1,22,64,.45)"></div>
+
+  <!-- EL LOMO NAVY -->
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:680px;display:flex;border-radius:16px;overflow:hidden;box-shadow:0 32px 80px -28px rgba(1,22,64,.55)">
+    <!-- lomo -->
+    <div style="width:150px;flex-shrink:0;background:radial-gradient(220px 200px at -40px -30px,rgba(4,217,139,.20),transparent 70%),#011640;color:#fff;position:relative;display:flex;flex-direction:column;padding:22px 18px">
+      <img src="logomark-white.png" alt="" style="position:absolute;right:-38px;bottom:-30px;width:150px;opacity:.10;transform:rotate(-12deg)">
+      <div style="width:36px;height:36px;border-radius:11px;background:rgba(4,217,139,.18);color:#04D98B;display:flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><path d="M14 3v6h6"></path></svg></div>
+      <div style="font:800 10px 'Nunito Sans',sans-serif;letter-spacing:.16em;color:rgba(255,255,255,.55);margin-top:14px;text-transform:uppercase">Finanzas</div>
+      <div style="font:800 15px 'Nunito',sans-serif;margin-top:2px">Nueva factura</div>
+      <div style="margin-top:auto;position:relative">
+        <div style="font:700 10px 'Nunito Sans',sans-serif;letter-spacing:.1em;color:rgba(255,255,255,.5);text-transform:uppercase">Contexto vivo</div>
+        <div style="font:800 20px 'Nunito',sans-serif;color:#04D98B;margin-top:4px;font-variant-numeric:tabular-nums">$ 14,6 M</div>
+        <div style="font:600 11.5px 'Nunito Sans',sans-serif;color:rgba(255,255,255,.72)">Grupo Andino</div>
+        <div style="font:600 10.5px 'Nunito Sans',sans-serif;color:rgba(255,255,255,.45);margin-top:2px">MRR actual: $14,6 M · al día</div>
+      </div>
+    </div>
+    <!-- costura gradiente -->
+    <div style="width:3px;background:linear-gradient(180deg,#04D98B,#F2E205);flex-shrink:0"></div>
+    <!-- cuerpo -->
+    <div style="flex:1;background:#fff;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;padding:18px 24px 6px">
+        <span style="display:inline-flex;font:800 11px 'Nunito Sans',sans-serif;color:#5A6B85;background:#EEF1F6;border-radius:999px;padding:4px 10px">Manual</span>
+        <div style="margin-left:auto;width:32px;height:32px;border:1px solid #E3E8F0;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#5A6B85"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg></div>
+      </div>
+      <div style="padding:6px 24px 18px;display:flex;flex-direction:column;gap:15px">
+        <div class="fld"><label>Cliente</label><div class="in focus">Grupo Andino S.A.S.<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8B99B0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></div></div>
+        <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:12px">
+          <div class="fld"><label>Monto</label><div class="in" style="justify-content:flex-start;font-weight:800">$ 14.600.000</div></div>
+          <div class="fld"><label>Moneda</label><div class="seg"><span class="on">COP</span><span>USD</span><span>EUR</span></div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:12px">
+          <div class="fld"><label>Emitida</label><div class="in" style="justify-content:flex-start">25 ago 2026</div></div>
+          <div class="fld"><label>Vence</label><div class="in" style="justify-content:flex-start">24 sep 2026</div></div>
+        </div>
+        <div class="fld"><label>Estado</label><div class="seg"><span class="on">Abierta</span><span>Pagada</span><span>Anulada</span></div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;border-top:1px solid #EDF0F5;padding:13px 24px">
+        <span style="font:800 12.5px 'Nunito Sans',sans-serif;color:#5A6B85">Guardar y crear otra</span>
+        <div style="margin-left:auto;display:flex;gap:10px"><div class="btn ghosty">Cancelar</div><div class="btn pri">Guardar factura</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&display=swap">
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Nunito Sans',system-ui,sans-serif;color:#0A1E3F;background:#EEF1F6;-webkit-font-smoothing:antialiased}
+    a{color:#069B66}
+    .btn{display:inline-flex;align-items:center;height:38px;padding:0 18px;border-radius:999px;font:800 13px 'Nunito Sans',sans-serif;border:1px solid transparent}
+  </style>
+</helmet>
+
+<div style="width:720px;height:520px;display:flex;align-items:center;justify-content:center;background:#EEF1F6;position:relative">
+  <div style="position:absolute;top:20px;left:24px;font:700 11px 'Nunito Sans',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#8B99B0">B · Confirmación destructiva — el lomo se pone serio</div>
+  <div style="width:520px;display:flex;border-radius:16px;overflow:hidden;box-shadow:0 24px 64px -24px rgba(1,22,64,.35)">
+    <div style="width:110px;flex-shrink:0;background:radial-gradient(160px 150px at -30px -20px,rgba(201,58,58,.28),transparent 70%),#011640;color:#fff;position:relative;display:flex;flex-direction:column;padding:20px 16px">
+      <img src="logomark-white.png" alt="" style="position:absolute;right:-30px;bottom:-24px;width:120px;opacity:.08;transform:rotate(-12deg)">
+      <div style="width:36px;height:36px;border-radius:11px;background:rgba(201,58,58,.30);color:#F08A8A;display:flex;align-items:center;justify-content:center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8v5M12 16.5v.5"></path><circle cx="12" cy="12" r="9"></circle></svg></div>
+      <div style="font:800 10px 'Nunito Sans',sans-serif;letter-spacing:.14em;color:rgba(255,255,255,.55);margin-top:auto;text-transform:uppercase">Irreversible</div>
+      <div style="font:800 13px 'Nunito',sans-serif;color:#F08A8A;margin-top:2px">FV-2041</div>
+    </div>
+    <div style="width:3px;background:#C93A3A;flex-shrink:0"></div>
+    <div style="flex:1;background:#fff;padding:22px 24px">
+      <div style="font:800 16px 'Nunito',sans-serif;color:#011640">¿Eliminar la factura FV-2041?</div>
+      <div style="font:600 13px/1.55 'Nunito Sans',sans-serif;color:#5A6B85;margin-top:6px">Se borra el registro y sus pagos asociados de Finanzas y de la cuenta de Grupo Andino. Esta acción no se puede deshacer.</div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px">
+        <div class="btn" style="border-color:#E3E8F0;background:#fff;color:#0A1E3F;outline:2px solid #04D98B;outline-offset:2px">Cancelar</div>
+        <div class="btn" style="background:#C93A3A;color:#fff">Eliminar factura</div>
+      </div>
+    </div>
+  </div>
+  <div style="position:absolute;bottom:20px;left:24px;right:24px;font:600 11.5px/1.6 'Nunito Sans',sans-serif;color:#5A6B85">Misma anatomía que la captura: el lomo navy cambia su aura a roja, la costura pasa de gradiente a rojo y el lomo nombra el objeto en peligro. Identidad constante, severidad evidente.</div>
+</div>
+</x-dc>
+</body>
+</html>

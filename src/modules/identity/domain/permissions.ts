@@ -93,8 +93,9 @@ const MATRIX: Record<Role, Record<Resource, Grant>> = {
     marketing: null,
     purchases: "rw",
     people_directory: "ro",
-    // Compensación (nómina/salarios): tan sensible como el P&L.
-    people_compensation: "ro",
+    // Compensación: registrar pagos de nómina es tarea de finanzas
+    // (decisión Planeador 2026-08-25).
+    people_compensation: "rw",
     treasury: "rw",
     profitability: "ro",
     settings: null,

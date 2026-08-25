@@ -77,10 +77,13 @@ export function IntegrationCard({ meta, status }: IntegrationCardProps) {
     );
   }
 
-  function onSyncNow() {
+  function onSyncNow(scope?: "core" | "erp") {
     submit(
       () =>
-        runSyncNow({ integration: meta.integration }).then((r) =>
+        runSyncNow({
+          integration: meta.integration,
+          ...(scope ? { scope } : {}),
+        }).then((r) =>
           r.ok && !r.data.ok
             ? { ok: false as const, error: r.data.error ?? "El sync falló" }
             : r,
@@ -142,10 +145,23 @@ export function IntegrationCard({ meta, status }: IntegrationCardProps) {
           variant="outline"
           size="sm"
           disabled={pending || (!status.configured && !status.envFallbackAvailable)}
-          onClick={onSyncNow}
+          onClick={() => onSyncNow()}
         >
           Sincronizar
         </Button>
+        {meta.integration === "alegra" && (
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={
+              pending || (!status.configured && !status.envFallbackAvailable)
+            }
+            title="Gastos, nómina y bancos (módulos ERP)"
+            onClick={() => onSyncNow("erp")}
+          >
+            Sincronizar ERP
+          </Button>
+        )}
         {status.configured && (
           <Button
             variant="ghost"

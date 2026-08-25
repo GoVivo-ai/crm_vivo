@@ -9,6 +9,7 @@ import { ServicesSection } from "@/modules/clients/ui/services-section";
 import { AccountStatusBadge } from "@/modules/crm/ui/labels";
 import { ActionError } from "@/shared/ui/action-error";
 import { formatMoney } from "@/shared/ui/format";
+import { KpiMultiCurrency } from "@/shared/ui/kpi";
 
 export default async function Client360Page({
   params,
@@ -43,18 +44,11 @@ export default async function Client360Page({
           <h1 className="text-2xl font-semibold">{account.name}</h1>
           <AccountStatusBadge status={account.status} />
         </div>
-        <div className="text-right">
-          <p className="text-xs text-muted-foreground">MRR</p>
-          {Object.keys(mrrByCurrency).length === 0 ? (
-            <p className="font-mono text-lg">—</p>
-          ) : (
-            Object.entries(mrrByCurrency).map(([currency, amount]) => (
-              <p key={currency} className="font-mono text-lg">
-                {currency === "COP" ? formatMoney(amount) : `${amount} ${currency}`}
-              </p>
-            ))
-          )}
-        </div>
+        <KpiMultiCurrency
+          label="MRR"
+          amounts={mrrByCurrency}
+          className="min-w-44 border-module-clients/30"
+        />
       </div>
 
       <ServicesSection

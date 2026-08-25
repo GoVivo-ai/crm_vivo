@@ -16,6 +16,14 @@ type DealCardContentProps = {
   today: string;
 };
 
+const MONTH_SHORT = "ene feb mar abr may jun jul ago sep oct nov dic".split(" ");
+
+/** "2026-09-05" → "5 sep". */
+function shortDate(iso: string): string {
+  const m = Number(iso.slice(5, 7));
+  return `${Number(iso.slice(8, 10))} ${MONTH_SHORT[m - 1] ?? ""}`;
+}
+
 /** Días que el deal lleva en su etapa actual (stageEnteredAt de backend). */
 function daysInStage(deal: Deal, today: string): number {
   const ms = Date.parse(`${today}T00:00:00Z`) - deal.stageEnteredAt.getTime();
@@ -39,6 +47,8 @@ export function DealCardContent({
           {deal.amount !== null ? formatMoney(deal.amount) : "Sin monto"}
         </span>
         {deal.expectedCloseDate && (
+          // Línea meta de calendario (canon del artboard): la forma aprobada
+          // de destacar un cierre próximo — no lleva ring.
           <span
             className={cn(
               "flex items-center gap-1 text-xs",
@@ -46,7 +56,7 @@ export function DealCardContent({
             )}
           >
             <CalendarDays className="size-3" />
-            {deal.expectedCloseDate}
+            {overdue ? "Venció" : "Cierre"}: {shortDate(deal.expectedCloseDate)}
           </span>
         )}
       </div>

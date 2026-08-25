@@ -9,6 +9,7 @@ import { testAlegraConnection } from "@/integrations/alegra/test-connection";
 import { testClickUpConnection } from "@/integrations/clickup/test-connection";
 import { testWindsorConnection } from "@/integrations/windsor/test-connection";
 import { syncAlegra } from "@/integrations/alegra/sync-alegra";
+import { syncAlegraErp } from "@/integrations/alegra/sync-alegra-erp";
 import { syncClickUp } from "@/integrations/clickup/sync-clickup";
 import { syncWindsor } from "@/integrations/windsor/sync-windsor";
 import { toReadableSyncError } from "@/integrations/shared/errors";
@@ -44,10 +45,14 @@ export async function testConnection(
 
 export async function runManualSync(
   integration: Integration,
+  /** Solo aplica a alegra: 'core' = invoices/pagos/snapshots, 'erp' = bills/equipo/tesorería. */
+  scope: "core" | "erp" = "core",
 ): Promise<{ ok: boolean; error: string | null }> {
   try {
-    if (integration === "alegra") await syncAlegra();
-    else if (integration === "windsor") await syncWindsor();
+    if (integration === "alegra") {
+      if (scope === "erp") await syncAlegraErp();
+      else await syncAlegra();
+    } else if (integration === "windsor") await syncWindsor();
     else await syncClickUp();
     return { ok: true, error: null };
   } catch (error) {

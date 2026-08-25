@@ -230,10 +230,11 @@ Regla editorial: **ningún dato sin verbo** — todo problema trae su acción.
   neto de cada mes (línea, no barras: la historia es la trayectoria del saldo). Si la
   reconstrucción no es confiable (multi-moneda), fallback: flujo neto mensual como
   BARRAS (nunca línea) con label explícito.
-- Semáforo de clientes: mientras backend no exponga salud por cuenta
-  (`getClientsHealthList`), chips de CONTEO por bucket ("N sanas / N atención /
-  N riesgo") — interino; el objetivo de diseño son chips con NOMBRE (el valor está en
-  saber CUÁL cuenta está mal). El accionable de cuenta en riesgo sí exige nombre.
+- Semáforo de clientes (resuelto): chips con NOMBRE por cuenta vía
+  `getClientsHealthList`, rojas primero, enlazadas a la vista 360, tooltip con la
+  regla del bucket (+ margen solo si el rol puede verlo; tooltip neutral si no),
+  línea resumen "N sanas · N atención · N riesgo" y accionable "Rescatar {peor
+  cuenta} →" (la roja de menor margen).
 - Marketing: sin serie temporal de spend — mini-barras = **top-5 campañas por
   inversión** en la rampa teal, ordenadas ascendente izq→der (la más oscura = mayor
   spend), con label explícito.

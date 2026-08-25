@@ -1,3 +1,4 @@
+// (geometría del spec: badges píldora — Badge ya es rounded-full)
 import { Badge } from "@/components/ui/badge";
 import type { IntegrationStatus } from "@/modules/settings/domain/types";
 import { formatRelativeTime } from "@/shared/ui/format";

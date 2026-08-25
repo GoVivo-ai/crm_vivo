@@ -13,6 +13,7 @@ import {
   getPayrollCostSeries,
   getTeamDirectory,
 } from "@/modules/people/application/team-actions";
+import { getProfitabilityDashboard } from "@/modules/profitability/application/profitability-dashboard-action";
 import { getTreasuryPosition } from "@/modules/treasury/application/treasury-actions";
 import { ClientesFranja } from "@/shared/ui/home/clientes-franja";
 import { ComercialFranja } from "@/shared/ui/home/comercial-franja";
@@ -53,6 +54,13 @@ export default async function DashboardHome() {
       seesPayroll ? getPayrollCostSeries() : null,
       isApprover ? listAllLeaveRequests() : null,
     ]);
+  const profitability = has("profitability")
+    ? await getProfitabilityDashboard({})
+    : null;
+  const worstAccountName =
+    profitability?.ok === true && profitability.data.accounts.length > 0
+      ? profitability.data.accounts.at(-1)!.accountName
+      : null;
 
   const financeData = finance?.ok ? finance.data : null;
   const treasuryData = treasury?.ok ? treasury.data : null;
@@ -132,7 +140,10 @@ export default async function DashboardHome() {
           )}
           {clients?.ok && (
             <div className={cn(board?.ok ? "lg:col-span-2" : "lg:col-span-5")}>
-              <ClientesFranja summary={clients.data} />
+              <ClientesFranja
+                summary={clients.data}
+                worstAccountName={worstAccountName}
+              />
             </div>
           )}
         </div>

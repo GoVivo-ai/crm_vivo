@@ -57,7 +57,7 @@ export function Kpi({
       <p
         className={cn(
           "font-[family-name:var(--font-display)] leading-none font-bold tabular-nums",
-          size === "lg" ? "text-3xl" : "text-2xl",
+          size === "lg" ? "text-[36px]" : "text-2xl",
           negative && "text-health-critical",
         )}
       >

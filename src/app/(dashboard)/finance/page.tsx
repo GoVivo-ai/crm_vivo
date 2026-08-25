@@ -75,7 +75,13 @@ export default async function FinancePage() {
         </div>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Ruptura de grilla (spec §del sistema): la primera card domina 1.5fr. */}
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
+        <StatTile
+          label="Resultado neto del mes"
+          amount={pnlCurrentMonth?.netIncomeCop ?? null}
+          emphasis
+        />
         <StatTile
           label="Facturación del mes"
           amount={lastMonth?.totalCop ?? null}
@@ -85,11 +91,6 @@ export default async function FinancePage() {
           label="Cartera viva"
           amount={receivables.outstandingCop}
           detail={`${receivables.openInvoices} facturas abiertas`}
-        />
-        <StatTile
-          label="Resultado neto del mes"
-          amount={pnlCurrentMonth?.netIncomeCop ?? null}
-          emphasis
         />
         <StatTile
           label="Flujo neto del mes"

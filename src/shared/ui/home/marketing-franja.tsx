@@ -25,7 +25,9 @@ export function MarketingFranja({
       ? totals.spendByCurrency[singleCurrency] / totals.leads
       : null;
 
-  const top = byCampaign.slice(0, 5);
+  // Orden fijado por el diseñador: ascendente izq→der, teal más oscura
+  // (#0790A8) para el mayor spend (el de la derecha).
+  const top = byCampaign.slice(0, 5).sort((a, b) => a.spend - b.spend);
   const maxSpend = Math.max(...top.map((c) => c.spend), 1);
 
   const verdict: Veredicto =
@@ -83,14 +85,14 @@ export function MarketingFranja({
                 className="w-8 rounded-t"
                 style={{
                   height: `${Math.max((c.spend / maxSpend) * 100, 12)}%`,
-                  background: TEALS[i] ?? TEALS.at(-1),
+                  background: TEALS[top.length - 1 - i] ?? TEALS.at(-1),
                 }}
               />
             ))}
           </div>
           <p className="mt-1.5 text-[10.5px] font-bold text-muted-foreground">
             Top campañas por spend · mejor cuenta:{" "}
-            {top[0]?.adAccountName ?? top[0]?.campaignName ?? "—"}
+            {top.at(-1)?.adAccountName ?? top.at(-1)?.campaignName ?? "—"}
           </p>
         </div>
       )}

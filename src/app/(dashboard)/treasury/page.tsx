@@ -59,7 +59,8 @@ export default async function TreasuryPage() {
         </div>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Ruptura de grilla: la posición de caja domina 1.5fr. */}
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
         <Kpi
           label="Posición de caja"
           value={totalCashCop}

@@ -30,7 +30,7 @@ export function EquipoFranja({
 
   return (
     <Franja
-      dot="var(--module-marketing)"
+      dot="#011640"
       label="Equipo"
       verdict={verdict}
       href="/people"

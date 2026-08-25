@@ -19,7 +19,15 @@ const HEALTH_CHIP: Record<
 };
 
 /** Franja Clientes: semáforo de salud de proyectos + accionable. */
-export function ClientesFranja({ summary }: { summary: ClientsSummary }) {
+export function ClientesFranja({
+  summary,
+  worstAccountName = null,
+}: {
+  summary: ClientsSummary;
+  /** Peor cuenta por margen (si el rol ve rentabilidad) — da nombre al
+   *  accionable de rescate, como exige el spec. */
+  worstAccountName?: string | null;
+}) {
   const { projectsByHealth, activeClients } = summary;
   const risky = projectsByHealth.red;
   const warning = projectsByHealth.yellow;
@@ -79,7 +87,9 @@ export function ClientesFranja({ summary }: { summary: ClientsSummary }) {
           )}
         >
           {risky > 0
-            ? `Rescatar ${risky} proyecto${risky === 1 ? "" : "s"} en riesgo →`
+            ? worstAccountName
+              ? `Rescatar ${worstAccountName} →`
+              : `Rescatar ${risky} proyecto${risky === 1 ? "" : "s"} en riesgo →`
             : `Revisar ${warning} proyecto${warning === 1 ? "" : "s"} en atención →`}
         </Link>
       )}

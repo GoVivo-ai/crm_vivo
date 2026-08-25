@@ -78,9 +78,9 @@
   --muted-foreground: #5a6b85;
   --accent: #e6f5ee;
   --accent-foreground: #0a1e3f;
-  --destructive: #b3261e;
-  --border: #e2e6ec;
-  --input: #e2e6ec;
+  --destructive: #c93a3a;
+  --border: #e3e8f0;
+  --input: #e3e8f0;
   --ring: #04d98b;
   --chart-1: #069b66;
   --chart-2: #1e5fbf;
@@ -102,7 +102,7 @@
   --module-marketing: #0790a8;
   --health-ok: #069b66;
   --health-warn: #a3690b;
-  --health-critical: #b3261e;
+  --health-critical: #c93a3a;
 }
 
 /* Dark mode diferido a v2 — espejo navy de los tokens de marca. */

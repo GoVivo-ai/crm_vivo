@@ -60,10 +60,21 @@ export function MoneyFranja({
   cashflowSeries,
 }: MoneyFranjaProps) {
   const net = finance.pnlCurrentMonth?.netIncomeCop ?? null;
+  const cashNow = treasury?.totalCashCop ?? null;
+  // Saldo al cierre de mes reconstruido hacia atrás desde el saldo actual
+  // restando el flujo neto de cada mes (decisión del diseñador, §10).
+  const balances: number[] = [];
+  if (cashNow !== null && cashflowSeries.length > 0) {
+    let acc = cashNow;
+    for (let i = cashflowSeries.length - 1; i >= 0; i--) {
+      balances[i] = acc;
+      acc -= cashflowSeries[i].netCop;
+    }
+  }
   const overdue = finance.receivables.aging
     .filter((b) => b.bucket !== "current")
     .reduce((s, b) => s + b.amountCop, 0);
-  const cash = treasury?.totalCashCop ?? null;
+  const cash = cashNow;
 
   // Cobertura: caja / gasto mensual promedio (gastos+nómina, 3 meses).
   const monthlyBurn = avgBurn(finance);
@@ -99,12 +110,12 @@ export function MoneyFranja({
           >
             {cash !== null ? formatAccountingMoney(cash) : "—"}
           </p>
-          <Sparkline points={cashflowSeries.map((p) => p.netCop)} />
+          {balances.length > 1 && <Sparkline points={balances} />}
           <p className="mt-1.5 text-[11.5px] font-semibold text-muted-foreground">
             {coverage !== null
               ? `Cubre ${coverage.toFixed(1).replace(".", ",")} meses de operación`
               : "Registra gastos para calcular cobertura"}
-            {" · flujo neto mensual, últimos 12 m"}
+            {balances.length > 1 && " · saldo al cierre de mes, últimos 12 m"}
           </p>
         </div>
         <div className="lg:pl-7">

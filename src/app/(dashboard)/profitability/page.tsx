@@ -28,11 +28,13 @@ export default async function ProfitabilityPage() {
         </p>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      {/* Ruptura de grilla: la primera card domina 1.5fr. */}
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-[1.5fr_1fr_1fr_1fr_1fr]">
         <Kpi
           label="Costo de nómina del periodo"
           value={totalPayrollCop}
           kind="accounting"
+          size="lg"
           detail="serie: nómina (pagos registrados)"
         />
         <Kpi

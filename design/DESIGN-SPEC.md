@@ -326,7 +326,8 @@ La ventana es asimétrica: una franja estructural navy (el LOMO) + costura gradi
 + cuerpo blanco. Es la firma del sistema — ningún dialog vuelve a ser un rectángulo
 blanco centrado.
 - Contenedor: 680px (formularios a 2 columnas) o 560px (1 columna); radio 16,
-  overflow hidden, sombra `0 32px 80px -28px rgba(1,22,64,.55)`, scrim navy 45%.
+  overflow hidden, sombra `0 32px 80px -28px rgba(1,22,64,.55)`, scrim navy 40%
+  (el scrim base de 12.0 es ÚNICO para todos los overlays — sin variantes).
 - **Lomo** (150px en 680 / 130px en 560): fondo navy `#011640` con aura verde
   `radial-gradient(220px 200px at -40px -30px, rgba(4,217,139,.20), transparent
   70%)` e **isotipo** `logomark-white.png` como marca de agua (esquina inferior
@@ -389,7 +390,9 @@ Misma anatomía del 12.1 — identidad constante, severidad evidente:
   (`#C93A3A`, hover `#B53232`) con verbo+objeto — nunca "Aceptar", nunca verde.
   Enter no dispara el destructivo si el foco no está en él. Borrados irreversibles
   en lote exigen además escribir el nombre. El dirty guard usa este patrón
-  ("¿Descartar cambios?" / "Seguir editando" con foco inicial / "Descartar" rojo).
+  ("¿Descartar cambios?" / "Seguir editando" con foco inicial / "Descartar" rojo)
+  con una variante de lomo: eyebrow **"Sin guardar"** y sin objeto nombrado (el
+  registro aún no existe) — "Irreversible" se reserva para borrar cosas reales.
 
 **12.5 Toast**
 - Abajo a la derecha, máx 380px, radio 12, **fondo navy `#011640` texto blanco**

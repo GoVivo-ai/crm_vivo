@@ -20,10 +20,16 @@ type Option = { id: string; name: string };
 type AdAccountsTableProps = {
   adAccounts: AdAccountView[];
   clients: Option[];
+  /** Roles marketing:ro ven la vinculación en solo-lectura. */
+  canWrite: boolean;
 };
 
 /** Vinculación cuenta publicitaria ↔ cliente CRM; sin vincular = pendiente. */
-export function AdAccountsTable({ adAccounts, clients }: AdAccountsTableProps) {
+export function AdAccountsTable({
+  adAccounts,
+  clients,
+  canWrite,
+}: AdAccountsTableProps) {
   const { submit, pending } = useActionSubmit<{ adAccountId: string }>();
 
   return (
@@ -69,6 +75,11 @@ export function AdAccountsTable({ adAccounts, clients }: AdAccountsTableProps) {
                 )}
               </TableCell>
               <TableCell>
+                {!canWrite ? (
+                  <span className="text-sm">
+                    {ad.linkedAccountName ?? "—"}
+                  </span>
+                ) : (
                 <NativeSelect
                   aria-label={`Cliente de ${ad.name}`}
                   value={ad.accountId ?? ""}
@@ -96,6 +107,7 @@ export function AdAccountsTable({ adAccounts, clients }: AdAccountsTableProps) {
                     </option>
                   ))}
                 </NativeSelect>
+                )}
               </TableCell>
             </TableRow>
           ))}

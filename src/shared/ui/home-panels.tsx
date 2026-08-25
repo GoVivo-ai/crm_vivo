@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Route } from "next";
 import { getSyncStatus } from "@/modules/finance/application/finance-actions";
 import type { SyncSource } from "@/modules/finance/domain/types";
+import { formatCurrency } from "@/shared/ui/format";
 import { SyncStatus } from "@/shared/ui/sync-status";
 
 /** Panel del home 360 con enlace al módulo. */
@@ -28,6 +29,36 @@ export function HomePanel({
       </div>
       {children}
     </section>
+  );
+}
+
+/** KPI del home con montos desglosados por moneda (jamás se mezclan). */
+export function MoneyTile({
+  label,
+  amounts,
+  detail,
+  round = false,
+}: {
+  label: string;
+  amounts: Record<string, number>;
+  detail?: string;
+  round?: boolean;
+}) {
+  const entries = Object.entries(amounts);
+  return (
+    <div className="flex flex-col gap-1 rounded-lg border bg-card p-4">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <div className="font-mono text-xl leading-tight">
+        {entries.length === 0
+          ? "—"
+          : entries.map(([currency, amount]) => (
+              <p key={currency}>
+                {formatCurrency(round ? Math.round(amount) : amount, currency)}
+              </p>
+            ))}
+      </div>
+      {detail && <p className="text-xs text-muted-foreground">{detail}</p>}
+    </div>
   );
 }
 

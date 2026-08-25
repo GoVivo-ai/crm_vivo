@@ -6,8 +6,7 @@ import { getMarketingDashboard } from "@/modules/marketing/application/marketing
 import { getCurrentUser } from "@/modules/identity/application/get-current-user";
 import { readableResources } from "@/modules/identity/domain/permissions";
 import { StatTile } from "@/modules/finance/ui/stat-tile";
-import { HomePanel, HomeSyncPanel } from "@/shared/ui/home-panels";
-import { formatCurrency } from "@/shared/ui/format";
+import { HomePanel, HomeSyncPanel, MoneyTile } from "@/shared/ui/home-panels";
 
 /**
  * Home ejecutivo 360 (Fase 5), compuesto por rol: cada panel se consulta
@@ -24,6 +23,8 @@ export default async function DashboardHome() {
     allowed.includes("clients") ? getClientsSummary() : null,
   ]);
 
+  // Agregados por moneda: nunca se suman monedas distintas (multimoneda
+  // contemplada en el plan aunque hoy los deals sean COP).
   const open =
     board?.ok === true
       ? board.data.stages
@@ -31,13 +32,19 @@ export default async function DashboardHome() {
           .flatMap((s) =>
             s.deals.map((d) => ({
               amount: d.amount ?? 0,
+              currency: d.currency,
               probability: s.probability,
             })),
           )
       : null;
-  const pipelineTotal = open?.reduce((sum, d) => sum + d.amount, 0) ?? null;
-  const forecast =
-    open?.reduce((sum, d) => sum + (d.amount * d.probability) / 100, 0) ?? null;
+  const pipelineByCurrency: Record<string, number> = {};
+  const forecastByCurrency: Record<string, number> = {};
+  for (const d of open ?? []) {
+    pipelineByCurrency[d.currency] =
+      (pipelineByCurrency[d.currency] ?? 0) + d.amount;
+    forecastByCurrency[d.currency] =
+      (forecastByCurrency[d.currency] ?? 0) + (d.amount * d.probability) / 100;
+  }
 
   const aging = finance?.ok === true ? finance.data.receivables.aging : null;
   const overdue =
@@ -56,15 +63,16 @@ export default async function DashboardHome() {
           <HomePanel title="Pipeline comercial" href="/crm/pipeline">
             {board.ok ? (
               <div className="grid grid-cols-2 gap-3">
-                <StatTile
+                <MoneyTile
                   label="Pipeline abierto"
-                  amount={pipelineTotal}
+                  amounts={pipelineByCurrency}
                   detail={`${open?.length ?? 0} deals`}
                 />
-                <StatTile
+                <MoneyTile
                   label="Forecast ponderado"
-                  amount={forecast !== null ? Math.round(forecast) : null}
+                  amounts={forecastByCurrency}
                   detail="por probabilidad de etapa"
+                  round
                 />
               </div>
             ) : (
@@ -103,20 +111,7 @@ export default async function DashboardHome() {
                   <p className="text-xs text-muted-foreground">Leads</p>
                   <p className="font-mono text-xl">{mkt.totals.leads}</p>
                 </div>
-                <div className="flex flex-col gap-1 rounded-lg border bg-card p-4">
-                  <p className="text-xs text-muted-foreground">Spend</p>
-                  <div className="font-mono text-xl leading-tight">
-                    {Object.entries(mkt.totals.spendByCurrency).length === 0
-                      ? "—"
-                      : Object.entries(mkt.totals.spendByCurrency).map(
-                          ([currency, amount]) => (
-                            <p key={currency}>
-                              {formatCurrency(amount, currency)}
-                            </p>
-                          ),
-                        )}
-                  </div>
-                </div>
+                <MoneyTile label="Spend" amounts={mkt.totals.spendByCurrency} />
               </div>
             ) : (
               <p className="text-sm text-muted-foreground">
@@ -130,23 +125,11 @@ export default async function DashboardHome() {
           <HomePanel title="Clientes" href="/clients">
             {clients.ok ? (
               <div className="grid grid-cols-2 gap-3">
-                <div className="flex flex-col gap-1 rounded-lg border bg-card p-4">
-                  <p className="text-xs text-muted-foreground">MRR</p>
-                  <div className="font-mono text-xl leading-tight">
-                    {Object.entries(clients.data.mrrByCurrency).length === 0
-                      ? "—"
-                      : Object.entries(clients.data.mrrByCurrency).map(
-                          ([currency, amount]) => (
-                            <p key={currency}>
-                              {formatCurrency(amount, currency)}
-                            </p>
-                          ),
-                        )}
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {clients.data.activeClients} clientes activos
-                  </p>
-                </div>
+                <MoneyTile
+                  label="MRR"
+                  amounts={clients.data.mrrByCurrency}
+                  detail={`${clients.data.activeClients} clientes activos`}
+                />
                 <div className="flex flex-col gap-2 rounded-lg border bg-card p-4">
                   <p className="text-xs text-muted-foreground">
                     Salud de proyectos
@@ -172,9 +155,10 @@ export default async function DashboardHome() {
 
       <HomeSyncPanel />
 
-      {pipelineTotal !== null && pipelineTotal > 0 && (
+      {(open?.length ?? 0) > 0 && (
         <p className="text-xs text-muted-foreground">
-          Pipeline y forecast en COP; los deals sin monto cuentan como 0.
+          Pipeline y forecast desglosados por la moneda de cada deal; los
+          deals sin monto cuentan como 0.
         </p>
       )}
     </div>

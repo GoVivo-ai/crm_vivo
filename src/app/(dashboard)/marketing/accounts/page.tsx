@@ -1,13 +1,17 @@
 import { listAccounts } from "@/modules/crm/application/accounts-actions";
+import { getCurrentUser } from "@/modules/identity/application/get-current-user";
+import { can } from "@/modules/identity/domain/permissions";
 import { getAdAccounts } from "@/modules/marketing/application/marketing-actions";
 import { AdAccountsTable } from "@/modules/marketing/ui/ad-accounts-table";
 import { ActionError } from "@/shared/ui/action-error";
 
 export default async function AdAccountsPage() {
-  const [adAccountsResult, accountsResult] = await Promise.all([
+  const [adAccountsResult, accountsResult, user] = await Promise.all([
     getAdAccounts(),
     listAccounts(),
+    getCurrentUser(),
   ]);
+  const canWrite = user !== null && can(user.role, "marketing", "write");
   if (!adAccountsResult.ok)
     return <ActionError message={adAccountsResult.error} />;
 
@@ -39,7 +43,11 @@ export default async function AdAccountsPage() {
           Windsor.
         </p>
       ) : (
-        <AdAccountsTable adAccounts={adAccounts} clients={clients} />
+        <AdAccountsTable
+          adAccounts={adAccounts}
+          clients={clients}
+          canWrite={canWrite}
+        />
       )}
     </div>
   );

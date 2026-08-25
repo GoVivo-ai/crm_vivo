@@ -1,45 +1,39 @@
-import { UserButton } from "@clerk/nextjs";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { readableResources } from "@/modules/identity/domain/permissions";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 import { getCurrentUser } from "@/modules/identity/application/get-current-user";
+import {
+  readableResources,
+  type Role,
+} from "@/modules/identity/domain/permissions";
+import { AppHeader } from "@/shared/ui/app-header";
+import { AppSidebar } from "@/shared/ui/app-sidebar";
 
-const NAV_LABELS: Record<string, { href: string; label: string }> = {
-  dashboard: { href: "/", label: "Dashboard" },
-  crm: { href: "/crm", label: "CRM" },
-  clients: { href: "/clients", label: "Clientes" },
-  finance: { href: "/finance", label: "Finanzas" },
-  marketing: { href: "/marketing", label: "Marketing" },
-  settings: { href: "/settings", label: "Configuración" },
+const ROLE_LABELS: Record<Role, string> = {
+  admin: "Administración",
+  sales: "Ventas",
+  operations: "Operaciones",
+  finance: "Finanzas",
+  management: "Gerencia",
 };
 
-// Layout placeholder de Fase 0 — frontend es dueño de esta capa y lo
-// reemplazará con el sidebar shadcn definitivo.
 export default async function DashboardLayout({
   children,
 }: LayoutProps<"/">) {
   const user = await getCurrentUser();
   if (!user) redirect("/sign-in");
 
-  const nav = readableResources(user.role).map((r) => NAV_LABELS[r]);
-
   return (
-    <div className="flex min-h-screen w-full">
-      <aside className="flex w-56 flex-col border-r p-4">
-        <div className="mb-6 font-semibold">CRM VIVO</div>
-        <nav className="flex flex-col gap-2 text-sm">
-          {nav.map(({ href, label }) => (
-            <Link key={href} href={href} className="hover:underline">
-              {label}
-            </Link>
-          ))}
-        </nav>
-        <div className="mt-auto flex items-center gap-2 text-sm">
-          <UserButton />
-          <span>{user.name ?? user.email}</span>
-        </div>
-      </aside>
-      <main className="flex-1 p-6">{children}</main>
-    </div>
+    <SidebarProvider>
+      <AppSidebar allowed={readableResources(user.role)} />
+      <SidebarInset>
+        <AppHeader
+          userName={user.name ?? user.email}
+          roleLabel={ROLE_LABELS[user.role]}
+        />
+        <main className="flex-1 p-6">{children}</main>
+      </SidebarInset>
+      <Toaster position="bottom-right" />
+    </SidebarProvider>
   );
 }

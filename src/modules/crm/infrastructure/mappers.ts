@@ -17,14 +17,18 @@ import type {
 
 const toNumber = (v: string | null) => (v === null ? null : Number(v));
 
+function omitUpdatedAt<T extends { updatedAt: Date }>(row: T): Omit<T, "updatedAt"> {
+  const rest = { ...row } as Partial<T>;
+  delete rest.updatedAt;
+  return rest as Omit<T, "updatedAt">;
+}
+
 export function toAccount(row: typeof accounts.$inferSelect): Account {
-  const { updatedAt: _updatedAt, ...rest } = row;
-  return rest;
+  return omitUpdatedAt(row);
 }
 
 export function toContact(row: typeof contacts.$inferSelect): Contact {
-  const { updatedAt: _updatedAt, ...rest } = row;
-  return rest;
+  return omitUpdatedAt(row);
 }
 
 export function toStage(
@@ -34,13 +38,11 @@ export function toStage(
 }
 
 export function toDeal(row: typeof deals.$inferSelect): Deal {
-  const { updatedAt: _updatedAt, ...rest } = row;
-  return { ...rest, amount: toNumber(row.amount) };
+  return { ...omitUpdatedAt(row), amount: toNumber(row.amount) };
 }
 
 export function toProposal(row: typeof proposals.$inferSelect): Proposal {
-  const { updatedAt: _updatedAt, ...rest } = row;
-  return { ...rest, amount: toNumber(row.amount) };
+  return { ...omitUpdatedAt(row), amount: toNumber(row.amount) };
 }
 
 export function toActivity(row: typeof activities.$inferSelect): Activity {

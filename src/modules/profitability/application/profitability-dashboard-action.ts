@@ -45,8 +45,10 @@ function activeInMonth(row: StaffingRow, month: string): boolean {
 
 /**
  * Margen por cuenta (profitability:read = finance/management/admin).
- * Prorrateo mensual del costo real de nómina (serie desde pagos):
- * costo(cuenta, mes) = nómina(mes) × Σ%(cuenta, mes) / Σ%(global, mes).
+ * Prorrateo mensual por CAPACIDAD TOTAL (directriz del Planeador):
+ * costo(cuenta, mes) = nómina(mes) × Σ%(cuenta, mes) / (100 × empleados
+ * activos); el residuo queda como unassignedCostCop (compañía). Supone
+ * costo igual por empleado — assumption: 'equal-cost' en el resultado.
  * adSpend es informativo, NO se resta del margen (el cliente paga su
  * pauta directo — pendiente confirmación final con datos).
  */
@@ -63,31 +65,31 @@ export async function getProfitabilityDashboard(
   const period = { from, to };
 
   return runAction("profitability", "read", async () => {
-    const [revenue, adSpend, staffing, payrollSeries] = await Promise.all([
-      getRevenueByAccount(period),
-      getAdSpendByAccount(period),
-      listStaffingOverlappingPeriod(period),
-      getPayrollCostForRange(period),
-    ]);
+    const [revenue, adSpend, staffing, payrollSeries, activeEmployees] =
+      await Promise.all([
+        getRevenueByAccount(period),
+        getAdSpendByAccount(period),
+        listStaffingOverlappingPeriod(period),
+        getPayrollCostForRange(period),
+        countActiveEmployees(),
+      ]);
 
     const months = monthsInRange(from, to);
     const staffingCostByAccount = new Map<string, number>();
     let totalPayrollCop = 0;
+    // Capacidad total del mes: 100% × empleados activos (conteo actual;
+    // no hay historial mensual del directorio).
+    const capacityPercent = 100 * Math.max(activeEmployees, 1);
     for (const month of months) {
       const payroll = payrollSeries.find((p) => p.month === month);
       if (!payroll || payroll.totalCop === 0) continue;
       totalPayrollCop += payroll.totalCop;
       const active = staffing.filter((s) => activeInMonth(s, month));
-      const globalPercent = active.reduce(
-        (acc, s) => acc + s.dedicationPercent,
-        0,
-      );
-      if (globalPercent === 0) continue;
       for (const s of active) {
         staffingCostByAccount.set(
           s.accountId,
           (staffingCostByAccount.get(s.accountId) ?? 0) +
-            (payroll.totalCop * s.dedicationPercent) / globalPercent,
+            (payroll.totalCop * s.dedicationPercent) / capacityPercent,
         );
       }
     }
@@ -127,6 +129,19 @@ export async function getProfitabilityDashboard(
       })
       .sort((a, b) => b.marginCop - a.marginCop);
 
-    return { period, totalPayrollCop, totalAssignedPercent, accounts };
+    const assignedTotal = [...staffingCostByAccount.values()].reduce(
+      (acc, v) => acc + v,
+      0,
+    );
+
+    return {
+      period,
+      totalPayrollCop,
+      totalAssignedPercent,
+      unassignedCostCop: Math.round(totalPayrollCop - assignedTotal),
+      activeEmployees,
+      assumption: "equal-cost" as const,
+      accounts,
+    };
   });
 }

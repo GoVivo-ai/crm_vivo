@@ -16,10 +16,12 @@ export type StaffingAssignment = {
  * del Planeador) para que la UI muestre el detalle.
  *
  * staffingCostCop se prorratea del costo REAL de nómina mensual (serie
- * derivada de pagos, nunca registeredSalary): para cada mes,
- * costo(cuenta) = nómina(mes) × Σ%dedicación(cuenta) / Σ%dedicación
- * global asignada ese mes. Así el 100% del costo se reparte entre las
- * cuentas proporcionalmente a la dedicación asignada.
+ * derivada de pagos, nunca registeredSalary) por CAPACIDAD TOTAL:
+ * costo(cuenta, mes) = nómina(mes) × Σ%dedicación(cuenta, mes)
+ *                      / (100 × empleados_activos).
+ * Lo no asignado queda como "costo sin asignar" (compañía) — así la
+ * adopción gradual del staffing no distorsiona los márgenes. Supone
+ * costo igual por empleado (assumption: 'equal-cost' en el dashboard).
  *
  * adSpendCop es INFORMATIVO y NO se resta del margen: en esta agencia el
  * cliente normalmente paga su pauta directo (pendiente de confirmación
@@ -42,7 +44,14 @@ export type ProfitabilityDashboard = {
   period: { from: string; to: string };
   /** Nómina total del periodo (misma serie etiquetada de people). */
   totalPayrollCop: number;
-  /** % de dedicación global asignada (base del prorrateo). */
+  /** % de dedicación global asignada. */
   totalAssignedPercent: number;
+  /** Nómina del periodo NO asignada a cuentas (compañía) — visible en UI. */
+  unassignedCostCop: number;
+  /** Empleados activos usados como capacidad (conteo actual del
+   * directorio; no hay historial mensual). */
+  activeEmployees: number;
+  /** Suposición del prorrateo, para mostrarla como nota en la UI. */
+  assumption: "equal-cost";
   accounts: AccountProfitability[];
 };

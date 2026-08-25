@@ -2,6 +2,7 @@ import { and, eq, gte, isNotNull, lte, sql } from "drizzle-orm";
 import { db } from "@/shared/database/db";
 import { accounts } from "@/modules/crm/schema";
 import { syncedInvoices } from "@/modules/finance/schema";
+import { syncedEmployees } from "@/modules/people/schema";
 import {
   adAccounts,
   syncedCampaignMetrics,
@@ -39,6 +40,20 @@ export async function getRevenueByAccount(range: {
     )
     .groupBy(accounts.id, accounts.name);
   return rows.map((r) => ({ ...r, revenueCop: Number(r.revenueCop) }));
+}
+
+/** Empleados activos (post-filtro fantasma): capacidad del prorrateo. */
+export async function countActiveEmployees(): Promise<number> {
+  const [row] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(syncedEmployees)
+    .where(
+      and(
+        isNotNull(syncedEmployees.names),
+        sql`coalesce(${syncedEmployees.status}, 'active') = 'active'`,
+      ),
+    );
+  return row?.count ?? 0;
 }
 
 export type AdSpendByAccount = { accountId: string; adSpendCop: number };

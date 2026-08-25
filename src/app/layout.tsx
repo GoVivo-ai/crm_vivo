@@ -26,8 +26,8 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CRM VIVO",
-  description: "CRM 360 de govivo.ai",
+  title: "ERP VIVO",
+  description: "ERP 360 de govivo.ai",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

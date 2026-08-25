@@ -17,7 +17,7 @@ import {
   setUserRole,
 } from "@/modules/identity/application/users-admin-actions";
 import { ROLES, type Role } from "@/modules/identity/domain/permissions";
-import { NativeSelect } from "@/shared/ui/native-select";
+import { ChipSelect } from "@/shared/ui/chip-select";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
 
 const ROLE_LABELS: Record<Role, string> = {
@@ -36,6 +36,22 @@ type UsersTableProps = {
 
 export function UsersTable({ users, currentUserId }: UsersTableProps) {
   const { submit, pending } = useActionSubmit<ManagedUser>();
+
+  // Cambio de rol ajeno: éxito con "Deshacer" (patrón del diseñador).
+  // La fila propia sigue deshabilitada (nadie se auto-modifica).
+  function changeRole(user: ManagedUser, role: Role) {
+    const previous = user.role;
+    submit(() => setUserRole({ userId: user.id, role }), {
+      successMessage: `${user.name ?? user.email} ahora es ${ROLE_LABELS[role]}`,
+      successAction: {
+        label: "Deshacer",
+        onClick: () =>
+          submit(() => setUserRole({ userId: user.id, role: previous }), {
+            successMessage: `Rol restaurado a ${ROLE_LABELS[previous]}`,
+          }),
+      },
+    });
+  }
 
   return (
     <div className="overflow-x-auto rounded-lg border bg-card">
@@ -74,30 +90,17 @@ export function UsersTable({ users, currentUserId }: UsersTableProps) {
                   </div>
                 </div>
               </TableCell>
-              <TableCell>
-                <NativeSelect
-                  aria-label={`Rol de ${user.email}`}
+              <TableCell title={selfTitle}>
+                <ChipSelect
+                  ariaLabel={`Rol de ${user.email}`}
                   value={user.role}
                   disabled={pending || isSelf}
-                  title={selfTitle}
-                  className="w-40"
-                  onChange={(e) =>
-                    submit(
-                      () =>
-                        setUserRole({
-                          userId: user.id,
-                          role: e.target.value as Role,
-                        }),
-                      { successMessage: "Rol actualizado" },
-                    )
-                  }
-                >
-                  {ROLES.map((role) => (
-                    <option key={role} value={role}>
-                      {ROLE_LABELS[role]}
-                    </option>
-                  ))}
-                </NativeSelect>
+                  onValueChange={(role) => changeRole(user, role)}
+                  options={ROLES.map((role) => ({
+                    value: role,
+                    label: ROLE_LABELS[role],
+                  }))}
+                />
               </TableCell>
               <TableCell>
                 {user.isActive ? (

@@ -12,7 +12,7 @@ import {
 import { setAdAccountLink } from "@/modules/marketing/application/marketing-actions";
 import type { AdAccountView } from "@/modules/marketing/domain/types";
 import { PLATFORM_LABELS } from "@/modules/marketing/ui/metrics-tables";
-import { NativeSelect } from "@/shared/ui/native-select";
+import { Combobox } from "@/shared/ui/combobox";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
 
 type Option = { id: string; name: string };
@@ -80,33 +80,26 @@ export function AdAccountsTable({
                     {ad.linkedAccountName ?? "—"}
                   </span>
                 ) : (
-                <NativeSelect
-                  aria-label={`Cliente de ${ad.name}`}
-                  value={ad.accountId ?? ""}
-                  disabled={pending}
-                  className="w-52"
-                  onChange={(e) =>
-                    submit(
-                      () =>
-                        setAdAccountLink({
-                          adAccountId: ad.id,
-                          accountId: e.target.value || null,
-                        }),
-                      {
-                        successMessage: e.target.value
-                          ? "Cuenta vinculada"
-                          : "Cuenta desvinculada",
-                      },
-                    )
-                  }
-                >
-                  <option value="">Sin vincular</option>
-                  {clients.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </NativeSelect>
+                <div className="w-56">
+                  <Combobox
+                    ariaLabel={`Cliente de ${ad.name}`}
+                    options={[{ id: "__none", name: "— Sin vincular —" }, ...clients]}
+                    value={ad.accountId ?? "__none"}
+                    onValueChange={(id) => {
+                      if (pending) return;
+                      const accountId = id === "__none" || id === null ? null : id;
+                      submit(
+                        () => setAdAccountLink({ adAccountId: ad.id, accountId }),
+                        {
+                          successMessage: accountId
+                            ? `${ad.name} vinculada`
+                            : `${ad.name} desvinculada`,
+                        },
+                      );
+                    }}
+                    placeholder="Buscar cliente…"
+                  />
+                </div>
                 )}
               </TableCell>
             </TableRow>

@@ -17,13 +17,18 @@ export function useActionSubmit<T>() {
 
   function submit(
     run: () => Promise<ActionResult<T>>,
-    opts: { successMessage: string; onSuccess?: (data: T) => void },
+    opts: {
+      successMessage: string;
+      onSuccess?: (data: T) => void;
+      /** Acción del toast (§12.5), p.ej. Deshacer. */
+      successAction?: { label: string; onClick: () => void };
+    },
   ) {
     startTransition(async () => {
       const result = await run();
       if (result.ok) {
         setFieldErrors({});
-        toast.success(opts.successMessage);
+        toast.success(opts.successMessage, { action: opts.successAction });
         router.refresh();
         opts.onSuccess?.(result.data);
       } else {

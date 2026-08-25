@@ -51,6 +51,8 @@ Los assets de marca ya viven en `public/brand/` (logo-vivo-blue/white.png, logom
 ```
 
 - Neutro de relleno (columnas kanban, pistas de barras, chips mudos): `#EEF1F6`.
+- Tinta navy `#E7EBF3` (texto `#011640`): tile del área Equipo en dialogs y chip
+  activo neutro (p. ej. filtro "Todas").
 - Borde punteado (dropzones, slots vacíos): `#C6CFDD`, 1.5px dashed.
 - Puntos de área en el Home (§10): finanzas `#8C7A0A` · comercial `#069B66` ·
   clientes `#1E5FBF` · equipo `#011640` · marketing `#0790A8`.

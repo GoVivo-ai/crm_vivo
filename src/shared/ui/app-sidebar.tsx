@@ -13,9 +13,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import type { Resource } from "@/modules/identity/domain/permissions";
 import { NAV_GROUPS, type NavItem } from "@/shared/ui/sidebar-nav";
@@ -37,13 +34,6 @@ function NavEntry({ item, pathname }: { item: NavItem; pathname: string }) {
   const reduced = useReducedMotion();
   const active =
     item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
-  const matching = (item.children ?? []).filter((c) =>
-    pathname.startsWith(c.href),
-  );
-  const best = matching.reduce(
-    (a, b) => (b.href.length > (a?.href.length ?? 0) ? b : a),
-    matching[0],
-  );
   return (
     <SidebarMenuItem>
       <SidebarMenuButton
@@ -78,20 +68,6 @@ function NavEntry({ item, pathname }: { item: NavItem; pathname: string }) {
           <span className="vivo-odot" aria-hidden />
         )}
       </SidebarMenuButton>
-      {item.children && active && (
-        <SidebarMenuSub>
-          {item.children.map((child) => (
-            <SidebarMenuSubItem key={child.href}>
-              <SidebarMenuSubButton
-                render={<Link href={child.href} />}
-                isActive={best?.href === child.href}
-              >
-                {child.label}
-              </SidebarMenuSubButton>
-            </SidebarMenuSubItem>
-          ))}
-        </SidebarMenuSub>
-      )}
     </SidebarMenuItem>
   );
 }

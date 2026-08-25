@@ -55,6 +55,10 @@ const NAV: NavItem[] = [
     label: "Clientes",
     icon: Briefcase,
     accent: "var(--module-clients)",
+    children: [
+      { href: "/clients", label: "Cuentas cliente" },
+      { href: "/clients/services", label: "Servicios" },
+    ],
   },
   {
     resource: "finance",
@@ -117,16 +121,27 @@ export function AppSidebar({ allowed }: AppSidebarProps) {
               </SidebarMenuButton>
               {item.children && isActive(item) && (
                 <SidebarMenuSub>
-                  {item.children.map((child) => (
-                    <SidebarMenuSubItem key={child.href}>
-                      <SidebarMenuSubButton
-                        render={<Link href={child.href} />}
-                        isActive={pathname.startsWith(child.href)}
-                      >
-                        {child.label}
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
+                  {item.children.map((child) => {
+                    // Activo solo el subítem con el prefijo más largo que
+                    // matchea, para que /clients/services no active /clients.
+                    const matching = item.children!.filter((c) =>
+                      pathname.startsWith(c.href),
+                    );
+                    const best = matching.reduce(
+                      (a, b) => (b.href.length > (a?.href.length ?? 0) ? b : a),
+                      matching[0],
+                    );
+                    return (
+                      <SidebarMenuSubItem key={child.href}>
+                        <SidebarMenuSubButton
+                          render={<Link href={child.href} />}
+                          isActive={best?.href === child.href}
+                        >
+                          {child.label}
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    );
+                  })}
                 </SidebarMenuSub>
               )}
             </SidebarMenuItem>

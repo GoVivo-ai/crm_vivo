@@ -6,6 +6,8 @@ import {
   listActivitiesForDeal,
   listProposalsForDeal,
 } from "@/modules/crm/application/activities-actions";
+import { listServices } from "@/modules/clients/application/services-actions";
+import { ConvertDealDialog } from "@/modules/clients/ui/convert-deal-dialog";
 import { getPipelineBoard } from "@/modules/crm/application/deals-actions";
 import { ActivityForm } from "@/modules/crm/ui/activity-form";
 import { ActivityTimeline } from "@/modules/crm/ui/activity-timeline";
@@ -27,14 +29,19 @@ export default async function DealDetailPage({
   const deal = stage?.deals.find((d) => d.id === id);
   if (!stage || !deal) notFound();
 
-  const [accountResult, activitiesResult, proposalsResult] = await Promise.all([
-    getAccount(deal.accountId),
-    listActivitiesForDeal(deal.id),
-    listProposalsForDeal(deal.id),
-  ]);
+  const [accountResult, activitiesResult, proposalsResult, catalogResult] =
+    await Promise.all([
+      getAccount(deal.accountId),
+      listActivitiesForDeal(deal.id),
+      listProposalsForDeal(deal.id),
+      listServices(),
+    ]);
   const account = accountResult.ok ? accountResult.data : null;
   const activities = activitiesResult.ok ? activitiesResult.data : [];
   const proposals = proposalsResult.ok ? proposalsResult.data : [];
+  const catalog = catalogResult.ok
+    ? catalogResult.data.filter((s) => s.isActive)
+    : [];
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-4">
@@ -62,9 +69,18 @@ export default async function DealDetailPage({
             {" · "}etapa <span className="font-medium">{stage.name}</span>
           </p>
         </div>
-        <p className="font-mono text-lg">
-          {deal.amount !== null ? formatMoney(deal.amount) : "Sin monto"}
-        </p>
+        <div className="flex items-center gap-3">
+          <p className="font-mono text-lg">
+            {deal.amount !== null ? formatMoney(deal.amount) : "Sin monto"}
+          </p>
+          {deal.closedAt === null && !stage.isWon && !stage.isLost && (
+            <ConvertDealDialog
+              dealId={deal.id}
+              catalog={catalog}
+              today={new Date().toISOString().slice(0, 10)}
+            />
+          )}
+        </div>
       </div>
 
       <section className="rounded-lg border bg-card p-5">

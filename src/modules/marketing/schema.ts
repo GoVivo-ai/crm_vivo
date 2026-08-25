@@ -15,18 +15,27 @@ import { accounts } from "@/modules/crm/schema";
 
 export const adPlatformEnum = pgEnum("ad_platform", ["meta", "google_ads"]);
 
-export const adAccounts = pgTable("ad_accounts", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  accountId: uuid("account_id").references(() => accounts.id),
-  platform: adPlatformEnum("platform").notNull(),
-  externalAccountId: text("external_account_id").notNull(),
-  name: text("name").notNull(),
-  accountCurrency: text("account_currency").notNull().default("COP"),
-  isActive: boolean("is_active").notNull().default(true),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-});
+export const adAccounts = pgTable(
+  "ad_accounts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    accountId: uuid("account_id").references(() => accounts.id),
+    platform: adPlatformEnum("platform").notNull(),
+    externalAccountId: text("external_account_id").notNull(),
+    name: text("name").notNull(),
+    accountCurrency: text("account_currency").notNull().default("COP"),
+    isActive: boolean("is_active").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("ad_accounts_platform_external_uq").on(
+      table.platform,
+      table.externalAccountId,
+    ),
+  ],
+);
 
 export const syncedCampaignMetrics = pgTable(
   "synced_campaign_metrics",

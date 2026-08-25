@@ -46,6 +46,34 @@ export async function upsertUserFromClerk(input: {
     });
 }
 
+export async function listAllUsers(): Promise<UserRow[]> {
+  return db.select().from(users).orderBy(users.email);
+}
+
+export async function setUserRole(
+  id: string,
+  role: UserRow["role"],
+): Promise<UserRow | null> {
+  const rows = await db
+    .update(users)
+    .set({ role, updatedAt: new Date() })
+    .where(eq(users.id, id))
+    .returning();
+  return rows[0] ?? null;
+}
+
+export async function setUserActive(
+  id: string,
+  isActive: boolean,
+): Promise<UserRow | null> {
+  const rows = await db
+    .update(users)
+    .set({ isActive, updatedAt: new Date() })
+    .where(eq(users.id, id))
+    .returning();
+  return rows[0] ?? null;
+}
+
 export async function deactivateUserByClerkId(clerkId: string): Promise<void> {
   await db
     .update(users)

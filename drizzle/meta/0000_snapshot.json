@@ -1,5 +1,5 @@
 {
-  "id": "fdf2bd83-786b-40dc-80b0-8e0e21c9090a",
+  "id": "ec0ae091-efd3-4249-af60-8f7e1345c87c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1374,7 +1374,29 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "ad_accounts_platform_external_uq": {
+          "name": "ad_accounts_platform_external_uq",
+          "columns": [
+            {
+              "expression": "platform",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "external_account_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "ad_accounts_account_id_accounts_id_fk": {
           "name": "ad_accounts_account_id_accounts_id_fk",

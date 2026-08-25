@@ -250,4 +250,5 @@ ALTER TABLE "synced_invoices" ADD CONSTRAINT "synced_invoices_account_id_account
 ALTER TABLE "synced_payments" ADD CONSTRAINT "synced_payments_account_id_accounts_id_fk" FOREIGN KEY ("account_id") REFERENCES "public"."accounts"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "ad_accounts" ADD CONSTRAINT "ad_accounts_account_id_accounts_id_fk" FOREIGN KEY ("account_id") REFERENCES "public"."accounts"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "synced_campaign_metrics" ADD CONSTRAINT "synced_campaign_metrics_ad_account_id_ad_accounts_id_fk" FOREIGN KEY ("ad_account_id") REFERENCES "public"."ad_accounts"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+CREATE UNIQUE INDEX "ad_accounts_platform_external_uq" ON "ad_accounts" USING btree ("platform","external_account_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "campaign_metrics_platform_campaign_date_uq" ON "synced_campaign_metrics" USING btree ("platform","campaign_external_id","metric_date");

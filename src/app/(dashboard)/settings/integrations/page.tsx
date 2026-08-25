@@ -8,7 +8,7 @@ export default async function IntegrationsPage() {
   if (!result.ok) return <ActionError message={result.error} />;
 
   return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-4">
+    <div className="flex flex-col gap-5">
       <div>
         <h1 className="text-2xl font-semibold">Integraciones</h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -16,13 +16,15 @@ export default async function IntegrationsPage() {
           nunca se muestran completas.
         </p>
       </div>
-      {INTEGRATIONS_CATALOG.map((meta) => (
-        <IntegrationCard
-          key={meta.integration}
-          meta={meta}
-          status={result.data[meta.integration]}
-        />
-      ))}
+      <div className="grid items-start gap-4 lg:grid-cols-2 xl:grid-cols-3">
+        {INTEGRATIONS_CATALOG.map((meta) => (
+          <IntegrationCard
+            key={meta.integration}
+            meta={meta}
+            status={result.data[meta.integration]}
+          />
+        ))}
+      </div>
     </div>
   );
 }

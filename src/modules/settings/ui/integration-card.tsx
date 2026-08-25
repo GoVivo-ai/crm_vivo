@@ -1,11 +1,12 @@
 "use client";
 
-import { ExternalLink } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 import {
   clearIntegrationCredentials,
   setIntegrationCredentials,
@@ -13,6 +14,7 @@ import {
 } from "@/modules/settings/application/integration-credentials-actions";
 import { runSyncNow } from "@/modules/settings/application/run-sync-now-action";
 import type { IntegrationStatus } from "@/modules/settings/domain/types";
+import { CredentialsForm } from "@/modules/settings/ui/credentials-form";
 import { IntegrationStatusLine } from "@/modules/settings/ui/integration-status-line";
 import type { IntegrationMeta } from "@/modules/settings/ui/integrations-catalog";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
@@ -23,21 +25,38 @@ type IntegrationCardProps = {
 };
 
 export function IntegrationCard({ meta, status }: IntegrationCardProps) {
-  // Los inputs NUNCA se pre-llenan con secretos: el hint va en el estado.
+  const [open, setOpen] = useState(!status.configured);
   const [values, setValues] = useState<Record<string, string>>({});
   const { submit, pending, fieldErrors } = useActionSubmit<unknown>();
+  const reducedMotion = useReducedMotion();
 
   const typedCount = meta.fields.filter((f) => values[f.name]?.trim()).length;
-  const allTyped = typedCount === meta.fields.length;
 
   function typedCredentials(): Record<string, string> | null {
-    if (typedCount === 0) return null; // probar las guardadas
-    if (!allTyped) {
-      toast.error("Completa todos los campos para probar esas credenciales");
+    if (typedCount === 0) return null;
+    if (typedCount < meta.fields.length) {
+      toast.error("Completa todos los campos para usar esas credenciales");
       return null;
     }
     return Object.fromEntries(
       meta.fields.map((f) => [f.name, values[f.name].trim()]),
+    );
+  }
+
+  function onSave(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const credentials = typedCredentials();
+    if (!credentials) return;
+    submit(
+      () =>
+        setIntegrationCredentials({ integration: meta.integration, credentials }),
+      {
+        successMessage: "Credenciales guardadas",
+        onSuccess: () => {
+          setValues({});
+          setOpen(false);
+        },
+      },
     );
   }
 
@@ -55,26 +74,6 @@ export function IntegrationCard({ meta, status }: IntegrationCardProps) {
             : r,
         ),
       { successMessage: "Conexión OK" },
-    );
-  }
-
-  function onSave(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const credentials = typedCredentials();
-    if (!credentials) {
-      if (typedCount === 0) toast.error("Escribe las credenciales a guardar");
-      return;
-    }
-    submit(
-      () =>
-        setIntegrationCredentials({
-          integration: meta.integration,
-          credentials,
-        }),
-      {
-        successMessage: "Credenciales guardadas",
-        onSuccess: () => setValues({}),
-      },
     );
   }
 
@@ -100,87 +99,91 @@ export function IntegrationCard({ meta, status }: IntegrationCardProps) {
   }
 
   return (
-    <section className="flex flex-col gap-4 rounded-lg border bg-card p-5">
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <div>
-          <h2 className="text-base font-semibold">{meta.label}</h2>
-          <p className="text-xs text-muted-foreground">{meta.description}</p>
+    <section className="flex flex-col gap-4 rounded-xl border bg-card p-5 shadow-xs transition-shadow hover:shadow-md">
+      <div className="flex items-start gap-3">
+        <span className="grid size-12 shrink-0 place-items-center rounded-lg border bg-white">
+          <Image
+            src={meta.logoSrc}
+            alt=""
+            width={30}
+            height={30}
+            className="size-[30px] object-contain"
+          />
+        </span>
+        <div className="min-w-0">
+          <h2 className="text-base font-bold">{meta.label}</h2>
+          <p className="text-xs leading-snug text-muted-foreground">
+            {meta.description}
+          </p>
         </div>
-        <a
-          href={meta.helpUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
-        >
-          {meta.helpText} <ExternalLink className="size-3" />
-        </a>
       </div>
 
       <IntegrationStatusLine status={status} label={meta.label} />
 
-      <form onSubmit={onSave} className="flex flex-col gap-3">
-        <div className="grid gap-3 sm:grid-cols-2">
-          {meta.fields.map((field) => (
-            <div key={field.name} className="flex flex-col gap-1.5">
-              <Label htmlFor={`${meta.integration}-${field.name}`}>
-                {field.label}
-              </Label>
-              <Input
-                id={`${meta.integration}-${field.name}`}
-                type={field.kind === "email" ? "email" : "password"}
-                autoComplete="off"
-                placeholder={
-                  status.configured ? "Guardada — escribe para reemplazar" : ""
-                }
-                value={values[field.name] ?? ""}
-                onChange={(e) =>
-                  setValues((prev) => ({
-                    ...prev,
-                    [field.name]: e.target.value,
-                  }))
-                }
-              />
-              {fieldErrors[field.name] && (
-                <p className="text-xs text-destructive">
-                  {fieldErrors[field.name][0]}
-                </p>
-              )}
-            </div>
-          ))}
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button type="submit" disabled={pending || typedCount === 0}>
-            Guardar
-          </Button>
+      <div className="mt-auto flex flex-wrap gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+        >
+          Credenciales
+          <ChevronDown
+            className={cn(
+              "size-3.5 transition-transform",
+              open && "rotate-180",
+            )}
+          />
+        </Button>
+        <Button variant="outline" size="sm" disabled={pending} onClick={onTest}>
+          Probar conexión
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={pending || (!status.configured && !status.envFallbackAvailable)}
+          onClick={onSyncNow}
+        >
+          Sincronizar
+        </Button>
+        {status.configured && (
           <Button
-            type="button"
-            variant="outline"
+            variant="ghost"
+            size="sm"
             disabled={pending}
-            onClick={onTest}
+            className="text-muted-foreground hover:text-destructive"
+            onClick={onClear}
           >
-            Probar conexión
+            Quitar
           </Button>
-          <Button
-            type="button"
-            variant="outline"
-            disabled={pending || (!status.configured && !status.envFallbackAvailable)}
-            onClick={onSyncNow}
+        )}
+      </div>
+
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            key="form"
+            initial={reducedMotion ? false : { height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={reducedMotion ? undefined : { height: 0, opacity: 0 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
           >
-            Sincronizar ahora
-          </Button>
-          {status.configured && (
-            <Button
-              type="button"
-              variant="ghost"
-              disabled={pending}
-              className="text-muted-foreground hover:text-destructive"
-              onClick={onClear}
-            >
-              Quitar credenciales
-            </Button>
-          )}
-        </div>
-      </form>
+            <CredentialsForm
+              meta={meta}
+              configured={status.configured}
+              values={values}
+              onChange={(name, value) =>
+                setValues((prev) => ({ ...prev, [name]: value }))
+              }
+              fieldErrors={fieldErrors}
+              pending={pending}
+              typedCount={typedCount}
+              onSubmit={onSave}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

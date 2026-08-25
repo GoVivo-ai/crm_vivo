@@ -11,6 +11,8 @@ export type IntegrationMeta = {
   integration: Integration;
   label: string;
   description: string;
+  /** Logo oficial en public/brand/integrations/. */
+  logoSrc: string;
   fields: CredentialField[];
   helpUrl: string;
   helpText: string;
@@ -22,6 +24,7 @@ export const INTEGRATIONS_CATALOG: IntegrationMeta[] = [
     integration: "alegra",
     label: "Alegra",
     description: "Facturación, cartera, P&L y cashflow (Finanzas 360).",
+    logoSrc: "/brand/integrations/alegra.svg",
     fields: [
       { name: "email", label: "Email de la cuenta", kind: "email" },
       { name: "token", label: "Token de API", kind: "secret" },
@@ -33,6 +36,7 @@ export const INTEGRATIONS_CATALOG: IntegrationMeta[] = [
     integration: "windsor",
     label: "Windsor.ai",
     description: "Métricas de campañas de Meta y Google Ads (Marketing).",
+    logoSrc: "/brand/integrations/windsor.png",
     fields: [{ name: "apiKey", label: "API key", kind: "secret" }],
     helpUrl: "https://app.windsor.ai/",
     helpText: "app.windsor.ai → API Keys",
@@ -41,6 +45,7 @@ export const INTEGRATIONS_CATALOG: IntegrationMeta[] = [
     integration: "clickup",
     label: "ClickUp",
     description: "Progreso y salud de proyectos (Clientes 360).",
+    logoSrc: "/brand/integrations/clickup.svg",
     fields: [{ name: "token", label: "Token personal", kind: "secret" }],
     helpUrl: "https://app.clickup.com/settings/apps",
     helpText: "ClickUp → Settings → Apps",

@@ -11,6 +11,9 @@ export type SpotlightValues = {
   entityId: string | null;
   entityText: string;
   amountStr: string;
+  currency: "COP" | "USD";
+  /** TRM obligatoria cuando la moneda es USD (el backend normaliza a COP). */
+  trmStr: string;
   date: string;
   due: string;
   period: string;
@@ -39,23 +42,42 @@ export function SpotlightFields({
   catalog,
   values,
   set,
+  autoOpenEntity = false,
 }: {
   type: SpotlightType;
   catalog: SpotlightCatalog;
   values: SpotlightValues;
   set: (patch: Partial<SpotlightValues>) => void;
+  /** Ambigüedad del parseo (≥2 coincidencias) = combobox abierto. */
+  autoOpenEntity?: boolean;
 }) {
   const amountField = (
-    <Field label="Monto (COP)">
+    <Field label={`Monto (${values.currency})`}>
       <Input
         type="number"
         min={1}
         value={values.amountStr}
         onChange={(e) => set({ amountStr: e.target.value })}
-        aria-label="Monto en pesos"
+        aria-label={`Monto en ${values.currency}`}
       />
     </Field>
   );
+  // La TRM solo aplica a registros con moneda propia (no al movimiento,
+  // que hereda la moneda de su cuenta).
+  const trmField =
+    values.currency === "USD" && type !== "transaction" ? (
+      <Field label="TRM (COP por USD)">
+        <Input
+          type="number"
+          min={1}
+          step="0.01"
+          value={values.trmStr}
+          onChange={(e) => set({ trmStr: e.target.value })}
+          placeholder="4100"
+          aria-label="Tasa de cambio a pesos"
+        />
+      </Field>
+    ) : null;
   const dateField = (label: string) => (
     <Field label={label}>
       <Input
@@ -72,6 +94,8 @@ export function SpotlightFields({
       <>
         <Field label="Cliente">
           <Combobox
+            key={autoOpenEntity ? "ambiguo" : "normal"}
+            defaultOpen={autoOpenEntity}
             options={catalog.accounts}
             value={values.entityId}
             onValueChange={(id) => set({ entityId: id })}
@@ -80,6 +104,7 @@ export function SpotlightFields({
           />
         </Field>
         {amountField}
+        {trmField}
         {dateField("Emitida")}
         <Field label="Vence">
           <Input
@@ -115,6 +140,7 @@ export function SpotlightFields({
           />
         </Field>
         {amountField}
+        {trmField}
         {dateField("Fecha")}
       </>
     );
@@ -125,6 +151,8 @@ export function SpotlightFields({
       <>
         <Field label="Persona">
           <Combobox
+            key={autoOpenEntity ? "ambiguo" : "normal"}
+            defaultOpen={autoOpenEntity}
             options={catalog.employees}
             value={values.entityId}
             onValueChange={(id) => set({ entityId: id })}
@@ -134,6 +162,7 @@ export function SpotlightFields({
           />
         </Field>
         {amountField}
+        {trmField}
         <Field label="Periodo">
           <Input
             value={values.period}
@@ -151,6 +180,8 @@ export function SpotlightFields({
     <>
       <Field label="Cuenta">
         <Combobox
+          key={autoOpenEntity ? "ambiguo" : "normal"}
+          defaultOpen={autoOpenEntity}
           options={catalog.bankAccounts}
           value={values.entityId}
           onValueChange={(id) => set({ entityId: id })}

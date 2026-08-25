@@ -18,6 +18,7 @@ export function Combobox({
   placeholder = "Buscar…",
   ariaLabel,
   required = false,
+  defaultOpen = false,
 }: {
   options: ComboOption[];
   value: string | null;
@@ -25,11 +26,14 @@ export function Combobox({
   placeholder?: string;
   ariaLabel: string;
   required?: boolean;
+  /** Abierto al montar — ambigüedad del Spotlight (§12.6). */
+  defaultOpen?: boolean;
 }) {
   const selected = options.find((o) => o.id === value) ?? null;
 
   return (
     <ComboboxPrimitive.Root
+      defaultOpen={defaultOpen}
       items={options}
       itemToStringLabel={(item: ComboOption | null) => item?.name ?? ""}
       value={selected}

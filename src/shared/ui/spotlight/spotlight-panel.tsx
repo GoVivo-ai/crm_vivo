@@ -6,7 +6,7 @@ import { createInvoice } from "@/modules/finance/application/invoices-actions";
 import { createExpense } from "@/modules/purchases/application/purchases-actions";
 import { createPayrollPayment } from "@/modules/people/application/team-actions";
 import { createBankTransaction } from "@/modules/treasury/application/treasury-actions";
-import { formatMoney } from "@/shared/ui/format";
+import { formatCurrency } from "@/shared/ui/format";
 import { useActionSubmit } from "@/shared/ui/use-action-submit";
 import type { ParsedCommand, SpotlightCatalog, SpotlightType } from "./parser";
 import { shiftDays } from "./parser";
@@ -58,6 +58,8 @@ export function SpotlightPanel({
     entityText: ov.entityText ?? parsed.entityText,
     amountStr:
       ov.amountStr ?? (parsed.amount !== null ? String(parsed.amount) : ""),
+    currency: parsed.currency,
+    trmStr: ov.trmStr ?? "",
     date,
     due: ov.due ?? shiftDays(date, 30),
     period: ov.period ?? date.slice(0, 7),
@@ -69,13 +71,19 @@ export function SpotlightPanel({
 
   const amount = Number(values.amountStr);
   const amountOk = Number.isFinite(amount) && amount > 0;
+  const trm = Number(values.trmStr);
+  const trmOk =
+    values.currency === "COP" ||
+    type === "transaction" ||
+    (Number.isFinite(trm) && trm > 0);
+  const exchangeRate = values.currency === "USD" ? trm : undefined;
   const entityOk =
     type === "expense"
       ? values.entityText.trim().length > 0
       : type === "invoice"
         ? values.entityId !== null || values.entityText.trim().length > 0
         : values.entityId !== null;
-  const valid = amountOk && entityOk && !pending;
+  const valid = amountOk && entityOk && trmOk && !pending;
 
   const entityName =
     type === "expense"
@@ -102,7 +110,8 @@ export function SpotlightPanel({
             dueDate: values.due || null,
             status: values.status,
             total: amount,
-            currencyCode: "COP",
+            currencyCode: values.currency,
+            exchangeRate,
           }),
         base,
       );
@@ -115,7 +124,8 @@ export function SpotlightPanel({
             txnDate: values.date,
             status: "paid",
             total: amount,
-            currencyCode: "COP",
+            currencyCode: values.currency,
+            exchangeRate,
           }),
         base,
       );
@@ -126,7 +136,8 @@ export function SpotlightPanel({
             employeeId: values.entityId,
             period: values.period,
             amount,
-            currencyCode: "COP",
+            currencyCode: values.currency,
+            exchangeRate,
             paidAt: values.date,
           }),
         base,
@@ -163,7 +174,7 @@ export function SpotlightPanel({
           {entityName ? ` · ${entityName}` : ""}
         </p>
         <p className="mt-1 font-[family-name:var(--font-display)] text-[44px] leading-[1.1] font-extrabold text-[#011640] tabular-nums">
-          {amountOk ? formatMoney(amount) : "—"}
+          {amountOk ? formatCurrency(amount, values.currency) : "—"}
         </p>
         <p className="mt-1 text-xs font-semibold text-[#069B66]">
           Entendido del texto: {understood} · corrige abajo si algo no es
@@ -180,6 +191,11 @@ export function SpotlightPanel({
           catalog={catalog}
           values={values}
           set={set}
+          autoOpenEntity={
+            type !== "expense" &&
+            values.entityId === null &&
+            parsed.entityMatches.length > 1
+          }
         />
       </div>
       <div className="flex items-center gap-3 border-t border-[#EDF0F5] px-7 py-3">

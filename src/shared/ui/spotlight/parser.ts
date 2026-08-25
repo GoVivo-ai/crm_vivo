@@ -47,8 +47,12 @@ function normalize(s: string): string {
 }
 
 /** "14.6"→14.600.000 · "890k"→890.000 · "2.4m"→2.400.000 ·
- * "14.600.000"/"1450000"→literal. Regla: sin sufijo y <1000 = millones. */
-export function parseAmountToken(token: string): number | null {
+ * "14.600.000"/"1450000"→literal. Regla COP: sin sufijo y <1000 = millones;
+ * en USD el número es literal ("usd 500" → US$ 500). */
+export function parseAmountToken(
+  token: string,
+  millionsShortcut = true,
+): number | null {
   const t = token.replace(/^\$/, "");
   if (/^\d{1,3}(\.\d{3})+$/.test(t)) return Number(t.replaceAll(".", ""));
   const m = /^(\d+(?:[.,]\d+)?)([km])?$/i.exec(t);
@@ -58,6 +62,7 @@ export function parseAmountToken(token: string): number | null {
   const suffix = m[2]?.toLowerCase();
   if (suffix === "k") return Math.round(n * 1_000);
   if (suffix === "m") return Math.round(n * 1_000_000);
+  if (!millionsShortcut) return Math.round(n);
   return n < 1000 ? Math.round(n * 1_000_000) : Math.round(n);
 }
 
@@ -128,6 +133,8 @@ export function matchEntities(
 
 export type ParsedCommand = {
   type: SpotlightType | null;
+  /** Sin token = COP; "usd" en el texto = USD (la TRM se pide en el panel). */
+  currency: "COP" | "USD";
   /** Texto de entidad tal como se escribió (proveedor libre en gasto). */
   entityText: string;
   entityMatches: SpotlightEntity[];
@@ -152,17 +159,23 @@ export function parseCommand(
   );
   if (!def || tokens.length === 0) {
     return {
-      type: null, entityText: "", entityMatches: [],
+      type: null, currency: "COP", entityText: "", entityMatches: [],
       amount: null, date: null, understood: [],
     };
   }
 
-  const { date, rest } = takeDate(tokens.slice(1), today);
+  const { date, rest: afterDate } = takeDate(tokens.slice(1), today);
+  const currency: "COP" | "USD" = afterDate.some(
+    (t) => normalize(t) === "usd",
+  )
+    ? "USD"
+    : "COP";
+  const rest = afterDate.filter((t) => normalize(t) !== "usd");
   let amount: number | null = null;
   const entityTokens: string[] = [];
   for (let i = rest.length - 1; i >= 0; i--) {
     const tokenAmount: number | null =
-      amount === null ? parseAmountToken(rest[i]) : null;
+      amount === null ? parseAmountToken(rest[i], currency === "COP") : null;
     if (tokenAmount !== null) amount = tokenAmount;
     else entityTokens.unshift(rest[i]);
   }
@@ -191,8 +204,11 @@ export function parseCommand(
             : "cliente",
     );
   }
-  if (amount !== null) understood.push("monto");
+  if (amount !== null) understood.push(currency === "USD" ? "monto usd" : "monto");
   if (date) understood.push("fecha");
 
-  return { type: def.key, entityText, entityMatches, amount, date, understood };
+  return {
+    type: def.key, currency, entityText, entityMatches,
+    amount, date, understood,
+  };
 }

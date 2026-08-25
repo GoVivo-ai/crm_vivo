@@ -138,9 +138,20 @@ export function SpotlightOverlay({
             />
             <div className="hidden gap-1.5 sm:flex">
               {chips.map((d) => (
-                <Kbd key={d.key}>
-                  {d.letter} {d.label}
-                </Kbd>
+                <button
+                  key={d.key}
+                  type="button"
+                  onClick={() => {
+                    setText(`${d.words[0]} `);
+                    inputRef.current?.focus();
+                  }}
+                  className="rounded-md outline-none focus-visible:outline-2 focus-visible:outline-[#04D98B]"
+                  aria-label={`Registrar ${d.label}`}
+                >
+                  <Kbd>
+                    {d.letter} {d.label}
+                  </Kbd>
+                </button>
               ))}
             </div>
           </div>

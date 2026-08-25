@@ -180,7 +180,7 @@ CREATE TABLE "users" (
 	"name" text,
 	"image_url" text,
 	"role" "user_role" DEFAULT 'sales' NOT NULL,
-	"is_active" boolean DEFAULT true NOT NULL,
+	"is_active" boolean DEFAULT false NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "users_clerk_id_unique" UNIQUE("clerk_id")

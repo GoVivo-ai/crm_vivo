@@ -4,7 +4,8 @@ const isPublicRoute = createRouteMatcher([
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/api/webhooks(.*)",
-  "/api/cron(.*)", // protegidas por CRON_SECRET, no por sesión
+  // NOTA: /api/cron se agregará aquí cuando existan las rutas (Fase 3),
+  // siempre validando Authorization: Bearer CRON_SECRET — coordina Integraciones.
 ]);
 
 // Capa 1 del RBAC: autenticación por ruta. El chequeo fino por rol vive

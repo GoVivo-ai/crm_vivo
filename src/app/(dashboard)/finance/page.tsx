@@ -67,6 +67,7 @@ export default async function FinancePage() {
         <StatTile
           label="Resultado neto del mes"
           amount={pnlCurrentMonth?.netIncome ?? null}
+          emphasis
         />
         <StatTile
           label="Saldo en bancos"

@@ -13,6 +13,7 @@ import { listAccounts } from "@/modules/crm/application/accounts-actions";
 import { AccountForm } from "@/modules/crm/ui/account-form";
 import { AccountStatusBadge } from "@/modules/crm/ui/labels";
 import { ActionError } from "@/shared/ui/action-error";
+import { EmptyState } from "@/shared/ui/empty-state";
 
 export default async function AccountsPage({
   searchParams,
@@ -43,11 +44,19 @@ export default async function AccountsPage({
       </div>
 
       {accounts.length === 0 ? (
-        <p className="mt-8 text-sm text-muted-foreground">
-          {search
-            ? `Sin resultados para "${search}".`
-            : "Todavía no hay cuentas. Crea la primera con “Nueva cuenta”."}
-        </p>
+        <EmptyState
+          title={search ? `Sin resultados para "${search}"` : "Aún no hay cuentas"}
+          hint={
+            search
+              ? "Prueba con otro nombre o revisa la ortografía."
+              : "Las cuentas son las empresas con las que trabajas: de prospecto a cliente activo."
+          }
+          action={
+            search ? undefined : (
+              <AccountForm triggerLabel="Crear la primera cuenta" />
+            )
+          }
+        />
       ) : (
         <div className="overflow-x-auto rounded-lg border bg-card">
           <Table>

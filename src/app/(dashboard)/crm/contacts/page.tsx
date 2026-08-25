@@ -13,6 +13,7 @@ import { listAccounts } from "@/modules/crm/application/accounts-actions";
 import { listContacts } from "@/modules/crm/application/contacts-actions";
 import { ContactForm } from "@/modules/crm/ui/contact-form";
 import { ActionError } from "@/shared/ui/action-error";
+import { EmptyState } from "@/shared/ui/empty-state";
 
 export default async function ContactsPage({
   searchParams,
@@ -53,11 +54,22 @@ export default async function ContactsPage({
       </div>
 
       {contacts.length === 0 ? (
-        <p className="mt-8 text-sm text-muted-foreground">
-          {search
-            ? `Sin resultados para "${search}".`
-            : "Todavía no hay contactos. Crea el primero con “Nuevo contacto”."}
-        </p>
+        <EmptyState
+          title={search ? `Sin resultados para "${search}"` : "Aún no hay contactos"}
+          hint={
+            search
+              ? "Prueba con otro nombre o revisa la ortografía."
+              : "Registra a las personas con las que negocias: cada deal y actividad se cuelga de un contacto."
+          }
+          action={
+            search ? undefined : (
+              <ContactForm
+                accounts={accountOptions}
+                triggerLabel="Crear el primer contacto"
+              />
+            )
+          }
+        />
       ) : (
         <div className="overflow-x-auto rounded-lg border bg-card">
           <Table>

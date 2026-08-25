@@ -31,7 +31,7 @@ export function DealCardContent({
 }: DealCardContentProps) {
   const days = daysInStage(deal, today);
   return (
-    <div className="flex flex-col gap-1.5 rounded-md border bg-card p-3 text-left shadow-xs">
+    <div className="flex flex-col gap-1.5 rounded-lg border bg-card p-3 text-left shadow-xs transition-[box-shadow,translate] duration-150 hover:-translate-y-0.5 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0">
       <p className="text-sm leading-snug font-medium">{deal.title}</p>
       <p className="text-xs text-muted-foreground">{accountName}</p>
       <div className="flex items-center justify-between gap-2">

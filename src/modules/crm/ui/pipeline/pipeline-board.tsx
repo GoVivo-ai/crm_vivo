@@ -137,12 +137,14 @@ export function PipelineBoard({
       </div>
       <DragOverlay>
         {activeDeal && (
-          <DealCardContent
+          <div className="rotate-2 opacity-95 shadow-lg motion-reduce:rotate-0">
+            <DealCardContent
             deal={activeDeal}
             accountName={accountNames.get(activeDeal.accountId) ?? "—"}
             overdue={false}
             today={today}
           />
+          </div>
         )}
       </DragOverlay>
     </DndContext>

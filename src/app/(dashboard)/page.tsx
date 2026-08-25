@@ -7,6 +7,8 @@ import { getCurrentUser } from "@/modules/identity/application/get-current-user"
 import { readableResources } from "@/modules/identity/domain/permissions";
 import { StatTile } from "@/modules/finance/ui/stat-tile";
 import { HomePanel, HomeSyncPanel, MoneyTile } from "@/shared/ui/home-panels";
+import { Kpi } from "@/shared/ui/kpi";
+import { StaggerIn } from "@/shared/ui/stagger";
 
 /**
  * Home ejecutivo 360 (Fase 5), compuesto por rol: cada panel se consulta
@@ -54,11 +56,26 @@ export default async function DashboardHome() {
 
   const mkt = marketing?.ok === true ? marketing.data : null;
 
+  const today = new Intl.DateTimeFormat("es-CO", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  }).format(new Date());
+  const firstName = user?.name?.split(" ")[0] ?? null;
+
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold">360</h1>
+    <div className="flex flex-col gap-5">
+      <div>
+        <h1 className="text-3xl font-bold">
+          {firstName ? `Hola, ${firstName}` : "360"}
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Así está GoVivo hoy · {today}
+        </p>
+      </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
+        <StaggerIn>
         {board !== null && (
           <HomePanel title="Pipeline comercial" href="/crm/pipeline">
             {board.ok ? (
@@ -107,10 +124,7 @@ export default async function DashboardHome() {
           <HomePanel title="Marketing · últimos 30 días" href="/marketing">
             {mkt ? (
               <div className="grid grid-cols-2 gap-3">
-                <div className="flex flex-col gap-1 rounded-lg border bg-card p-4">
-                  <p className="text-xs text-muted-foreground">Leads</p>
-                  <p className="font-mono text-xl">{mkt.totals.leads}</p>
-                </div>
+                <Kpi label="Leads" value={mkt.totals.leads} kind="count" />
                 <MoneyTile label="Spend" amounts={mkt.totals.spendByCurrency} />
               </div>
             ) : (
@@ -151,6 +165,7 @@ export default async function DashboardHome() {
             )}
           </HomePanel>
         )}
+        </StaggerIn>
       </div>
 
       <HomeSyncPanel />

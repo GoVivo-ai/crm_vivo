@@ -10,6 +10,7 @@ import {
 import { listAccounts } from "@/modules/crm/application/accounts-actions";
 import { AccountStatusBadge } from "@/modules/crm/ui/labels";
 import { ActionError } from "@/shared/ui/action-error";
+import { EmptyState } from "@/shared/ui/empty-state";
 
 /** Cuentas que ya son (o fueron) clientes — las prospect viven en CRM. */
 export default async function ClientsPage() {
@@ -25,10 +26,10 @@ export default async function ClientsPage() {
       </div>
 
       {clients.length === 0 ? (
-        <p className="mt-8 text-sm text-muted-foreground">
-          Todavía no hay clientes. Cuando un deal se marque ganado en el
-          pipeline, la cuenta aparecerá aquí.
-        </p>
+        <EmptyState
+          title="Aún no hay clientes"
+          hint="Cuando un deal se marque ganado en el pipeline, la cuenta aparecerá aquí con sus servicios, proyectos y MRR."
+        />
       ) : (
         <div className="overflow-x-auto rounded-lg border bg-card">
           <Table>

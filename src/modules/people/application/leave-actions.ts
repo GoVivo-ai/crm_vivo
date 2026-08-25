@@ -15,6 +15,7 @@ import {
   decideLeaveSchema,
   leaveRequestInputSchema,
 } from "@/modules/people/domain/validation";
+import { countLeaveDays } from "@/modules/people/domain/leave-days";
 import { findEmployeeByUserId } from "@/modules/people/infrastructure/people-repository";
 import * as repo from "@/modules/people/infrastructure/leave-repository";
 
@@ -119,10 +120,7 @@ export async function decideLeaveRequest(
       type: row.type,
       startDate: row.startDate,
       endDate: row.endDate,
-      days:
-        Math.round(
-          (Date.parse(row.endDate) - Date.parse(row.startDate)) / 86_400_000,
-        ) + 1,
+      days: countLeaveDays(row.startDate, row.endDate),
       reason: row.reason,
       status: row.status,
       requestedBy: row.requestedBy,

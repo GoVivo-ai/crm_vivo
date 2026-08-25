@@ -6,11 +6,7 @@ import type { LeaveRequestInput } from "@/modules/people/domain/validation";
 
 type LeaveRow = typeof leaveRequests.$inferSelect;
 
-const dayCount = (start: string, end: string) =>
-  Math.round(
-    (Date.parse(`${end}T00:00:00Z`) - Date.parse(`${start}T00:00:00Z`)) /
-      86_400_000,
-  ) + 1;
+import { countLeaveDays } from "@/modules/people/domain/leave-days";
 
 function toView(row: LeaveRow, employeeName: string | null): LeaveRequestView {
   return {
@@ -20,7 +16,7 @@ function toView(row: LeaveRow, employeeName: string | null): LeaveRequestView {
     type: row.type,
     startDate: row.startDate,
     endDate: row.endDate,
-    days: dayCount(row.startDate, row.endDate),
+    days: countLeaveDays(row.startDate, row.endDate),
     reason: row.reason,
     status: row.status,
     requestedBy: row.requestedBy,
@@ -96,15 +92,16 @@ export async function decideLeave(
   return rows[0] ?? null;
 }
 
-/** Días aprobados del año en curso para un perfil. Aproximación
- * aceptada (QA): una ausencia que cruza el año cuenta completa en el
- * año de su fecha de inicio. */
+/** Días (hábiles CO) aprobados del año en curso. Aproximación aceptada
+ * (QA): una ausencia que cruza el año cuenta completa en el año de su
+ * fecha de inicio. El conteo usa la función única countLeaveDays. */
 export async function approvedDaysThisYear(
   employeeId: string,
 ): Promise<number> {
-  const [row] = await db
+  const rows = await db
     .select({
-      days: sql<number>`coalesce(sum((${leaveRequests.endDate} - ${leaveRequests.startDate}) + 1), 0)::int`,
+      startDate: leaveRequests.startDate,
+      endDate: leaveRequests.endDate,
     })
     .from(leaveRequests)
     .where(
@@ -114,5 +111,8 @@ export async function approvedDaysThisYear(
         sql`extract(year from ${leaveRequests.startDate}) = extract(year from current_date)`,
       ),
     );
-  return row?.days ?? 0;
+  return rows.reduce(
+    (acc, r) => acc + countLeaveDays(r.startDate, r.endDate),
+    0,
+  );
 }

@@ -77,6 +77,8 @@ export type LeaveRequestView = {
   type: LeaveType;
   startDate: string;
   endDate: string;
+  /** DÍAS HÁBILES (L–V sin festivos CO) — misma unidad que
+   * annualLeaveDays/remainingDays; ver LEAVE_DAY_UNIT. */
   days: number;
   reason: string | null;
   status: LeaveStatus;
@@ -87,7 +89,8 @@ export type LeaveRequestView = {
   createdAt: Date;
 };
 
-/** Saldo anual de días del empleado del guard. */
+/** Saldo anual del empleado del guard — TODO en días hábiles CO
+ * (LEAVE_DAY_UNIT), incluida annualLeaveDays. */
 export type LeaveBalance = {
   annualLeaveDays: number;
   approvedDaysThisYear: number;

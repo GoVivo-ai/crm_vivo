@@ -86,3 +86,38 @@ export async function listAccountsWorstHealth(): Promise<
     worstHealth: decode[String(r.worstHealth)] ?? "unknown",
   }));
 }
+
+export type AccountOptionWithMrr = {
+  id: string;
+  name: string;
+  /** Fees mensuales activos por moneda (mismo cálculo que getAccount360). */
+  mrrByCurrency: Record<string, number>;
+};
+
+/** Todas las cuentas (para selects) con su MRR activo por moneda. */
+export async function listAccountsWithMrr(): Promise<AccountOptionWithMrr[]> {
+  const rows = await db
+    .select({
+      id: accounts.id,
+      name: accounts.name,
+      currency: accountServices.currency,
+      total: sql<string | null>`sum(${accountServices.monthlyFee}) filter (where ${accountServices.isActive})`,
+    })
+    .from(accounts)
+    .leftJoin(accountServices, eq(accountServices.accountId, accounts.id))
+    .groupBy(accounts.id, accounts.name, accountServices.currency)
+    .orderBy(accounts.name);
+  const byAccount = new Map<string, AccountOptionWithMrr>();
+  for (const r of rows) {
+    let option = byAccount.get(r.id);
+    if (!option) {
+      option = { id: r.id, name: r.name, mrrByCurrency: {} };
+      byAccount.set(r.id, option);
+    }
+    if (r.currency && r.total && Number(r.total) > 0) {
+      option.mrrByCurrency[r.currency] =
+        (option.mrrByCurrency[r.currency] ?? 0) + Number(r.total);
+    }
+  }
+  return [...byAccount.values()];
+}

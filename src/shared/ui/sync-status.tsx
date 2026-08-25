@@ -8,6 +8,8 @@ type SyncStatusProps = {
   syncedAt: Date | null;
   /** Minutos tras los cuales el dato deja de considerarse fresco. */
   freshForMinutes?: number;
+  /** Mensaje si el último sync falló — pinta el punto en rojo. */
+  error?: string | null;
   className?: string;
 };
 
@@ -20,12 +22,14 @@ export function SyncStatus({
   source,
   syncedAt,
   freshForMinutes = 360,
+  error = null,
   className,
 }: SyncStatusProps) {
   const isFresh = syncedAt !== null && isFreshSync(syncedAt, freshForMinutes);
 
-  const label =
-    syncedAt === null
+  const label = error
+    ? `${source} · error de sincronización`
+    : syncedAt === null
       ? `${source} · sin sincronizar`
       : `${source} · sincronizado ${formatRelativeTime(syncedAt)}`;
 
@@ -40,12 +44,16 @@ export function SyncStatus({
         aria-hidden
         className={cn(
           "size-2 rounded-full",
-          syncedAt === null && "bg-muted-foreground/40",
-          syncedAt !== null && isFresh && "bg-health-ok sync-pulse-fresh",
-          syncedAt !== null && !isFresh && "bg-health-warn",
+          error
+            ? "bg-health-critical"
+            : syncedAt === null
+              ? "bg-muted-foreground/40"
+              : isFresh
+                ? "bg-health-ok sync-pulse-fresh"
+                : "bg-health-warn",
         )}
       />
-      {label}
+      <span title={error ?? undefined}>{label}</span>
     </span>
   );
 }

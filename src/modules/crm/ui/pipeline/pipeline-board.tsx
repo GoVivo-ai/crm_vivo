@@ -141,6 +141,7 @@ export function PipelineBoard({
             deal={activeDeal}
             accountName={accountNames.get(activeDeal.accountId) ?? "—"}
             overdue={false}
+            today={today}
           />
         )}
       </DragOverlay>

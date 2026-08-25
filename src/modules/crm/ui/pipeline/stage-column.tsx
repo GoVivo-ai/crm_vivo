@@ -59,6 +59,7 @@ export function StageColumn({ stage, accountNames, today }: StageColumnProps) {
             <DealCard
               key={deal.id}
               deal={deal}
+              today={today}
               accountName={accountNames.get(deal.accountId) ?? "—"}
               overdue={
                 deal.expectedCloseDate !== null &&

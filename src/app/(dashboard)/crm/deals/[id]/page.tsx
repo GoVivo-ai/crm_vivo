@@ -8,7 +8,10 @@ import {
 } from "@/modules/crm/application/activities-actions";
 import { listServices } from "@/modules/clients/application/services-actions";
 import { ConvertDealDialog } from "@/modules/clients/ui/convert-deal-dialog";
-import { getPipelineBoard } from "@/modules/crm/application/deals-actions";
+import {
+  getDeal,
+  getPipelineBoard,
+} from "@/modules/crm/application/deals-actions";
 import { ActivityForm } from "@/modules/crm/ui/activity-form";
 import { ActivityTimeline } from "@/modules/crm/ui/activity-timeline";
 import { ProposalStatusBadge } from "@/modules/crm/ui/labels";
@@ -20,14 +23,20 @@ export default async function DealDetailPage({
   params,
 }: PageProps<"/crm/deals/[id]">) {
   const { id } = await params;
-  const boardResult = await getPipelineBoard();
-  if (!boardResult.ok) return <ActionError message={boardResult.error} />;
+  const dealResult = await getDeal(id);
+  if (!dealResult.ok) {
+    if (dealResult.error === "No encontrado") notFound();
+    return <ActionError message={dealResult.error} />;
+  }
+  const deal = dealResult.data;
 
-  const stage = boardResult.data.stages.find((s) =>
-    s.deals.some((d) => d.id === id),
-  );
-  const deal = stage?.deals.find((d) => d.id === id);
-  if (!stage || !deal) notFound();
+  // El board solo aporta metadata de la etapa (nombre, isWon/isLost);
+  // pendiente un listStages de backend para no cargar los deals.
+  const boardResult = await getPipelineBoard();
+  const stage = boardResult.ok
+    ? boardResult.data.stages.find((s) => s.id === deal.stageId)
+    : undefined;
+  if (!stage) return <ActionError message="Etapa del deal no disponible" />;
 
   const [accountResult, activitiesResult, proposalsResult, catalogResult] =
     await Promise.all([

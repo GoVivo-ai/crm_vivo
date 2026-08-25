@@ -1,6 +1,17 @@
+import { getSyncStatus } from "@/modules/finance/application/finance-actions";
+import type { SyncSource } from "@/modules/finance/domain/types";
 import { SyncStatus } from "@/shared/ui/sync-status";
 
-export default function DashboardHome() {
+const SOURCE_LABELS: Record<SyncSource, string> = {
+  alegra: "Alegra",
+  clickup: "ClickUp",
+  windsor: "Windsor",
+};
+
+export default async function DashboardHome() {
+  const syncResult = await getSyncStatus();
+  const sync = syncResult.ok ? syncResult.data : null;
+
   return (
     <div className="mx-auto max-w-3xl">
       <h1 className="text-2xl font-semibold">360</h1>
@@ -10,9 +21,17 @@ export default function DashboardHome() {
       </p>
       <div className="mt-6 flex flex-col gap-2 rounded-lg border bg-card p-4">
         <p className="text-sm font-medium">Estado de las fuentes</p>
-        <SyncStatus source="Alegra" syncedAt={null} />
-        <SyncStatus source="ClickUp" syncedAt={null} />
-        <SyncStatus source="Windsor" syncedAt={null} />
+        {(Object.keys(SOURCE_LABELS) as SyncSource[]).map((source) => {
+          const run = sync?.[source] ?? null;
+          return (
+            <SyncStatus
+              key={source}
+              source={SOURCE_LABELS[source]}
+              syncedAt={run?.status === "success" ? run.finishedAt : null}
+              error={run?.status === "error" ? run.error : null}
+            />
+          );
+        })}
       </div>
     </div>
   );

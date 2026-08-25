@@ -12,14 +12,24 @@ type DealCardContentProps = {
   deal: Deal;
   accountName: string;
   overdue: boolean;
+  /** Hoy (YYYY-MM-DD) desde el server, para calcular aging sin impurezas. */
+  today: string;
 };
+
+/** Días que el deal lleva en su etapa actual (stageEnteredAt de backend). */
+function daysInStage(deal: Deal, today: string): number {
+  const ms = Date.parse(`${today}T00:00:00Z`) - deal.stageEnteredAt.getTime();
+  return Math.max(0, Math.floor(ms / 86_400_000));
+}
 
 /** Cuerpo visual de la card — compartido entre la lista y el DragOverlay. */
 export function DealCardContent({
   deal,
   accountName,
   overdue,
+  today,
 }: DealCardContentProps) {
+  const days = daysInStage(deal, today);
   return (
     <div className="flex flex-col gap-1.5 rounded-md border bg-card p-3 text-left shadow-xs">
       <p className="text-sm leading-snug font-medium">{deal.title}</p>
@@ -40,13 +50,25 @@ export function DealCardContent({
           </span>
         )}
       </div>
+      {deal.closedAt === null && (
+        <span
+          className={cn(
+            "text-xs",
+            days >= 30 && "text-health-critical",
+            days >= 14 && days < 30 && "text-health-warn",
+            days < 14 && "text-muted-foreground",
+          )}
+        >
+          {days === 0 ? "Entró hoy a la etapa" : `${days} d en etapa`}
+        </span>
+      )}
     </div>
   );
 }
 
 type DealCardProps = DealCardContentProps;
 
-export function DealCard({ deal, accountName, overdue }: DealCardProps) {
+export function DealCard({ deal, accountName, overdue, today }: DealCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: deal.id });
 
@@ -70,6 +92,7 @@ export function DealCard({ deal, accountName, overdue }: DealCardProps) {
           deal={deal}
           accountName={accountName}
           overdue={overdue}
+          today={today}
         />
       </Link>
     </div>

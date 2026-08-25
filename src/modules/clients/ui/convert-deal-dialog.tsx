@@ -60,7 +60,7 @@ export function ConvertDealDialog({
         startDate: today,
       }));
     submit(() => convertDealToClient({ dealId, services }), {
-      successMessage: "Deal ganado: la cuenta ya es cliente",
+      successMessage: "Negocio ganado: la cuenta ya es cliente",
       onSuccess: (data) => {
         setOpen(false);
         router.push(`/clients/${data.accountId}`);

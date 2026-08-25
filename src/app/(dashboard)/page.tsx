@@ -93,7 +93,11 @@ export default async function DashboardHome() {
       financeData.pnlCurrentMonth.payrollCop
     : 0;
   const verdict = computeVerdict({
-    cashCop: treasuryData?.totalCashCop ?? null,
+    // Sin cuentas bancarias, caja "0" no es dato: es ausencia (M4).
+    cashCop:
+      treasuryData && treasuryData.accounts.length > 0
+        ? treasuryData.totalCashCop
+        : null,
     coverageMonths:
       treasuryData && burn > 0 ? treasuryData.totalCashCop / burn : null,
     netIncomeCop: financeData?.pnlCurrentMonth?.netIncomeCop ?? null,

@@ -24,7 +24,7 @@ export default async function ClientsPage() {
       {clients.length === 0 ? (
         <EmptyState
           title="Aún no hay clientes"
-          hint="Cuando un deal se marque ganado en el pipeline, la cuenta aparecerá aquí con sus servicios, proyectos y MRR."
+          hint="Cuando un negocio se marque ganado en el pipeline, la cuenta aparecerá aquí con sus servicios, proyectos y MRR."
         />
       ) : (
         <div className="overflow-x-auto rounded-lg border bg-card">

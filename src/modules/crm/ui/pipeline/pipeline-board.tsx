@@ -112,7 +112,7 @@ export function PipelineBoard({
       .catch(() => {
         // Rechazo fuera del contrato (red caída, server down): rollback.
         setStages(snapshot.current);
-        toast.error("No se pudo mover el deal");
+        toast.error("No se pudo mover el negocio");
       });
   }
 

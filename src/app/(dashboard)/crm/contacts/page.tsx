@@ -58,7 +58,7 @@ export default async function ContactsPage({
           hint={
             search
               ? "Prueba con otro nombre o revisa la ortografía."
-              : "Registra a las personas con las que negocias: cada deal y actividad se cuelga de un contacto."
+              : "Registra a las personas con las que negocias: cada negocio y actividad se cuelga de un contacto."
           }
           action={
             search ? undefined : (

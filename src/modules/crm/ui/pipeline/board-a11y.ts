@@ -27,7 +27,7 @@ function makeAnnouncements(
   getStages: () => BoardStage[],
 ): Announcements {
   const dealTitle = (id: string | number) =>
-    findDeal(getStages(), String(id))?.title ?? "el deal";
+    findDeal(getStages(), String(id))?.title ?? "el negocio";
   const stageName = (id: string | number | undefined) => {
     if (id === undefined) return null;
     const stages = getStages();
@@ -59,7 +59,7 @@ function makeAnnouncements(
 
 export const screenReaderInstructions: ScreenReaderInstructions = {
   draggable:
-    "Para mover un deal, presiona espacio o enter, usa las flechas para " +
+    "Para mover un negocio, presiona espacio o enter, usa las flechas para " +
     "cambiar de posición o etapa, y vuelve a presionar espacio o enter " +
     "para soltarlo. Presiona escape para cancelar.",
 };

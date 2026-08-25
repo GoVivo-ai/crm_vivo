@@ -36,7 +36,7 @@ export default async function DealDetailPage({
   const stage = boardResult.ok
     ? boardResult.data.stages.find((s) => s.id === deal.stageId)
     : undefined;
-  if (!stage) return <ActionError message="Etapa del deal no disponible" />;
+  if (!stage) return <ActionError message="Etapa del negocio no disponible" />;
 
   const [accountResult, activitiesResult, proposalsResult, catalogResult] =
     await Promise.all([

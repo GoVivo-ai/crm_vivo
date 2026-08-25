@@ -78,7 +78,7 @@ export function DealForm({
           expectedCloseDate: (form.get("expectedCloseDate") as string) || null,
         }),
       {
-        successMessage: `Deal ${form.get("title")} creado`,
+        successMessage: `Negocio ${form.get("title")} creado`,
         onSuccess: () => setOpen(false),
       },
     );
@@ -97,10 +97,10 @@ export function DealForm({
     <>
       <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
         {!hideTrigger && (
-          <DialogTrigger render={<Button size="sm" />}>Nuevo deal</DialogTrigger>
+          <DialogTrigger render={<Button size="sm" />}>Nuevo negocio</DialogTrigger>
         )}
         <CaptureDialogContent>
-          <CaptureLomo icon={Handshake} module="CRM" title={"Nuevo deal"} context={lomoContext} />
+          <CaptureLomo icon={Handshake} module="CRM" title={"Nuevo negocio"} context={lomoContext} />
         <div className="flex min-w-0 flex-col">
         <CaptureDialogBar subtitle="Pipeline · CRM" />
           <form ref={formRef} onSubmit={onSubmit}>
@@ -114,7 +114,7 @@ export function DealForm({
                 <div className="flex flex-col gap-1.5">
                   <Label>Cuenta</Label>
                   <Combobox
-                    ariaLabel="Cuenta del deal"
+                    ariaLabel="Cuenta del negocio"
                     options={accounts}
                     value={accountId}
                     onValueChange={setAccountId}
@@ -167,7 +167,7 @@ export function DealForm({
                 <FieldError errors={fieldErrors.expectedCloseDate} />
               </div>
             </CaptureDialogBody>
-            <CaptureDialogFooter submitLabel="Crear deal" pending={pending} />
+            <CaptureDialogFooter submitLabel="Crear negocio" pending={pending} />
           </form>
         </div>
       </CaptureDialogContent>

@@ -60,7 +60,9 @@ export function MoneyFranja({
   cashflowSeries,
 }: MoneyFranjaProps) {
   const net = finance.pnlCurrentMonth?.netIncomeCop ?? null;
-  const cashNow = treasury?.totalCashCop ?? null;
+  // Sin cuentas bancarias, caja "0" no es dato: es ausencia (M4).
+  const cashNow =
+    treasury && treasury.accounts.length > 0 ? treasury.totalCashCop : null;
   // Saldo al cierre de mes reconstruido hacia atrás desde el saldo actual
   // restando el flujo neto de cada mes (decisión del diseñador, §10).
   const balances: number[] = [];

@@ -27,7 +27,8 @@ type IntegrationCardProps = {
 };
 
 export function IntegrationCard({ meta, status, today }: IntegrationCardProps) {
-  const [open, setOpen] = useState(!status.configured && !meta.oauth);
+  // Siempre cerrada al inicio (decisión de Victor); solo la abre el usuario.
+  const [open, setOpen] = useState(false);
   const [values, setValues] = useState<Record<string, string>>({});
   const { submit, pending, fieldErrors } = useActionSubmit<unknown>();
   const reducedMotion = useReducedMotion();
@@ -174,7 +175,7 @@ export function IntegrationCard({ meta, status, today }: IntegrationCardProps) {
               aria-expanded={open}
               onClick={() => setOpen((v) => !v)}
             >
-              Credenciales
+              {status.configured ? "Credenciales" : "Configurar credenciales"}
               <ChevronDown
                 className={cn(
                   "size-3.5 transition-transform",

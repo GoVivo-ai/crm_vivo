@@ -554,7 +554,7 @@ con la checklist en 0 de M como guía de onboarding.
 `#E7EBF3`); los selects cortos (tipo de contrato, jornada, RH) son segmented o
 select según la regla §12.3; tallas como inputs cortos de 3 columnas.
 
-## 15. Sistema de vista-detalle y listas (propuesta — pendiente de aprobación de Victor)
+## 15. Sistema de vista-detalle y listas (aprobado por Victor 2026-08-26)
 
 Origen: auditoría en producción 2026-08-26 — las vistas de la era F1-F2 quedaron
 pre-sistema: detalle de negocio (columna flotante sin cabecera, cifras en fuente

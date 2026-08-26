@@ -152,3 +152,20 @@ export const activities = pgTable(
     ),
   ],
 );
+
+/** Historial de transiciones de etapa — un evento por movimiento real
+ * (el timeline del negocio pinta la historia completa). */
+export const dealStageEvents = pgTable("deal_stage_events", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  dealId: uuid("deal_id")
+    .notNull()
+    .references(() => deals.id, { onDelete: "cascade" }),
+  fromStageId: uuid("from_stage_id").references(() => pipelineStages.id),
+  toStageId: uuid("to_stage_id")
+    .notNull()
+    .references(() => pipelineStages.id),
+  movedBy: uuid("moved_by").references(() => users.id),
+  movedAt: timestamp("moved_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});

@@ -13,6 +13,7 @@ import {
   convertDealAtomic,
   findExistingServiceIds,
 } from "@/modules/clients/infrastructure/convert-deal-repository";
+import { insertStageEvent } from "@/modules/crm/infrastructure/stage-events-repository";
 
 export type ConvertDealResult = {
   deal: Deal;
@@ -33,7 +34,7 @@ export async function convertDealToClient(
   if (!parsed.ok) return parsed.result;
   const { dealId, services } = parsed.data;
 
-  return runAction("crm", "write", async () => {
+  return runAction("crm", "write", async (user) => {
     const deal = await dealsRepo.findDealById(dealId);
     if (!deal) throw new DomainRuleError("Deal no encontrado");
     if (deal.closedAt) {
@@ -63,6 +64,14 @@ export async function convertDealToClient(
       servicesToContract: services,
       closedAt: new Date(),
     });
+    if (deal.stageId !== wonStage.id) {
+      await insertStageEvent({
+        dealId,
+        fromStageId: deal.stageId,
+        toStageId: wonStage.id,
+        movedBy: user.id,
+      });
+    }
 
     revalidatePath("/crm");
     revalidatePath("/clients");

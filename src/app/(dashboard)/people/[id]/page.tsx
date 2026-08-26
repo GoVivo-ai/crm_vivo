@@ -23,6 +23,7 @@ import { NotesCard } from "@/modules/people/ui/file/notes-card";
 import { PersonalCard } from "@/modules/people/ui/file/personal-card";
 import { MyLeaveList } from "@/modules/people/ui/leave-lists";
 import { ActionError } from "@/shared/ui/action-error";
+import { CrumbTitle } from "@/shared/ui/page-title";
 import { hasWrite } from "@/shared/ui/requires-write";
 
 /** Expediente de empleado (§14): la "Cuenta 360 de una persona".
@@ -53,6 +54,7 @@ export default async function EmployeeFilePage({
     if (!member) return <ActionError message={detailResult.error} />;
     return (
       <div className="flex flex-col gap-5">
+        <CrumbTitle title={member.fullName} />
         <Link
           href="/people"
           className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
@@ -188,6 +190,7 @@ export default async function EmployeeFilePage({
 
   return (
     <div className="flex flex-col gap-5">
+      <CrumbTitle title={detail.fullName} />
       <Link
         href="/people"
         className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"

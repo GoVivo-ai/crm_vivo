@@ -6,6 +6,7 @@ import { listContacts } from "@/modules/crm/application/contacts-actions";
 import { AccountForm } from "@/modules/crm/ui/account-form";
 import { AccountStatusBadge } from "@/modules/crm/ui/labels";
 import { ActionError } from "@/shared/ui/action-error";
+import { CrumbTitle } from "@/shared/ui/page-title";
 import { formatDate } from "@/shared/ui/format";
 
 function Item({ label, value }: { label: string; value: React.ReactNode }) {
@@ -42,6 +43,7 @@ export default async function AccountDetailPage({
       </Link>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex items-center gap-3">
+          <CrumbTitle title={account.name} />
           <h1 className="text-2xl font-semibold">{account.name}</h1>
           <AccountStatusBadge status={account.status} />
         </div>

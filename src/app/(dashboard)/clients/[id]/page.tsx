@@ -8,6 +8,7 @@ import { ProjectForm } from "@/modules/clients/ui/project-form";
 import { ServicesSection } from "@/modules/clients/ui/services-section";
 import { AccountStatusBadge } from "@/modules/crm/ui/labels";
 import { ActionError } from "@/shared/ui/action-error";
+import { CrumbTitle } from "@/shared/ui/page-title";
 import { formatMoney } from "@/shared/ui/format";
 import { KpiMultiCurrency } from "@/shared/ui/kpi";
 
@@ -41,6 +42,7 @@ export default async function Client360Page({
 
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex items-center gap-3">
+          <CrumbTitle title={account.name} />
           <h1 className="text-2xl font-semibold">{account.name}</h1>
           <AccountStatusBadge status={account.status} />
         </div>

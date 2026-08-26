@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { deletePayrollPayment } from "@/modules/people/application/team-actions";
 import type { PayrollPayment } from "@/modules/people/domain/types";
 import { DeleteRecordButton } from "@/shared/ui/delete-record-button";
@@ -12,6 +15,10 @@ export function PayrollPaymentsList({
   /** people_compensation:write — sin él no se renderiza borrar. */
   canWrite: boolean;
 }) {
+  // Lista larga: 8 visibles + "Ver todos" (hallazgo m4 del diseñador).
+  const [expanded, setExpanded] = useState(false);
+  const visible = expanded ? payments : payments.slice(0, 8);
+
   if (payments.length === 0) {
     return (
       <p className="text-sm text-muted-foreground">
@@ -22,7 +29,7 @@ export function PayrollPaymentsList({
   }
   return (
     <ul className="flex flex-col gap-2">
-      {payments.map((p) => (
+      {visible.map((p) => (
         <li
           key={p.id}
           className="flex flex-wrap items-center gap-2 rounded-lg border px-3 py-2"
@@ -52,6 +59,19 @@ export function PayrollPaymentsList({
           )}
         </li>
       ))}
+      {payments.length > 8 && (
+        <li>
+          <button
+            type="button"
+            onClick={() => setExpanded((e) => !e)}
+            className="text-xs font-extrabold text-[#069B66] hover:text-[#045C3D]"
+          >
+            {expanded
+              ? "Ver menos"
+              : `Ver todos (${payments.length}) →`}
+          </button>
+        </li>
+      )}
     </ul>
   );
 }

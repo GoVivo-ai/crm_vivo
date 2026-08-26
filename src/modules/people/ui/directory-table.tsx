@@ -9,7 +9,10 @@ import {
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { TeamMember } from "@/modules/people/domain/types";
-import { formatDayMonth } from "@/modules/people/ui/file/helpers";
+import {
+  formatDayMonth,
+  formatIsoDate,
+} from "@/modules/people/ui/file/helpers";
 import { MemberStatusBadge } from "@/modules/people/ui/labels";
 
 type DirectoryTableProps = {
@@ -87,8 +90,8 @@ export function DirectoryTable({ members, today }: DirectoryTableProps) {
                   </span>
                 )}
               </TableCell>
-              <TableCell className="font-mono text-xs">
-                {member.hiredAt ?? "—"}
+              <TableCell className="text-xs whitespace-nowrap">
+                {member.hiredAt ? formatIsoDate(member.hiredAt) : "—"}
               </TableCell>
               <TableCell>
                 <MemberStatusBadge active={member.active} />

@@ -17,6 +17,7 @@ import { ActivityTimeline } from "@/modules/crm/ui/activity-timeline";
 import { ProposalStatusBadge } from "@/modules/crm/ui/labels";
 import { ProposalForm } from "@/modules/crm/ui/proposal-form";
 import { ActionError } from "@/shared/ui/action-error";
+import { CrumbTitle } from "@/shared/ui/page-title";
 import { formatMoney } from "@/shared/ui/format";
 
 export default async function DealDetailPage({
@@ -63,6 +64,7 @@ export default async function DealDetailPage({
 
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
+          <CrumbTitle title={deal.title} />
           <h1 className="text-2xl font-semibold">{deal.title}</h1>
           <p className="text-sm text-muted-foreground">
             {account ? (

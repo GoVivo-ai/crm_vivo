@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { usePageTitle } from "@/shared/ui/page-title";
 import { useSpotlight } from "@/shared/ui/spotlight/spotlight-provider";
 import { UserMenu } from "@/shared/ui/user-menu";
 
@@ -57,6 +58,11 @@ export function AppHeader({
   initials,
 }: AppHeaderProps) {
   const crumbs = breadcrumb(usePathname());
+  const detailTitle = usePageTitle();
+  // Detalles con nombre propio (M3): "Equipo / Laura Pinzón", no "Detalle".
+  if (detailTitle && crumbs[crumbs.length - 1] === "Detalle") {
+    crumbs[crumbs.length - 1] = detailTitle;
+  }
   const spotlight = useSpotlight();
 
   return (

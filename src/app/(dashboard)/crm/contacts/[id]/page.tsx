@@ -6,6 +6,7 @@ import { listAccounts } from "@/modules/crm/application/accounts-actions";
 import { getContact } from "@/modules/crm/application/contacts-actions";
 import { ContactForm } from "@/modules/crm/ui/contact-form";
 import { ActionError } from "@/shared/ui/action-error";
+import { CrumbTitle } from "@/shared/ui/page-title";
 import { formatDate } from "@/shared/ui/format";
 
 function Item({ label, value }: { label: string; value: React.ReactNode }) {
@@ -50,6 +51,7 @@ export default async function ContactDetailPage({
       </Link>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
+          <CrumbTitle title={contact.name} />
           <h1 className="text-2xl font-semibold">{contact.name}</h1>
           {contact.jobTitle && (
             <p className="text-sm text-muted-foreground">{contact.jobTitle}</p>

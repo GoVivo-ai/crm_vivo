@@ -69,7 +69,8 @@ export function Combobox({
                   className={cn(
                     "flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-[13px] font-semibold outline-none",
                     "data-highlighted:bg-[#EEF1F6]",
-                    "data-selected:bg-[#E6F9F1] data-selected:font-extrabold data-selected:text-[#011640]",
+                    // Selected GANA a highlighted (§12.3): mismo peso CSS, decide el orden — important.
+                    "data-selected:bg-[#E6F9F1]! data-selected:font-extrabold! data-selected:text-[#011640]!",
                   )}
                 >
                   <span className="min-w-0 flex-1 truncate">{item.name}</span>

@@ -15,6 +15,7 @@ import {
   AppSidebar,
   type SidebarSync,
 } from "@/shared/ui/app-sidebar";
+import { PageTitleProvider } from "@/shared/ui/page-title";
 import type { SpotlightType } from "@/shared/ui/spotlight/parser";
 import { SpotlightProvider } from "@/shared/ui/spotlight/spotlight-provider";
 
@@ -106,6 +107,7 @@ export default async function DashboardLayout({ children }: LayoutProps<"/">) {
 
   return (
     <SpotlightProvider allowed={spotlightAllowed} today={today}>
+    <PageTitleProvider>
     <SidebarProvider
       style={
         {
@@ -143,6 +145,7 @@ export default async function DashboardLayout({ children }: LayoutProps<"/">) {
         }}
       />
     </SidebarProvider>
+    </PageTitleProvider>
     </SpotlightProvider>
   );
 }

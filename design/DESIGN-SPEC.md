@@ -270,10 +270,18 @@ Regla editorial: **ningún dato sin verbo** — todo problema trae su acción.
     invitación — pídesela a tu admin." · error de credenciales "Ese correo y esa
     contraseña no coinciden. Inténtalo de nuevo."
   · Sign-up — título "Crea tu cuenta" · subtítulo "Un minuto y quedas dentro." ·
-    botón "Crear cuenta" · pie "¿Ya tienes cuenta? Entra." · verificación: título
-    "Revisa tu correo", subtítulo "Te enviamos un código a {correo}.", botón
-    "Verificar" · estado post-registro "Tu acceso está en revisión — un admin lo
-    activa en breve."
+    pie "¿Ya tienes cuenta? Entra." · verificación: título "Revisa tu correo",
+    subtítulo "Te enviamos un código para verificar tu cuenta." + formSubtitle
+    "Escribe el código que te llegó al correo." (sin interpolar el correo — la
+    clave de Clerk no lo garantiza), reenvío "¿No llegó? Reenviar código" ·
+    estado /pending "Tu acceso está en revisión — un admin lo activa en breve."
+  · Botón primario: Clerk solo expone UNA clave global (formButtonPrimary) —
+    queda "Entrar" en ambos flujos (decisión: el 95% del uso es sign-in y el
+    sign-up por invitación pasa una vez; prohibido el hack CSS de reemplazo de
+    texto, rompe el nombre accesible).
+  · Error de credenciales unificado (contraseña incorrecta Y correo inexistente):
+    "Ese correo y esa contraseña no coinciden. Inténtalo de nuevo." — no filtra
+    si la cuenta existe.
   Regla de voz: directa, cálida, de "tú", sin jerga ("para continuar a X" y
   similares quedan prohibidos); el producto se nombra "ERP VIVO" o no se nombra.
 - **CRM · Pipeline**: tabs Pipeline/Contactos/Cuentas; fila de filtros (chips);

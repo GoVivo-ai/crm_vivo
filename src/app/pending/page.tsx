@@ -24,8 +24,7 @@ export default async function PendingPage() {
         </span>
         <h1 className="text-2xl font-semibold">Tu acceso está en revisión</h1>
         <p className="text-sm text-muted-foreground">
-          Tu cuenta existe pero un administrador todavía no la ha activado ni
-          le ha asignado un rol. Avísale a tu admin de ERP VIVO y vuelve a
+          Tu acceso está en revisión — un admin lo activa en breve. Vuelve a
           entrar cuando te confirme.
         </p>
         <SignOutButton redirectUrl="/sign-in">

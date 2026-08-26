@@ -1,5 +1,5 @@
 import { ClerkProvider } from "@clerk/nextjs";
-import { esES } from "@clerk/localizations";
+import { vivoLocalization } from "@/shared/ui/clerk-localization";
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Nunito, Nunito_Sans } from "next/font/google";
 import "./globals.css";
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <ClerkProvider localization={esES}>
+    <ClerkProvider localization={vivoLocalization}>
       <html
         lang="es"
         className={`${display.variable} ${sans.variable} ${mono.variable} h-full antialiased`}

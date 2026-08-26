@@ -85,7 +85,7 @@ export default function SignInPage() {
           }}
         />
         <p className="text-xs font-semibold text-[#8B99B0]">
-          Acceso solo por invitación · pídesela a tu admin
+          El acceso es por invitación — pídesela a tu admin.
         </p>
       </div>
     </div>

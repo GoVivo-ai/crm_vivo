@@ -27,8 +27,21 @@ import { useActionSubmit } from "@/shared/ui/use-action-submit";
 import { useDirtyGuard } from "@/shared/ui/use-dirty-guard";
 
 /** Alta/edición de cuenta manual — el saldo se actualiza guardando aquí. */
-export function BankAccountForm({ account }: { account?: BankAccountView }) {
-  const [open, setOpen] = useState(false);
+export function BankAccountForm({
+  account,
+  open: controlledOpen,
+  onOpenChange,
+  hideTrigger = false,
+}: {
+  account?: BankAccountView;
+  /** Modo controlado (lo abre el menú de la fila); sin trigger propio. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  hideTrigger?: boolean;
+}) {
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const open = controlledOpen ?? uncontrolledOpen;
+  const setOpen = onOpenChange ?? setUncontrolledOpen;
   const [currency, setCurrency] = useState(account?.currencyCode ?? "COP");
   const [type, setType] = useState(account?.type ?? "bank");
   const [balanceStr, setBalanceStr] = useState(
@@ -80,11 +93,13 @@ export function BankAccountForm({ account }: { account?: BankAccountView }) {
   return (
     <>
     <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
-      <DialogTrigger
-        render={<Button variant={editing ? "outline" : "default"} size="sm" />}
-      >
-        {editing ? "Editar" : "+ Cuenta bancaria"}
-      </DialogTrigger>
+      {!hideTrigger && (
+        <DialogTrigger
+          render={<Button variant={editing ? "outline" : "default"} size="sm" />}
+        >
+          {editing ? "Editar" : "+ Cuenta bancaria"}
+        </DialogTrigger>
+      )}
       <CaptureDialogContent>
         <CaptureLomo icon={Landmark} module="Tesorería" title={editing ? `Editar · ${account.name}` : "Nueva cuenta bancaria"} context={lomoContext} />
         <div className="flex min-w-0 flex-col">

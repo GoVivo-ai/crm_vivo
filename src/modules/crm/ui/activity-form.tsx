@@ -27,7 +27,16 @@ const TYPE_OPTIONS = (
   Object.entries(ACTIVITY_TYPE_LABELS) as [ActivityType, string][]
 ).map(([id, name]) => ({ id, name }));
 
-export function ActivityForm({ dealId }: { dealId: string }) {
+export function ActivityForm({
+  dealId,
+  contactId,
+  accountId,
+}: {
+  /** La actividad se asocia a UNO de estos destinos (§15.1). */
+  dealId?: string;
+  contactId?: string;
+  accountId?: string;
+}) {
   const [open, setOpen] = useState(false);
   const [type, setType] = useState<string | null>("call");
   const { submit, pending, fieldErrors } = useActionSubmit<Activity>();
@@ -44,7 +53,9 @@ export function ActivityForm({ dealId }: { dealId: string }) {
           subject: form.get("subject"),
           content: (form.get("content") as string) || null,
           dueDate: (form.get("dueDate") as string) || null,
-          dealId,
+          dealId: dealId ?? null,
+          contactId: contactId ?? null,
+          accountId: accountId ?? null,
         }),
       {
         successMessage: `Actividad "${form.get("subject")}" registrada`,

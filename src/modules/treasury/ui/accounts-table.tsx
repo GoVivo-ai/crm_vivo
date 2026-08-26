@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import type { BankAccountView } from "@/modules/treasury/domain/types";
-import { BankAccountForm } from "@/modules/treasury/ui/bank-account-form";
+import { BankAccountRowActions } from "@/modules/treasury/ui/bank-account-row-actions";
 import { formatAccountingMoney, formatCurrency } from "@/shared/ui/format";
 import { SourceBadge } from "@/shared/ui/source-badge";
 
@@ -62,12 +62,12 @@ export function BankAccountsTable({
                 </span>
               )}
             </TableCell>
-            <TableCell className="text-right font-mono text-xs">
+            <TableCell className="text-right text-xs font-bold tabular-nums">
               {formatCurrency(account.balance, account.currencyCode)}
             </TableCell>
             <TableCell
               className={cn(
-                "text-right font-mono text-xs",
+                "text-right text-xs font-bold tabular-nums",
                 account.balanceCop < 0 && "text-health-critical",
               )}
             >
@@ -78,7 +78,7 @@ export function BankAccountsTable({
             </TableCell>
             <TableCell className="text-right">
               {canWrite && account.source === "manual" && (
-                <BankAccountForm account={account} />
+                <BankAccountRowActions account={account} />
               )}
             </TableCell>
           </TableRow>

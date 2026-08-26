@@ -49,6 +49,8 @@ type AppHeaderProps = {
   userEmail: string;
   roleLabel: string;
   initials: string;
+  /** Foto de la cuenta (Google vía Clerk); null = iniciales. */
+  imageUrl: string | null;
 };
 
 export function AppHeader({
@@ -56,6 +58,7 @@ export function AppHeader({
   userEmail,
   roleLabel,
   initials,
+  imageUrl,
 }: AppHeaderProps) {
   const crumbs = breadcrumb(usePathname());
   const detailTitle = usePageTitle();
@@ -104,6 +107,7 @@ export function AppHeader({
         <UserMenu
           name={userName}
           email={userEmail}
+          imageUrl={imageUrl}
           roleLabel={roleLabel}
           initials={initials}
         />

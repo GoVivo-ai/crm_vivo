@@ -13,6 +13,8 @@ import {
 type UserMenuProps = {
   name: string;
   email: string;
+  /** Foto de la cuenta (Google vía Clerk); null = iniciales. */
+  imageUrl: string | null;
   roleLabel: string;
   initials: string;
 };
@@ -23,21 +25,31 @@ type UserMenuProps = {
  * tarjeta del sidebar, ítems píldora y Cerrar sesión destructivo.
  * "Gestionar cuenta" sigue abriendo el perfil de Clerk (pantalla suya).
  */
-export function UserMenu({ name, email, roleLabel, initials }: UserMenuProps) {
+export function UserMenu({ name, email, imageUrl, roleLabel, initials }: UserMenuProps) {
   const { signOut, openUserProfile } = useClerk();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label="Menú de usuario"
-        className="grid size-9 place-items-center rounded-full bg-gradient-to-br from-[#04D98B] to-[#F2E205] font-[family-name:var(--font-display)] text-xs font-extrabold text-[#011640] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#04D98B]"
+        className="grid size-9 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-[#04D98B] to-[#F2E205] font-[family-name:var(--font-display)] text-xs font-extrabold text-[#011640] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#04D98B]"
       >
-        {initials}
+        {imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element -- foto remota de Clerk; sin optimizador (dominio externo)
+          <img src={imageUrl} alt="" className="size-full object-cover" />
+        ) : (
+          initials
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">
         <div className="flex items-center gap-2.5 px-2.5 py-2">
-          <span className="grid size-8 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[#04D98B] to-[#F2E205] font-[family-name:var(--font-display)] text-[11px] font-extrabold text-[#011640]">
-            {initials}
+          <span className="grid size-8 shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-[#04D98B] to-[#F2E205] font-[family-name:var(--font-display)] text-[11px] font-extrabold text-[#011640]">
+            {imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element -- foto remota de Clerk; sin optimizador (dominio externo)
+              <img src={imageUrl} alt="" className="size-full object-cover" />
+            ) : (
+              initials
+            )}
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate text-[12.5px] font-extrabold">{name}</p>

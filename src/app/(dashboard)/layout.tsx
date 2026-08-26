@@ -124,6 +124,7 @@ export default async function DashboardLayout({ children }: LayoutProps<"/">) {
           email: user.email,
           roleLabel: ROLE_LABELS[user.role],
           initials: initials || "V",
+          imageUrl: user.imageUrl,
         }}
       />
       <SidebarInset>
@@ -132,6 +133,7 @@ export default async function DashboardLayout({ children }: LayoutProps<"/">) {
           userEmail={user.email}
           roleLabel={ROLE_LABELS[user.role]}
           initials={initials || "V"}
+          imageUrl={user.imageUrl}
         />
         <main className="flex-1 p-6">{children}</main>
       </SidebarInset>

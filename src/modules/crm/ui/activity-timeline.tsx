@@ -17,6 +17,8 @@ export type TimelineMilestone = {
   id: string;
   title: string;
   at: Date;
+  /** Autor resuelto ("quién · cuándo"); null = sin autor conocido. */
+  by?: string | null;
 };
 
 // Tintas por tipo (§15.1): nota gris, llamada azul, reunión teal,
@@ -39,6 +41,7 @@ type Entry = {
   title: string;
   body: string | null;
   at: Date;
+  by?: string | null;
   /** Tarea pendiente: fecha límite visible en gold. */
   due?: Date | null;
 };
@@ -50,9 +53,12 @@ const VISIBLE = 8;
 export function ActivityTimeline({
   activities,
   milestones = [],
+  authors = {},
 }: {
   activities: Activity[];
   milestones?: TimelineMilestone[];
+  /** ownerId → nombre (listUserNames), para la firma "quién". */
+  authors?: Record<string, string>;
 }) {
   const [expanded, setExpanded] = useState(false);
   const entries: Entry[] = [
@@ -62,6 +68,7 @@ export function ActivityTimeline({
       title: a.subject,
       body: a.content,
       at: a.createdAt,
+      by: a.ownerId ? (authors[a.ownerId] ?? null) : null,
       due: a.completedAt === null ? a.dueDate : null,
     })),
     ...milestones.map((m) => ({
@@ -70,6 +77,7 @@ export function ActivityTimeline({
       title: m.title,
       body: null,
       at: m.at,
+      by: m.by ?? null,
     })),
   ].sort((a, b) => b.at.getTime() - a.at.getTime());
 
@@ -111,6 +119,7 @@ export function ActivityTimeline({
                 className="mt-0.5 text-[11px] font-semibold text-[#8B99B0]"
                 title={formatDate(entry.at)}
               >
+                {entry.by ? `${entry.by} · ` : ""}
                 {formatRelativeTime(entry.at)}
               </p>
             </li>

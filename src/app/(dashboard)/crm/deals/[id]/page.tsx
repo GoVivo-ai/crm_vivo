@@ -10,7 +10,9 @@ import { listContacts } from "@/modules/crm/application/contacts-actions";
 import {
   getDeal,
   getPipelineBoard,
+  listDealStageHistory,
 } from "@/modules/crm/application/deals-actions";
+import { listUserNames } from "@/modules/identity/application/list-user-names";
 import { listServices } from "@/modules/clients/application/services-actions";
 import { ConvertDealDialog } from "@/modules/clients/ui/convert-deal-dialog";
 import { ActivityForm } from "@/modules/crm/ui/activity-form";
@@ -45,15 +47,25 @@ export default async function DealDetailPage({
   const stage = stages.find((s) => s.id === deal.stageId);
   if (!stage) return <ActionError message="Etapa del negocio no disponible" />;
 
-  const [accountResult, activitiesResult, proposalsResult, catalogResult, contactsResult, canWrite] =
-    await Promise.all([
-      getAccount(deal.accountId),
-      listActivitiesForDeal(deal.id),
-      listProposalsForDeal(deal.id),
-      listServices(),
-      listContacts(),
-      hasWrite("crm"),
-    ]);
+  const [
+    accountResult,
+    activitiesResult,
+    proposalsResult,
+    catalogResult,
+    contactsResult,
+    historyResult,
+    namesResult,
+    canWrite,
+  ] = await Promise.all([
+    getAccount(deal.accountId),
+    listActivitiesForDeal(deal.id),
+    listProposalsForDeal(deal.id),
+    listServices(),
+    listContacts(),
+    listDealStageHistory(deal.id),
+    listUserNames(),
+    hasWrite("crm"),
+  ]);
   const account = accountResult.ok ? accountResult.data : null;
   const activities = activitiesResult.ok ? activitiesResult.data : [];
   const proposals = proposalsResult.ok ? proposalsResult.data : [];
@@ -95,14 +107,32 @@ export default async function DealDetailPage({
   );
   const isOpen = !stage.isWon && !stage.isLost;
 
-  // Hito de sistema: la entrada a la etapa actual (§15.1).
-  const milestones = isOpen
-    ? [{ id: `stage-${deal.stageId}`, title: `Pasó a ${stage.name}`, at: deal.stageEnteredAt }]
-    : [];
+  // Hitos de sistema (§15.1): historial real de transiciones; si el
+  // deal es anterior al registro, cae al hito único de stageEnteredAt.
+  const names = new Map(
+    (namesResult.ok ? namesResult.data : []).map((u) => [u.id, u.name]),
+  );
+  const history = historyResult.ok ? historyResult.data : [];
+  const milestones =
+    history.length > 0
+      ? history.map((e) => ({
+          id: e.id,
+          title:
+            e.fromStageName === null
+              ? `Creado en ${e.toStageName}`
+              : `Pasó a ${e.toStageName}`,
+          at: e.movedAt,
+          by: e.movedBy ? (names.get(e.movedBy) ?? null) : null,
+        }))
+      : isOpen
+        ? [{ id: `stage-${deal.stageId}`, title: `Pasó a ${stage.name}`, at: deal.stageEnteredAt }]
+        : [];
 
+  const owner = deal.ownerId ? (names.get(deal.ownerId) ?? null) : null;
   const meta = [
     account?.name,
     contact ? `contacto ${contact.name}` : null,
+    owner ? `responsable ${owner}` : null,
     `creado hace ${createdDays} día${createdDays === 1 ? "" : "s"}`,
   ]
     .filter(Boolean)
@@ -201,7 +231,11 @@ export default async function DealDetailPage({
               </span>
             </div>
             <div className="px-5 pt-3.5 pb-5">
-              <ActivityTimeline activities={activities} milestones={milestones} />
+              <ActivityTimeline
+                activities={activities}
+                milestones={milestones}
+                authors={Object.fromEntries(names)}
+              />
             </div>
           </section>
 

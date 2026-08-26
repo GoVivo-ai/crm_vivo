@@ -13,16 +13,22 @@ export const ACCOUNT_STATUS_LABELS: Record<AccountStatus, string> = {
   churned: "Perdido",
 };
 
+// §15.2: estado SIEMPRE badge de tinta (§6) — jamás outline.
 const ACCOUNT_STATUS_STYLES: Record<AccountStatus, string> = {
-  prospect: "bg-secondary text-secondary-foreground",
-  active: "bg-health-ok/10 text-health-ok border-health-ok/30",
-  paused: "bg-health-warn/10 text-health-warn border-health-warn/30",
-  churned: "bg-destructive/10 text-destructive border-destructive/30",
+  prospect: "bg-[#E8F0FB] text-[#1E5FBF]",
+  active: "bg-[#E6F9F1] text-[#069B66]",
+  paused: "bg-[#FBF7D9] text-[#8C7A0A]",
+  churned: "bg-[#FAEAEA] text-[#C93A3A]",
 };
 
 export function AccountStatusBadge({ status }: { status: AccountStatus }) {
   return (
-    <Badge variant="outline" className={cn(ACCOUNT_STATUS_STYLES[status])}>
+    <Badge
+      className={cn(
+        "rounded-full border-transparent font-extrabold",
+        ACCOUNT_STATUS_STYLES[status],
+      )}
+    >
       {ACCOUNT_STATUS_LABELS[status]}
     </Badge>
   );

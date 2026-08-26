@@ -8,7 +8,7 @@ const STATUS: Record<
   Invoice["status"],
   { label: string; cls: string }
 > = {
-  open: { label: "Pendiente", cls: "bg-[#FBF7D9] text-[#8C7A0A]" },
+  open: { label: "Abierta", cls: "bg-[#FBF7D9] text-[#8C7A0A]" },
   paid: { label: "Pagada", cls: "bg-[#E6F9F1] text-[#069B66]" },
   void: { label: "Anulada", cls: "bg-[#EEF1F6] text-[#5A6B85]" },
 };

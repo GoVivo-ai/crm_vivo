@@ -1,19 +1,19 @@
 import { Badge } from "@/components/ui/badge";
 import type { RecordSource } from "@/modules/finance/domain/types";
 
-/** Fuente del registro: manual (editable) o QuickBooks (solo lectura). */
+/** Chip de fuente (§15.2, tinta b-mut — jamás outline): manual
+ * (editable) o QuickBooks (solo lectura). */
 export function SourceBadge({ source }: { source: RecordSource }) {
   if (source === "manual") {
     return (
-      <Badge variant="outline" className="text-muted-foreground">
+      <Badge className="rounded-full border-transparent bg-[#EEF1F6] font-extrabold text-[#5A6B85]">
         Manual
       </Badge>
     );
   }
   return (
     <Badge
-      variant="outline"
-      className="border-[#2CA01C]/30 bg-[#2CA01C]/10 text-[#1d7a13]"
+      className="rounded-full border-transparent bg-[#E6F9F1] font-extrabold text-[#069B66]"
       title="Sincronizado desde QuickBooks — solo lectura"
     >
       QuickBooks

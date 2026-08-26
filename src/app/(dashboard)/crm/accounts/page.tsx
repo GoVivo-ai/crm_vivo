@@ -35,6 +35,8 @@ export default async function AccountsPage({
     churned: all.filter((a) => a.status === "churned").length,
   };
   const accounts = status ? all.filter((a) => a.status === status) : all;
+  // §15.2: una columna sin datos en toda la página se elimina.
+  const hasWebsite = accounts.some((a) => a.website !== null);
   const qs = search ? `&q=${encodeURIComponent(search)}` : "";
   const chips = [
     { href: `/crm/accounts?${qs.slice(1)}`, label: `Todas ${all.length}`, active: status === null },
@@ -84,7 +86,7 @@ export default async function AccountsPage({
                 <th className={LIST_TH}>Cuenta</th>
                 <th className={LIST_TH}>Estado</th>
                 <th className={LIST_TH}>Industria</th>
-                <th className={LIST_TH}>Sitio web</th>
+                {hasWebsite && <th className={LIST_TH}>Sitio web</th>}
                 <th className={LIST_TH} aria-hidden />
               </tr>
             </thead>
@@ -108,9 +110,11 @@ export default async function AccountsPage({
                   <td className="px-5 py-3 text-muted-foreground">
                     {account.industry ?? "—"}
                   </td>
-                  <td className="px-5 py-3 text-muted-foreground">
-                    {account.website ?? "—"}
-                  </td>
+                  {hasWebsite && (
+                    <td className="px-5 py-3 text-muted-foreground">
+                      {account.website ?? "—"}
+                    </td>
+                  )}
                   <td className="px-5 py-3 text-right">
                     <RowChevron />
                   </td>

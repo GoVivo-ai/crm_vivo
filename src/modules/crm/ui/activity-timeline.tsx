@@ -91,7 +91,13 @@ export function ActivityTimeline({
   const visible = expanded ? entries : entries.slice(0, VISIBLE);
 
   return (
-    <div className="relative pl-[26px] before:absolute before:top-1.5 before:bottom-1.5 before:left-[9px] before:w-0.5 before:rounded-full before:bg-[#EDF0F5]">
+    <div className="relative pl-[26px]">
+      {/* Rail del §15.1 como elemento real (el pseudo-elemento no
+       * pintaba de forma fiable). */}
+      <span
+        aria-hidden
+        className="absolute top-1.5 bottom-1.5 left-[9px] w-0.5 rounded-full bg-[#EDF0F5]"
+      />
       <ol className="flex flex-col">
         {visible.map((entry) => {
           const dot = DOT[entry.kind];

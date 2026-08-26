@@ -510,7 +510,9 @@ Lomo del área Equipo con solo esos campos) — nunca un formulario plano de 30 
    Caja de compensación) como bloques `#F6F7F9` r10 con eyebrow.
 2. *Personal y dotación*: nacimiento SIEMPRE como "fecha · edad calculada"
    ("14 mar 1994 · 32 años" — la edad jamás se guarda, se deriva); documento
-   ENMASCARADO ("CC ····4821", completo solo tras write); dirección; contacto de
+   ENMASCARADO ("CC ····4821") con acción **"Revelar"** on-demand para roles con
+   write (mejor que pintarlo completo: el dato sensible solo se muestra a
+   petición); dirección; contacto de
    emergencia (nombre + parentesco + teléfono); RH como badge rojo. **Tallas como
    tokens grandes** (Camisa/Pantalón/Calzado en tiles `#F6F7F9` r12, cifra Nunito
    800 22px) — es dato operativo de dotación, se le da presencia, con nota de

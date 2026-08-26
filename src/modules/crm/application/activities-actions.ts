@@ -19,6 +19,19 @@ export async function listActivitiesForDeal(
   return runCrmAction("read", () => repo.listActivitiesByDeal(dealId));
 }
 
+export async function listActivitiesForContact(
+  contactId: string,
+): Promise<ActionResult<Activity[]>> {
+  return runCrmAction("read", () => repo.listActivitiesByContact(contactId));
+}
+
+/** Actividades de la cuenta MÁS las de sus deals — historia completa. */
+export async function listActivitiesForAccount(
+  accountId: string,
+): Promise<ActionResult<Activity[]>> {
+  return runCrmAction("read", () => repo.listActivitiesByAccount(accountId));
+}
+
 /** La actividad queda a nombre del usuario autenticado. */
 export async function createActivity(
   input: unknown,

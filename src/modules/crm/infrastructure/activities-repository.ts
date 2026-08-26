@@ -1,6 +1,6 @@
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, or } from "drizzle-orm";
 import { db } from "@/shared/database/db";
-import { activities, proposals } from "@/modules/crm/schema";
+import { activities, deals, proposals } from "@/modules/crm/schema";
 import type { Activity, Proposal } from "@/modules/crm/domain/types";
 import type {
   ActivityInput,
@@ -18,6 +18,35 @@ export async function listActivitiesByDeal(
     .orderBy(desc(activities.createdAt))
     .limit(500);
   return rows.map(toActivity);
+}
+
+export async function listActivitiesByContact(
+  contactId: string,
+): Promise<Activity[]> {
+  const rows = await db
+    .select()
+    .from(activities)
+    .where(eq(activities.contactId, contactId))
+    .orderBy(desc(activities.createdAt))
+    .limit(500);
+  return rows.map(toActivity);
+}
+
+/** Historia completa de la cuenta: actividades directas de la cuenta MÁS
+ * las de sus deals (unión por deal.accountId). */
+export async function listActivitiesByAccount(
+  accountId: string,
+): Promise<Activity[]> {
+  const rows = await db
+    .select({ activity: activities })
+    .from(activities)
+    .leftJoin(deals, eq(activities.dealId, deals.id))
+    .where(
+      or(eq(activities.accountId, accountId), eq(deals.accountId, accountId)),
+    )
+    .orderBy(desc(activities.createdAt))
+    .limit(500);
+  return rows.map((r) => toActivity(r.activity));
 }
 
 export async function insertActivity(

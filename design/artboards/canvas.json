@@ -171,6 +171,24 @@
       "w": 720,
       "h": 520,
       "page": "sistema"
+    },
+    {
+      "file": "DetalleNegocio.dc.html",
+      "title": "Detalle de negocio",
+      "x": 0,
+      "y": 7280,
+      "w": 1440,
+      "h": 1120,
+      "page": "pantallas"
+    },
+    {
+      "file": "ListaCuentas.dc.html",
+      "title": "Lista de cuentas",
+      "x": 1560,
+      "y": 7280,
+      "w": 1440,
+      "h": 1024,
+      "page": "pantallas"
     }
   ],
   "annotations": [

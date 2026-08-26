@@ -553,3 +553,80 @@ con la checklist en 0 de M como guía de onboarding.
 **Captura**: los Lomos de sección usan el tile del área Equipo (tinta navy
 `#E7EBF3`); los selects cortos (tipo de contrato, jornada, RH) son segmented o
 select según la regla §12.3; tallas como inputs cortos de 3 columnas.
+
+## 15. Sistema de vista-detalle y listas (propuesta — pendiente de aprobación de Victor)
+
+Origen: auditoría en producción 2026-08-26 — las vistas de la era F1-F2 quedaron
+pre-sistema: detalle de negocio (columna flotante sin cabecera, cifras en fuente
+mono, actividades planas), listas de contactos/cuentas/clientes (tabla plana,
+badges outline, sin identidad de entidad, sin acceso visible al detalle — la lista
+de Clientes NI SIQUIERA enlaza al 360), facturas (fechas ISO, estado sin badge,
+botones Editar/Borrar por fila). Son dos SISTEMAS reutilizables, no pantallas
+sueltas. Artboards ejemplo: `DetalleNegocio.dc.html` (patrón detalle),
+`ListaCuentas.dc.html` (patrón lista); el tercer ejemplo pedido — cliente 360 —
+**ya tiene artboard aprobado desde el diseño original** (`Cuenta360.dc.html`) que
+nunca se implementó: se implementa tal cual bajo este sistema.
+
+### 15.1 Vista-detalle canónica (patrón "ficha") — generaliza el expediente §14
+
+Toda entidad con nombre propio (negocio, cuenta, contacto, cliente, empleado) se
+abre como PÁGINA con esta anatomía:
+1. **Back link** ("← Pipeline") + crumb con el nombre (M3).
+2. **Cabecera de entidad** (card): tile 52px radio 14 con inicial/icono sobre
+   tinta del tipo · nombre Nunito 800 20px + badges de estado (incl. señales tipo
+   "8 días en la etapa" en warn) · meta línea (relaciones clave, responsable,
+   antigüedad) · **stats a la derecha** (2–4, filtradas por rol) · **acciones de
+   la entidad**: la primaria en verde ("Marcar ganado", "Editar"), la destructiva
+   en ghost rojo ("Perdido"), el resto en menú ⋯ (§12).
+3. **Sub-cabecera propia del tipo cuando la entidad tiene ciclo de vida**:
+   negocio = **stepper de etapas** (píldoras: pasadas en tinta verde con check,
+   actual navy sólida con glow suave, futuras neutras, conectores 14×2 verdes/
+   grises). Cambiar de etapa se puede hacer aquí o arrastrando en el kanban.
+4. **Tabs** cuando hay ≥3 áreas de contenido (como Cuenta360/Expediente); sin
+   tabs si el detalle cabe en una vista.
+5. **Grid 3fr/2fr**: principal = las cards del contenido (editables por sección,
+   "Editar sección →" abre Lomo); lateral = **panel de relaciones** + metadatos.
+
+**Timeline de actividades (pieza propia del sistema)**: rail vertical de 2px
+`--line` con puntos de 20px (fondo tinta + icono del tipo: nota gris/lápiz,
+llamada azul/teléfono, reunión teal/calendario, correo gold/sobre, **cambio de
+etapa verde/trending** — los hitos de sistema se registran solos); cada entrada:
+título 800 12.5px, cuerpo opcional 12px `--muted`, firma "quién · cuándo relativo"
+en `--faint` (absoluto en tooltip). Composer: botón "+ Registrar actividad" (Lomo
+con segmented de tipo) — futuro: input inline. Orden descendente, "Ver más" tras
+8.
+
+**Panel de relaciones**: cards laterales por tipo relacionado (La cuenta,
+Contactos, Negocios, Servicios, Facturas…): **fila-entidad estándar** = tile 30px
+tinta + nombre 800 12.5px + meta `--muted` + valor/badge a la derecha + chevron;
+máx 5 filas + "Ver todos (N) →". La card de la entidad madre (p. ej. "La cuenta"
+en un negocio) incluye 2 mini-stats y "Abrir →".
+
+### 15.2 Sistema de listas
+
+Toda lista vive en UNA card con esta anatomía:
+1. **Header de lista**: chips de filtro por estado con conteos (activo = navy
+   sólido o su tinta, resto b-mut — patrón facturas) + buscador píldora +
+   CTA verde "+ Nueva {entidad}".
+2. **Fila de entidad**: primera celda = **celda identidad** (tile 32px radio 9 con
+   iniciales sobre tinta rotando entre las 4 tintas + nombre 800 navy + subline
+   `--faint` con el identificador secundario: NIT, correo, cuenta); estado SIEMPRE
+   badge de tinta (§6), jamás outline; cifras a la derecha en Nunito Sans
+   **tabular — la fuente mono queda PROHIBIDA en datos**; fechas es-CO
+   ("22 ago 2026", nunca ISO); vacío = "—" en `--faint`.
+3. **La fila entera navega al detalle** (hover `#F6F7F9`, chevron `--faint` al
+   final). Las acciones por registro viven en el detalle o en menú contextual ⋯
+   (§12.2) — **los botones Editar/Borrar por fila desaparecen**.
+4. Footer: "Mostrando N de M" + "Ver más →". Vacío: mensaje honesto + CTA.
+5. Columnas: máximo 6 + chevron; una columna sin datos en toda la página se
+   elimina, no se rellena de "—".
+
+### 15.3 Inventario a migrar (orden sugerido)
+1. Detalle de negocio (el que Victor está viendo) — artboard nuevo.
+2. Cliente 360 — implementar `Cuenta360.dc.html` (aprobado desde el inicio) y
+   ENLAZAR la lista de Clientes a él.
+3. Listas CRM: cuentas (artboard nuevo), contactos, y detalle de cuenta/contacto
+   con el patrón 15.1.
+4. Facturas/Gastos/Movimientos: adecuar filas al sistema (fechas es-CO, badges,
+   sin botones por fila; el chip de fuente se queda).
+5. Listas restantes (servicios, usuarios de settings, ausencias).

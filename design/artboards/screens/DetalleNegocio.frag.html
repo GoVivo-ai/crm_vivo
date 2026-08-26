@@ -1,0 +1,129 @@
+{"title":"CRM · Plan digital cosecha 2027","crumb":"Detalle de negocio","active":"CRM","minh":1120}
+      <style>
+        .step{display:flex;align-items:center;gap:6px;font:700 11.5px 'Nunito Sans',sans-serif;color:var(--faint);padding:6px 12px;border-radius:999px;background:#EEF1F6}
+        .step.done{color:var(--green-ink);background:var(--green-tint)}
+        .step.on{color:#fff;background:var(--navy);font-weight:800;box-shadow:0 6px 14px -6px rgba(1,22,64,.45)}
+        .kv{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px solid var(--line)}
+        .kv:last-child{border-bottom:0}
+        .kv .k{font:600 12.5px 'Nunito Sans',sans-serif;color:var(--muted)}
+        .kv .v{font:700 13px 'Nunito Sans',sans-serif;text-align:right}
+        .tl{position:relative;padding-left:26px}
+        .tl::before{content:"";position:absolute;left:9px;top:6px;bottom:6px;width:2px;border-radius:2px;background:var(--line)}
+        .tl-item{position:relative;padding:0 0 18px}
+        .tl-item:last-child{padding-bottom:2px}
+        .tl-dot{position:absolute;left:-26px;top:2px;width:20px;height:20px;border-radius:99px;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+        .rrow{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--line)}
+        .rrow:last-child{border-bottom:0}
+        .rtile{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font:800 11px 'Nunito',sans-serif;flex-shrink:0}
+      </style>
+
+      <div style="font:700 12px 'Nunito Sans',sans-serif;color:var(--muted)">← Pipeline</div>
+
+      <!-- Cabecera de entidad -->
+      <div class="card" style="padding:20px 24px">
+        <div style="display:flex;align-items:center;gap:16px">
+          <div style="width:52px;height:52px;border-radius:14px;background:var(--green-tint);color:var(--green-ink);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h3v16H5z"></path><path d="M10.5 4h3v10h-3z"></path><path d="M16 4h3v13h-3z"></path></svg></div>
+          <div style="min-width:0">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font:800 20px 'Nunito',sans-serif;color:var(--navy)">Plan digital cosecha 2027</span>
+              <span class="badge b-warn">8 días en la etapa</span>
+            </div>
+            <div style="font:600 12.5px 'Nunito Sans',sans-serif;color:var(--muted);margin-top:3px">Finca La Esperanza · responsable Valentina Ortiz · creado hace 12 días</div>
+          </div>
+          <div style="margin-left:auto;display:flex;gap:26px;align-items:center">
+            <div style="display:flex;flex-direction:column;gap:4px"><span class="lbl">Valor</span><span style="font:800 24px 'Nunito',sans-serif;color:var(--navy);font-variant-numeric:tabular-nums">$6.000.000</span></div>
+            <div style="display:flex;flex-direction:column;gap:4px"><span class="lbl">Cierre estimado</span><span style="font:800 16px 'Nunito',sans-serif;color:var(--ink)">30 sep 2026</span></div>
+            <div class="btn ghost" style="color:var(--red)">Perdido</div>
+            <div class="btn pri">Marcar ganado</div>
+          </div>
+        </div>
+        <!-- Stepper de etapa -->
+        <div style="display:flex;align-items:center;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)">
+          <span class="step done"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>Lead</span>
+          <span style="width:14px;height:2px;background:var(--green);border-radius:2px"></span>
+          <span class="step done"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>Contactado</span>
+          <span style="width:14px;height:2px;background:var(--green);border-radius:2px"></span>
+          <span class="step on">Propuesta</span>
+          <span style="width:14px;height:2px;background:#E3E8F0;border-radius:2px"></span>
+          <span class="step">Negociación</span>
+          <span style="width:14px;height:2px;background:#E3E8F0;border-radius:2px"></span>
+          <span class="step">Ganado</span>
+          <span style="margin-left:auto;font:600 11.5px 'Nunito Sans',sans-serif;color:var(--faint)">La etapa se cambia arrastrando en el pipeline o aquí</span>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:16px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+          <!-- Actividades: timeline -->
+          <div class="card">
+            <div class="card-h"><h2>Actividades</h2><div class="btn ghost" style="margin-left:auto;height:30px;font-size:12px">+ Registrar actividad</div></div>
+            <div style="padding:16px 20px 18px">
+              <div class="tl">
+                <div class="tl-item">
+                  <span class="tl-dot" style="background:var(--green-tint);color:var(--green-ink)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path></svg></span>
+                  <div style="font:800 12.5px 'Nunito Sans',sans-serif">Pasó a Propuesta</div>
+                  <div style="font:600 11px 'Nunito Sans',sans-serif;color:var(--faint)">Valentina Ortiz · hace 8 días</div>
+                </div>
+                <div class="tl-item">
+                  <span class="tl-dot" style="background:var(--blue-tint);color:var(--blue)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7l.5 2.8a2 2 0 0 1-.5 1.8L7.9 9.5a16 16 0 0 0 6.6 6.6l1.2-1.2a2 2 0 0 1 1.8-.5l2.8.5a2 2 0 0 1 1.7 2Z"></path></svg></span>
+                  <div style="font:800 12.5px 'Nunito Sans',sans-serif">Llamada de seguimiento</div>
+                  <div style="font:600 12px 'Nunito Sans',sans-serif;color:var(--muted);margin-top:2px">Rosa pide ajustar el alcance a 6 meses; enviará cifras de la cosecha pasada.</div>
+                  <div style="font:600 11px 'Nunito Sans',sans-serif;color:var(--faint);margin-top:2px">Valentina Ortiz · hace 5 días</div>
+                </div>
+                <div class="tl-item">
+                  <span class="tl-dot" style="background:#EEF1F6;color:var(--muted)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg></span>
+                  <div style="font:800 12.5px 'Nunito Sans',sans-serif">Nota</div>
+                  <div style="font:600 12px 'Nunito Sans',sans-serif;color:var(--muted);margin-top:2px">Cliente pide referencia de casos agro.</div>
+                  <div style="font:600 11px 'Nunito Sans',sans-serif;color:var(--faint);margin-top:2px">Valentina Ortiz · anteayer</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Propuestas -->
+          <div class="card">
+            <div class="card-h"><h2>Propuestas</h2><div class="btn ghost" style="margin-left:auto;height:30px;font-size:12px">+ Nueva propuesta</div></div>
+            <div style="padding:8px 20px 20px;display:flex;align-items:center;gap:12px">
+              <div style="flex:1;border:1.5px dashed #C6CFDD;border-radius:12px;padding:18px;text-align:center;font:700 12.5px 'Nunito Sans',sans-serif;color:var(--faint)">Sin propuestas todavía — crea la primera para mover el negocio a Negociación.</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+          <!-- Detalles -->
+          <div class="card">
+            <div class="card-h"><h2>Detalles</h2><span style="margin-left:auto;font:700 12px 'Nunito Sans',sans-serif;color:var(--green-ink)">Editar sección →</span></div>
+            <div style="padding:6px 20px 12px">
+              <div class="kv"><span class="k">Cuenta</span><span class="v" style="color:var(--green-ink)">Finca La Esperanza →</span></div>
+              <div class="kv"><span class="k">Contacto</span><span class="v">Rosa Jiménez</span></div>
+              <div class="kv"><span class="k">Responsable</span><span class="v">Valentina Ortiz</span></div>
+              <div class="kv"><span class="k">Moneda</span><span class="v">COP</span></div>
+              <div class="kv"><span class="k">Origen</span><span class="v">Referido</span></div>
+            </div>
+          </div>
+          <!-- Cuenta relacionada -->
+          <div class="card">
+            <div class="card-h"><h2>La cuenta</h2><span style="margin-left:auto;font:700 12px 'Nunito Sans',sans-serif;color:var(--green-ink)">Abrir cuenta →</span></div>
+            <div style="padding:12px 20px 16px">
+              <div style="display:flex;align-items:center;gap:11px">
+                <div class="rtile" style="background:var(--yellow-tint);color:var(--gold)">FE</div>
+                <div style="min-width:0;flex:1"><div style="font:800 13px 'Nunito Sans',sans-serif">Finca La Esperanza</div><div style="font:600 11.5px 'Nunito Sans',sans-serif;color:var(--muted)">Agro · Prospecto · sin NIT</div></div>
+              </div>
+              <div style="display:flex;gap:22px;margin-top:12px;border-top:1px solid var(--line);padding-top:12px">
+                <div><span class="lbl" style="font-size:9.5px">Negocios abiertos</span><div style="font:800 15px 'Nunito',sans-serif;color:var(--navy)">1 · $6,0 M</div></div>
+                <div><span class="lbl" style="font-size:9.5px">Ganados</span><div style="font:800 15px 'Nunito',sans-serif;color:var(--navy)">0</div></div>
+              </div>
+            </div>
+          </div>
+          <!-- Contactos relacionados -->
+          <div class="card">
+            <div class="card-h"><h2>Contactos</h2><span class="badge b-mut" style="margin-left:auto">1</span></div>
+            <div style="padding:4px 20px 14px">
+              <div class="rrow">
+                <div class="rtile" style="background:var(--blue-tint);color:var(--blue)">RJ</div>
+                <div style="min-width:0;flex:1"><div style="font:800 12.5px 'Nunito Sans',sans-serif">Rosa Jiménez</div><div style="font:600 11.5px 'Nunito Sans',sans-serif;color:var(--muted)">Propietaria · rosa@demo.example.com</div></div>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B99B0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>

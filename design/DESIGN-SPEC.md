@@ -261,9 +261,21 @@ Regla editorial: **ningún dato sin verbo** — todo problema trae su acción.
 - **Sign-in**: split 640/800. Panel navy con hairline gradiente arriba, isotipo
   gigante al 7% rotado −12° como marca de agua, claim Nunito 800 40px
   ("Toda la agencia, en una sola pantalla."), 3 bullets con check verde. Panel claro
-  con card 400px (radio 18, sombra profunda): isotipo azul, "Hola de nuevo",
-  correo/contraseña (foco verde), CTA verde píldora, divisor "O", Google SSO,
-  "Acceso solo por invitación".
+  con card 400px (radio 18, sombra profunda): isotipo azul, correo/contraseña
+  (foco verde), CTA verde píldora, divisor, Google SSO.
+  **Copy canónico (overrides de Clerk sobre esES; la app se llama "ERP VIVO")**:
+  · Sign-in — título "Hola de nuevo" · subtítulo "Entra y mira cómo va el negocio
+    hoy." · labels "Correo" / "Contraseña" (+ link "¿La olvidaste?") · botón
+    "Entrar" · divisor "o" · social "Continuar con Google" · pie "El acceso es por
+    invitación — pídesela a tu admin." · error de credenciales "Ese correo y esa
+    contraseña no coinciden. Inténtalo de nuevo."
+  · Sign-up — título "Crea tu cuenta" · subtítulo "Un minuto y quedas dentro." ·
+    botón "Crear cuenta" · pie "¿Ya tienes cuenta? Entra." · verificación: título
+    "Revisa tu correo", subtítulo "Te enviamos un código a {correo}.", botón
+    "Verificar" · estado post-registro "Tu acceso está en revisión — un admin lo
+    activa en breve."
+  Regla de voz: directa, cálida, de "tú", sin jerga ("para continuar a X" y
+  similares quedan prohibidos); el producto se nombra "ERP VIVO" o no se nombra.
 - **CRM · Pipeline**: tabs Pipeline/Contactos/Cuentas; fila de filtros (chips);
   4 columnas kanban con header (nombre 800 + count píldora blanca + suma derecha);
   barra inferior resumen del mes (ganados/perdidos/conversión).

@@ -41,7 +41,7 @@ export function ServicesSection({
               className="flex flex-wrap items-center gap-2 rounded-md border px-3 py-2"
             >
               <span className="text-sm font-medium">{s.serviceName}</span>
-              <span className="font-mono text-xs">
+              <span className="text-xs font-bold tabular-nums">
                 {formatMoney(s.monthlyFee)}/mes
               </span>
               <span className="text-xs text-muted-foreground">
@@ -62,7 +62,7 @@ export function ServicesSection({
               className="flex flex-wrap items-center gap-2 rounded-md border border-dashed px-3 py-2 opacity-60"
             >
               <span className="text-sm">{s.serviceName}</span>
-              <span className="font-mono text-xs">
+              <span className="text-xs font-bold tabular-nums">
                 {formatMoney(s.monthlyFee)}/mes
               </span>
               <span className="text-xs text-muted-foreground">

@@ -40,14 +40,23 @@ type InvoiceFormProps = {
   /** Cuentas CRM para vincular; puede escribirse un cliente libre. */
   accounts?: Option[];
   triggerLabel?: string;
+  /** Modo controlado (lo abre el menú de la fila); sin trigger propio. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  hideTrigger?: boolean;
 };
 
 export function InvoiceForm({
   invoice,
   accounts = [],
   triggerLabel = "+ Registrar factura",
+  open: controlledOpen,
+  onOpenChange,
+  hideTrigger = false,
 }: InvoiceFormProps) {
-  const [open, setOpen] = useState(false);
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const open = controlledOpen ?? uncontrolledOpen;
+  const setOpen = onOpenChange ?? setUncontrolledOpen;
   const [currency, setCurrency] = useState(invoice?.currencyCode ?? "COP");
   const [accountId, setAccountId] = useState<string | null>(
     invoice?.accountId ?? null,
@@ -121,11 +130,13 @@ export function InvoiceForm({
   return (
     <>
     <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
-      <DialogTrigger
-        render={<Button variant={invoice ? "outline" : "default"} size="sm" />}
-      >
-        {invoice ? "Editar" : triggerLabel}
-      </DialogTrigger>
+      {!hideTrigger && (
+        <DialogTrigger
+          render={<Button variant={invoice ? "outline" : "default"} size="sm" />}
+        >
+          {invoice ? "Editar" : triggerLabel}
+        </DialogTrigger>
+      )}
       <CaptureDialogContent>
         <CaptureLomo icon={FileText} module="Finanzas" title={invoice ? "Editar factura" : "Registrar factura"} context={lomoContext} />
         <div className="flex min-w-0 flex-col">

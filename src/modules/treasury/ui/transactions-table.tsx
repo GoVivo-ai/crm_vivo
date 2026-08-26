@@ -1,83 +1,68 @@
 import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { deleteBankTransaction } from "@/modules/treasury/application/treasury-actions";
 import type { BankTransactionView } from "@/modules/treasury/domain/types";
-import { DeleteRecordButton } from "@/shared/ui/delete-record-button";
+import { TransactionRowActions } from "@/modules/treasury/ui/transaction-row-actions";
+import { formatIsoDate } from "@/modules/people/ui/file/helpers";
+import { LIST_TH } from "@/shared/ui/entity/list-bits";
 import { formatMoney } from "@/shared/ui/format";
 
-/** Últimos movimientos registrados; entradas en verde, salidas en tinta. */
+/** Movimientos al sistema §15.2: fechas es-CO, tabular, menú ⋯. */
 export function TransactionsTable({
   transactions,
   canWrite,
 }: {
   transactions: BankTransactionView[];
-  /** treasury:write — sin él no se renderiza borrar. */
+  /** treasury:write — sin él no se monta el menú de acciones. */
   canWrite: boolean;
 }) {
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Fecha</TableHead>
-          <TableHead>Cuenta</TableHead>
-          <TableHead>Detalle</TableHead>
-          <TableHead className="text-right">Monto</TableHead>
-          <TableHead className="text-right">Acciones</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {transactions.map((tx) => {
-          const isIn = tx.direction === "in";
-          return (
-            <TableRow key={tx.id}>
-              <TableCell className="font-mono text-xs whitespace-nowrap">
-                {tx.date}
-              </TableCell>
-              <TableCell className="text-sm">{tx.bankName ?? "—"}</TableCell>
-              <TableCell className="max-w-80 truncate text-sm">
-                {tx.description ?? "—"}
-              </TableCell>
-              <TableCell
-                className={cn(
-                  "text-right font-mono text-xs whitespace-nowrap",
-                  isIn && "text-health-ok",
-                )}
-              >
-                <span className="inline-flex items-center gap-1">
-                  {isIn ? (
-                    <ArrowDownLeft className="size-3" />
-                  ) : (
-                    <ArrowUpRight className="size-3 text-muted-foreground" />
+    <div className="overflow-x-auto">
+      <table className="w-full text-[13px] font-semibold">
+        <thead>
+          <tr className="border-b">
+            <th className={LIST_TH}>Fecha</th>
+            <th className={LIST_TH}>Cuenta</th>
+            <th className={LIST_TH}>Detalle</th>
+            <th className={`${LIST_TH} text-right`}>Monto</th>
+            <th className={LIST_TH} aria-hidden />
+          </tr>
+        </thead>
+        <tbody>
+          {transactions.map((tx) => {
+            const isIn = tx.direction === "in";
+            return (
+              <tr key={tx.id} className="border-b border-[#EDF0F5] last:border-b-0">
+                <td className="px-5 py-3 whitespace-nowrap text-muted-foreground">
+                  {formatIsoDate(tx.date)}
+                </td>
+                <td className="px-5 py-3 font-extrabold">{tx.bankName ?? "—"}</td>
+                <td className="max-w-80 truncate px-5 py-3 text-muted-foreground">
+                  {tx.description ?? "—"}
+                </td>
+                <td
+                  className={cn(
+                    "px-5 py-3 text-right font-extrabold whitespace-nowrap tabular-nums",
+                    isIn ? "text-[#069B66]" : "text-[#0A1E3F]",
                   )}
-                  {isIn ? "+" : "−"}
-                  {formatMoney(Math.abs(tx.amount))}
-                </span>
-              </TableCell>
-              <TableCell className="text-right">
-                {canWrite && (
-                  <DeleteRecordButton
-                    action={deleteBankTransaction}
-                    id={tx.id}
-                    title={`¿Borrar el movimiento del ${tx.date} por ${formatMoney(tx.amount)}?`}
-                    body="Deja de contar en el flujo de caja del mes. Esta acción no se puede deshacer."
-                    confirmLabel="Borrar movimiento"
-                    objectName={tx.bankName ?? undefined}
-                    successMessage="Movimiento borrado"
-                  />
-                )}
-              </TableCell>
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
+                >
+                  <span className="inline-flex items-center gap-1">
+                    {isIn ? (
+                      <ArrowDownLeft className="size-3" />
+                    ) : (
+                      <ArrowUpRight className="size-3 text-muted-foreground" />
+                    )}
+                    {isIn ? "+" : "−"}
+                    {formatMoney(Math.abs(tx.amount))}
+                  </span>
+                </td>
+                <td className="px-5 py-3 text-right">
+                  {canWrite && <TransactionRowActions tx={tx} />}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }

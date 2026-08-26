@@ -103,18 +103,13 @@ export function UsersTable({ users, currentUserId }: UsersTableProps) {
                 />
               </TableCell>
               <TableCell>
+                {/* §15.2: badge de tinta, jamás outline. */}
                 {user.isActive ? (
-                  <Badge
-                    variant="outline"
-                    className="border-health-ok/30 bg-health-ok/10 text-health-ok"
-                  >
+                  <Badge className="rounded-full border-transparent bg-[#E6F9F1] font-extrabold text-[#069B66]">
                     Activo
                   </Badge>
                 ) : (
-                  <Badge
-                    variant="outline"
-                    className="border-health-warn/30 bg-health-warn/10 text-health-warn"
-                  >
+                  <Badge className="rounded-full border-transparent bg-[#FBF7D9] font-extrabold text-[#8C7A0A]">
                     Pendiente
                   </Badge>
                 )}

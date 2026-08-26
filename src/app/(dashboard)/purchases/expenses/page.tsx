@@ -42,7 +42,11 @@ export default async function ExpensesPage() {
         />
       ) : (
         <div className="overflow-x-auto rounded-lg border bg-card">
-          <ExpensesTable expenses={result.data} canWrite={canWrite} />
+          <ExpensesTable
+            expenses={result.data}
+            canWrite={canWrite}
+            total={result.data.length}
+          />
         </div>
       )}
     </div>

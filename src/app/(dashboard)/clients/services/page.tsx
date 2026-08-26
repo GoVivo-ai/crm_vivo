@@ -1,11 +1,8 @@
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  IdentityCell,
+  LIST_TH,
+  ListFooter,
+} from "@/shared/ui/entity/list-bits";
 import { listServices } from "@/modules/clients/application/services-actions";
 import { ServiceForm } from "@/modules/clients/ui/service-form";
 import { ActionError } from "@/shared/ui/action-error";
@@ -33,31 +30,41 @@ export default async function ServicesPage() {
           El catálogo está vacío. Crea el primer servicio.
         </p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border bg-card">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Servicio</TableHead>
-                <TableHead>Descripción</TableHead>
-                <TableHead className="text-right">Fee sugerido</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+        <div className="overflow-x-auto rounded-[14px] border bg-card shadow-[0_1px_2px_rgba(1,22,64,0.04)]">
+          <table className="w-full text-[13px] font-semibold">
+            <thead>
+              <tr className="border-b">
+                <th className={LIST_TH}>Servicio</th>
+                <th className={LIST_TH}>Descripción</th>
+                <th className={`${LIST_TH} text-right`}>Fee sugerido</th>
+              </tr>
+            </thead>
+            <tbody>
               {services.map((service) => (
-                <TableRow key={service.id}>
-                  <TableCell className="font-medium">{service.name}</TableCell>
-                  <TableCell className="max-w-md text-muted-foreground">
+                <tr
+                  key={service.id}
+                  className="relative border-b border-[#EDF0F5] last:border-b-0"
+                >
+                  <td className="px-5 py-3">
+                    <IdentityCell
+                      id={service.id}
+                      name={service.name}
+                      sub={service.isActive ? "Activo" : "Inactivo"}
+                    />
+                  </td>
+                  <td className="max-w-md px-5 py-3 text-muted-foreground">
                     {service.description ?? "—"}
-                  </TableCell>
-                  <TableCell className="text-right font-mono text-xs">
+                  </td>
+                  <td className="px-5 py-3 text-right font-extrabold whitespace-nowrap tabular-nums">
                     {service.defaultMonthlyFee !== null
                       ? formatMoney(service.defaultMonthlyFee)
                       : "—"}
-                  </TableCell>
-                </TableRow>
+                  </td>
+                </tr>
               ))}
-            </TableBody>
-          </Table>
+            </tbody>
+          </table>
+          <ListFooter shown={services.length} total={services.length} />
         </div>
       )}
     </div>

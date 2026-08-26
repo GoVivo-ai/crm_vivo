@@ -16,15 +16,21 @@ export const LEAVE_STATUS_LABELS: Record<LeaveStatus, string> = {
   rejected: "Rechazada",
 };
 
+// §15.2: estado SIEMPRE badge de tinta — jamás outline.
 const LEAVE_STATUS_STYLES: Record<LeaveStatus, string> = {
-  requested: "bg-health-warn/10 text-health-warn border-health-warn/30",
-  approved: "bg-health-ok/10 text-health-ok border-health-ok/30",
-  rejected: "bg-destructive/10 text-destructive border-destructive/30",
+  requested: "bg-[#FBF7D9] text-[#8C7A0A]",
+  approved: "bg-[#E6F9F1] text-[#069B66]",
+  rejected: "bg-[#FAEAEA] text-[#C93A3A]",
 };
 
 export function LeaveStatusBadge({ status }: { status: LeaveStatus }) {
   return (
-    <Badge variant="outline" className={cn(LEAVE_STATUS_STYLES[status])}>
+    <Badge
+      className={cn(
+        "rounded-full border-transparent font-extrabold",
+        LEAVE_STATUS_STYLES[status],
+      )}
+    >
       {LEAVE_STATUS_LABELS[status]}
     </Badge>
   );
@@ -34,11 +40,11 @@ export function LeaveStatusBadge({ status }: { status: LeaveStatus }) {
 export function MemberStatusBadge({ active }: { active: boolean }) {
   return (
     <Badge
-      variant="outline"
       className={cn(
+        "rounded-full border-transparent font-extrabold",
         active
-          ? "border-health-ok/30 bg-health-ok/10 text-health-ok"
-          : "text-muted-foreground",
+          ? "bg-[#E6F9F1] text-[#069B66]"
+          : "bg-[#EEF1F6] text-[#5A6B85]",
       )}
     >
       {active ? "Activo" : "Inactivo"}

@@ -43,7 +43,7 @@ export function PayrollPaymentsList({
               {p.notes ? ` · ${p.notes}` : ""}
             </p>
           </div>
-          <span className="font-mono text-sm">
+          <span className="text-sm font-bold tabular-nums">
             {formatCurrency(p.amount, p.currencyCode)}
           </span>
           {canWrite && (

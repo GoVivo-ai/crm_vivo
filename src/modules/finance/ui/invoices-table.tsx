@@ -1,105 +1,105 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { deleteInvoice } from "@/modules/finance/application/invoices-actions";
 import type { Invoice } from "@/modules/finance/domain/types";
-import { InvoiceForm } from "@/modules/finance/ui/invoice-form";
-import { DeleteRecordButton } from "@/shared/ui/delete-record-button";
+import { InvoiceRowActions } from "@/modules/finance/ui/invoice-row-actions";
+import { formatIsoDate } from "@/modules/people/ui/file/helpers";
+import { IdentityCell, LIST_TH, ListFooter } from "@/shared/ui/entity/list-bits";
 import { formatCurrency } from "@/shared/ui/format";
 import { SourceBadge } from "@/shared/ui/source-badge";
 
-const STATUS_LABELS: Record<Invoice["status"], string> = {
-  open: "Abierta",
-  paid: "Pagada",
-  void: "Anulada",
+const STATUS: Record<Invoice["status"], { label: string; cls: string }> = {
+  open: { label: "Abierta", cls: "bg-[#FBF7D9] text-[#8C7A0A]" },
+  paid: { label: "Pagada", cls: "bg-[#E6F9F1] text-[#069B66]" },
+  void: { label: "Anulada", cls: "bg-[#EEF1F6] text-[#5A6B85]" },
 };
 
 type InvoicesTableProps = {
   invoices: Invoice[];
   accounts: { id: string; name: string }[];
-  /** finance:write — sin él no se renderizan editar/borrar. */
+  /** finance:write — sin él no se monta el menú de acciones. */
   canWrite: boolean;
+  /** Total sin filtrar, para el footer "Mostrando N de M". */
+  total: number;
 };
 
-/** Facturas de ingreso; las manuales se editan/borran, QB solo lectura. */
+/** Facturas al sistema §15.2: celda identidad, badges de tinta, fechas
+ * es-CO, tabular; acciones en menú ⋯ (solo manuales). */
 export function InvoicesTable({
   invoices,
   accounts,
   canWrite,
+  total,
 }: InvoicesTableProps) {
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Cliente</TableHead>
-          <TableHead>Número</TableHead>
-          <TableHead>Emitida</TableHead>
-          <TableHead>Estado</TableHead>
-          <TableHead className="text-right">Total</TableHead>
-          <TableHead className="text-right">Saldo</TableHead>
-          <TableHead>Fuente</TableHead>
-          <TableHead className="text-right">Acciones</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {invoices.map((invoice) => (
-          <TableRow
-            key={invoice.id}
-            className={cn(invoice.status === "void" && "opacity-50")}
-          >
-            <TableCell className="max-w-56 truncate text-sm font-medium">
-              {invoice.accountName ?? invoice.clientName ?? "—"}
-            </TableCell>
-            <TableCell className="font-mono text-xs">
-              {invoice.number ?? "—"}
-            </TableCell>
-            <TableCell className="font-mono text-xs">
-              {invoice.issueDate}
-            </TableCell>
-            <TableCell className="text-sm">
-              {STATUS_LABELS[invoice.status]}
-            </TableCell>
-            <TableCell className="text-right font-mono text-xs">
-              {formatCurrency(invoice.total, invoice.currencyCode)}
-            </TableCell>
-            <TableCell
-              className={cn(
-                "text-right font-mono text-xs",
-                invoice.balance > 0 && invoice.status === "open"
-                  ? "text-health-warn"
-                  : "text-muted-foreground",
-              )}
-            >
-              {formatCurrency(invoice.balance, invoice.currencyCode)}
-            </TableCell>
-            <TableCell>
-              <SourceBadge source={invoice.source} />
-            </TableCell>
-            <TableCell className="text-right">
-              {canWrite && invoice.source === "manual" && (
-                <span className="inline-flex items-center gap-1">
-                  <InvoiceForm invoice={invoice} accounts={accounts} />
-                  <DeleteRecordButton
-                    action={deleteInvoice}
-                    id={invoice.id}
-                    title={`¿Borrar la factura ${invoice.number ?? "sin número"} de ${invoice.accountName ?? invoice.clientName ?? "?"}?`}
-                    body="Se borra el registro y deja de contar en facturación y cartera. Esta acción no se puede deshacer."
-                    confirmLabel="Borrar factura"
-                    objectName={invoice.number ?? invoice.accountName ?? invoice.clientName ?? undefined}
-                    successMessage={`Factura ${invoice.number ?? ""} borrada`.trim()}
-                  />
-                </span>
-              )}
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <>
+      <div className="overflow-x-auto">
+        <table className="w-full text-[13px] font-semibold">
+          <thead>
+            <tr className="border-b">
+              <th className={LIST_TH}>Cliente</th>
+              <th className={LIST_TH}>Emitida</th>
+              <th className={`${LIST_TH} text-right`}>Total</th>
+              <th className={`${LIST_TH} text-right`}>Saldo</th>
+              <th className={LIST_TH}>Fuente</th>
+              <th className={LIST_TH}>Estado</th>
+              <th className={LIST_TH} aria-hidden />
+            </tr>
+          </thead>
+          <tbody>
+            {invoices.map((invoice) => {
+              const st = STATUS[invoice.status];
+              return (
+                <tr
+                  key={invoice.id}
+                  className={cn(
+                    "border-b border-[#EDF0F5] last:border-b-0",
+                    invoice.status === "void" && "opacity-60",
+                  )}
+                >
+                  <td className="px-5 py-3">
+                    <IdentityCell
+                      id={invoice.accountId ?? invoice.id}
+                      name={invoice.accountName ?? invoice.clientName ?? "—"}
+                      sub={invoice.number ?? "Sin número"}
+                    />
+                  </td>
+                  <td className="px-5 py-3 whitespace-nowrap text-muted-foreground">
+                    {formatIsoDate(invoice.issueDate)}
+                  </td>
+                  <td className="px-5 py-3 text-right font-extrabold whitespace-nowrap tabular-nums">
+                    {formatCurrency(invoice.total, invoice.currencyCode)}
+                  </td>
+                  <td
+                    className={cn(
+                      "px-5 py-3 text-right whitespace-nowrap tabular-nums",
+                      invoice.balance > 0 && invoice.status === "open"
+                        ? "font-extrabold text-[#8C7A0A]"
+                        : "text-muted-foreground",
+                    )}
+                  >
+                    {formatCurrency(invoice.balance, invoice.currencyCode)}
+                  </td>
+                  <td className="px-5 py-3">
+                    <SourceBadge source={invoice.source} />
+                  </td>
+                  <td className="px-5 py-3">
+                    <span
+                      className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-extrabold ${st.cls}`}
+                    >
+                      {st.label}
+                    </span>
+                  </td>
+                  <td className="px-5 py-3 text-right">
+                    {canWrite && invoice.source === "manual" && (
+                      <InvoiceRowActions invoice={invoice} accounts={accounts} />
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <ListFooter shown={invoices.length} total={total} />
+    </>
   );
 }

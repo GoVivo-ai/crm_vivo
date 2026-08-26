@@ -114,11 +114,12 @@ export default async function InvoicesPage({
           }
         />
       ) : (
-        <div className="overflow-x-auto rounded-lg border bg-card">
+        <div className="rounded-[14px] border bg-card shadow-[0_1px_2px_rgba(1,22,64,0.04)]">
           <InvoicesTable
             invoices={invoices}
             accounts={accounts}
             canWrite={canWrite}
+            total={all.length}
           />
         </div>
       )}

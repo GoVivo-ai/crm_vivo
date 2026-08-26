@@ -6,6 +6,8 @@ export type EntityStat = {
   value: string;
   /** true = 16px (fechas); false = 24px (cifras protagonistas). */
   small?: boolean;
+  /** Color semántico (margen +/-): ok = verde tinta, bad = rojo. */
+  tone?: "ok" | "bad";
 };
 
 /**
@@ -61,8 +63,13 @@ export function EntityHeader({
               </span>
               <span
                 className={cn(
-                  "font-[family-name:var(--font-display)] font-extrabold text-[#011640] tabular-nums",
+                  "font-[family-name:var(--font-display)] font-extrabold tabular-nums",
                   stat.small ? "text-base" : "text-2xl",
+                  stat.tone === "ok"
+                    ? "text-[#069B66]"
+                    : stat.tone === "bad"
+                      ? "text-[#C93A3A]"
+                      : "text-[#011640]",
                 )}
               >
                 {stat.value}

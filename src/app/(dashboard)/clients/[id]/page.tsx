@@ -10,6 +10,7 @@ import { ProjectsCard } from "@/modules/clients/ui/three-sixty/projects-card";
 import { StaffingCard } from "@/modules/clients/ui/three-sixty/staffing-card";
 import { ServicesSection } from "@/modules/clients/ui/services-section";
 import { listInvoices } from "@/modules/finance/application/invoices-actions";
+import { getProfitabilityDashboard } from "@/modules/profitability/application/profitability-dashboard-action";
 import { listAccountStaffing } from "@/modules/profitability/application/staffing-actions";
 import { AccountForm } from "@/modules/crm/ui/account-form";
 import { AccountStatusBadge } from "@/modules/crm/ui/labels";
@@ -47,14 +48,21 @@ export default async function Client360Page({
   params,
 }: PageProps<"/clients/[id]">) {
   const { id } = await params;
-  const [result, catalogResult, invoicesResult, staffingResult, healthResult] =
-    await Promise.all([
-      getAccount360(id),
-      listServices(),
-      listInvoices({ accountId: id }),
-      listAccountStaffing(id),
-      getClientsHealthList(),
-    ]);
+  const [
+    result,
+    catalogResult,
+    invoicesResult,
+    staffingResult,
+    healthResult,
+    profitResult,
+  ] = await Promise.all([
+    getAccount360(id),
+    listServices(),
+    listInvoices({ accountId: id }),
+    listAccountStaffing(id),
+    getClientsHealthList(),
+    getProfitabilityDashboard(),
+  ]);
   if (!result.ok) {
     if (result.error.includes("no encontrada")) notFound();
     return <ActionError message={result.error} />;
@@ -68,6 +76,9 @@ export default async function Client360Page({
   const staffing = staffingResult.ok ? staffingResult.data : null;
   const health = healthResult.ok
     ? (healthResult.data.find((c) => c.accountId === id) ?? null)
+    : null;
+  const profit = profitResult.ok
+    ? (profitResult.data.accounts.find((a) => a.accountId === id) ?? null)
     : null;
   const today = new Date().toISOString().slice(0, 10);
 
@@ -235,9 +246,28 @@ export default async function Client360Page({
         stats={[
           { label: "MRR", value: byCurrency(mrrByCurrency) },
           { label: "Cartera pendiente", value: byCurrency(outstanding) },
-          ...(health?.marginCop !== undefined
-            ? [{ label: "Margen 3 m", value: formatCompactMoney(health.marginCop) }]
-            : []),
+          // Margen del periodo de Rentabilidad ("% · $cifra", artboard);
+          // sin dashboard cae a la cifra 3 m del chip de salud.
+          ...(profit !== null
+            ? [
+                {
+                  label: "Margen",
+                  value:
+                    profit.marginPercent !== null
+                      ? `${Math.round(profit.marginPercent)}% · ${formatCompactMoney(profit.marginCop)}`
+                      : formatCompactMoney(profit.marginCop),
+                  tone: profit.marginCop >= 0 ? ("ok" as const) : ("bad" as const),
+                },
+              ]
+            : health?.marginCop !== undefined
+              ? [
+                  {
+                    label: "Margen · 3 m",
+                    value: formatCompactMoney(health.marginCop),
+                    tone: health.marginCop >= 0 ? ("ok" as const) : ("bad" as const),
+                  },
+                ]
+              : []),
         ]}
         actions={
           <RequiresWrite resource="crm">

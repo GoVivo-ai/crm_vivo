@@ -1,14 +1,12 @@
 import { Search } from "lucide-react";
-import Link from "next/link";
+import type { Route } from "next";
 import { Input } from "@/components/ui/input";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  IdentityCell,
+  LIST_TH,
+  ListFooter,
+  RowChevron,
+} from "@/shared/ui/entity/list-bits";
 import { listAccounts } from "@/modules/crm/application/accounts-actions";
 import { listContacts } from "@/modules/crm/application/contacts-actions";
 import { ContactForm } from "@/modules/crm/ui/contact-form";
@@ -70,42 +68,50 @@ export default async function ContactsPage({
           }
         />
       ) : (
-        <div className="overflow-x-auto rounded-lg border bg-card">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nombre</TableHead>
-                <TableHead>Cargo</TableHead>
-                <TableHead>Cuenta</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Teléfono</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+        <div className="overflow-x-auto rounded-[14px] border bg-card shadow-[0_1px_2px_rgba(1,22,64,0.04)]">
+          <table className="w-full text-[13px] font-semibold">
+            <thead>
+              <tr className="border-b">
+                <th className={LIST_TH}>Contacto</th>
+                <th className={LIST_TH}>Cargo</th>
+                <th className={LIST_TH}>Cuenta</th>
+                <th className={LIST_TH}>Teléfono</th>
+                <th className={LIST_TH} aria-hidden />
+              </tr>
+            </thead>
+            <tbody>
               {contacts.map((contact) => (
-                <TableRow key={contact.id}>
-                  <TableCell className="font-medium">
-                    <Link
-                      href={`/crm/contacts/${contact.id}`}
-                      className="hover:underline"
-                    >
-                      {contact.name}
-                    </Link>
-                  </TableCell>
-                  <TableCell>{contact.jobTitle ?? "—"}</TableCell>
-                  <TableCell>
+                <tr
+                  key={contact.id}
+                  className="relative border-b border-[#EDF0F5] transition-colors last:border-b-0 hover:bg-[#F6F7F9]"
+                >
+                  <td className="px-5 py-3">
+                    <IdentityCell
+                      id={contact.id}
+                      name={contact.name}
+                      sub={contact.email ?? "Sin correo"}
+                      href={`/crm/contacts/${contact.id}` as Route}
+                    />
+                  </td>
+                  <td className="px-5 py-3 text-muted-foreground">
+                    {contact.jobTitle ?? "—"}
+                  </td>
+                  <td className="px-5 py-3">
                     {contact.accountId
                       ? (accountName.get(contact.accountId) ?? "—")
                       : "—"}
-                  </TableCell>
-                  <TableCell>{contact.email ?? "—"}</TableCell>
-                  <TableCell className="font-mono text-xs">
+                  </td>
+                  <td className="px-5 py-3 whitespace-nowrap text-muted-foreground tabular-nums">
                     {contact.phone ?? "—"}
-                  </TableCell>
-                </TableRow>
+                  </td>
+                  <td className="px-5 py-3 text-right">
+                    <RowChevron />
+                  </td>
+                </tr>
               ))}
-            </TableBody>
-          </Table>
+            </tbody>
+          </table>
+          <ListFooter shown={contacts.length} total={contacts.length} />
         </div>
       )}
     </div>

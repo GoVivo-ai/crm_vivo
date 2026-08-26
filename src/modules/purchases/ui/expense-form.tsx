@@ -27,8 +27,21 @@ import { useActionSubmit } from "@/shared/ui/use-action-submit";
 import { useDirtyGuard } from "@/shared/ui/use-dirty-guard";
 
 /** Registro/edición de gasto: direct = ya pagado (default), bill = a crédito. */
-export function ExpenseForm({ expense }: { expense?: Expense }) {
-  const [open, setOpen] = useState(false);
+export function ExpenseForm({
+  expense,
+  open: controlledOpen,
+  onOpenChange,
+  hideTrigger = false,
+}: {
+  expense?: Expense;
+  /** Modo controlado (lo abre el menú de la fila); sin trigger propio. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  hideTrigger?: boolean;
+}) {
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const open = controlledOpen ?? uncontrolledOpen;
+  const setOpen = onOpenChange ?? setUncontrolledOpen;
   const [kind, setKind] = useState<"bill" | "direct">(expense?.kind ?? "direct");
   const [currency, setCurrency] = useState(expense?.currencyCode ?? "COP");
   const [status, setStatus] = useState<"open" | "paid" | "void">(
@@ -94,11 +107,13 @@ export function ExpenseForm({ expense }: { expense?: Expense }) {
   return (
     <>
     <Dialog open={open} onOpenChange={guard.guardedOnOpenChange}>
-      <DialogTrigger
-        render={<Button variant={editing ? "outline" : "default"} size="sm" />}
-      >
-        {editing ? "Editar" : "+ Registrar gasto"}
-      </DialogTrigger>
+      {!hideTrigger && (
+        <DialogTrigger
+          render={<Button variant={editing ? "outline" : "default"} size="sm" />}
+        >
+          {editing ? "Editar" : "+ Registrar gasto"}
+        </DialogTrigger>
+      )}
       <CaptureDialogContent>
         <CaptureLomo icon={ReceiptText} module="Gastos" title={editing ? "Editar gasto" : "Registrar gasto"} context={lomoContext} />
         <div className="flex min-w-0 flex-col">

@@ -56,6 +56,9 @@
   --color-health-ok: var(--health-ok);
   --color-health-warn: var(--health-warn);
   --color-health-critical: var(--health-critical);
+  --color-fill: var(--fill);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -113,6 +116,12 @@
   --health-ok: #069b66;
   --health-warn: #a3690b;
   --health-critical: #c93a3a;
+  /* Neutros de relleno del §2 que vivían hardcodeados en los componentes.
+   * Son la base de la regla de marca: el gris es el color dominante y el
+   * navy/verde solo acentúan. */
+  --fill: #eef1f6; /* pistas de barra, chips mudos, tiles de identidad */
+  --faint: #8b99b0; /* labels, placeholders, ejes de gráficas */
+  --line: #edf0f5; /* líneas internas: filas de tabla, separadores */
 }
 
 /* Dark mode diferido a v2 — espejo navy de los tokens de marca. */
@@ -155,6 +164,9 @@
   --health-ok: #23c78e;
   --health-warn: #d3963a;
   --health-critical: #d9564e;
+  --fill: #12294f;
+  --faint: #8ea1bf;
+  --line: #ffffff14;
 }
 
 @layer base {

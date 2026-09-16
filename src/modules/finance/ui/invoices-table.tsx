@@ -57,7 +57,6 @@ export function InvoicesTable({
                 >
                   <td className="px-5 py-3">
                     <IdentityCell
-                      id={invoice.accountId ?? invoice.id}
                       name={invoice.accountName ?? invoice.clientName ?? "—"}
                       sub={invoice.number ?? "Sin número"}
                     />

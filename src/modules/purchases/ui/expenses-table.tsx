@@ -52,7 +52,6 @@ export function ExpensesTable({
                 >
                   <td className="px-5 py-3">
                     <IdentityCell
-                      id={expense.providerName}
                       name={expense.providerName}
                       sub={expense.kind === "bill" ? "Factura a crédito" : "Gasto directo"}
                     />

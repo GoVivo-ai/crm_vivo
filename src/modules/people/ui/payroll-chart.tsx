@@ -11,7 +11,7 @@ import type { PayrollCostPoint } from "@/modules/people/domain/types";
 import { formatCompactMoney, formatMoney } from "@/shared/ui/format";
 
 const config = {
-  totalCop: { label: "Costo", color: "var(--module-finance)" },
+  totalCop: { label: "Costo", color: "var(--chart-1)" },
 } satisfies ChartConfig;
 
 const MONTHS = "ene feb mar abr may jun jul ago sep oct nov dic".split(" ");

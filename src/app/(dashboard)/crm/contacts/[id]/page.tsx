@@ -106,8 +106,8 @@ export default async function ContactDetailPage({
   ]
     .filter(Boolean)
     .join(" · ");
-  const tint = tintFor(contact.id);
-  const accountTint = account ? tintFor(account.id) : null;
+  const tint = tintFor();
+  const accountTint = account ? tintFor() : null;
 
   return (
     <div className="flex flex-col gap-5">
@@ -168,7 +168,6 @@ export default async function ContactDetailPage({
                 contactDeals.map((d) => (
                   <EntityRow
                     key={d.id}
-                    id={d.id}
                     name={d.title}
                     meta={d.stageName}
                     right={

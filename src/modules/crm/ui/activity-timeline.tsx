@@ -21,18 +21,28 @@ export type TimelineMilestone = {
   by?: string | null;
 };
 
-// Tintas por tipo (§15.1): nota gris, llamada azul, reunión teal,
-// correo gold, tarea neutra, cambio de etapa VERDE.
+// El tipo de actividad lo dice el ICONO, no el color: seis tintas distintas en
+// una sola columna era ruido puro. Todos los puntos van en relleno neutro; el
+// único que se colorea es el hito de sistema, que sí es de otra naturaleza
+// (lo registra el ERP, no una persona).
 const DOT: Record<
   ActivityType | "milestone",
   { icon: typeof Phone; bg: string; fg: string }
 > = {
-  note: { icon: NotebookPen, bg: "#EEF1F6", fg: "#5A6B85" },
-  call: { icon: Phone, bg: "#E8F0FB", fg: "#1E5FBF" },
-  meeting: { icon: Users, bg: "#E0F2F6", fg: "#0790A8" },
-  email: { icon: Mail, bg: "#FBF7D9", fg: "#8C7A0A" },
-  task: { icon: SquareCheck, bg: "#EEF1F6", fg: "#5A6B85" },
-  milestone: { icon: TrendingUp, bg: "#E6F9F1", fg: "#069B66" },
+  note: { icon: NotebookPen, bg: "var(--fill)", fg: "var(--muted-foreground)" },
+  call: { icon: Phone, bg: "var(--fill)", fg: "var(--muted-foreground)" },
+  meeting: { icon: Users, bg: "var(--fill)", fg: "var(--muted-foreground)" },
+  email: { icon: Mail, bg: "var(--fill)", fg: "var(--muted-foreground)" },
+  task: {
+    icon: SquareCheck,
+    bg: "var(--fill)",
+    fg: "var(--muted-foreground)",
+  },
+  milestone: {
+    icon: TrendingUp,
+    bg: "var(--accent)",
+    fg: "var(--health-ok)",
+  },
 };
 
 type Entry = {

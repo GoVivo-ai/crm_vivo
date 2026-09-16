@@ -47,7 +47,6 @@ export default async function ServicesPage() {
                 >
                   <td className="px-5 py-3">
                     <IdentityCell
-                      id={service.id}
                       name={service.name}
                       sub={service.isActive ? "Activo" : "Inactivo"}
                     />

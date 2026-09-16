@@ -98,7 +98,6 @@ export default async function AccountsPage({
                 >
                   <td className="px-5 py-3">
                     <IdentityCell
-                      id={account.id}
                       name={account.name}
                       sub={account.nit ? `NIT ${account.nit}` : "Sin NIT"}
                       href={`/crm/accounts/${account.id}` as Route}

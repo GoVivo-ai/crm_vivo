@@ -52,17 +52,15 @@ export function ListChips({
  * ser `relative`).
  */
 export function IdentityCell({
-  id,
   name,
   sub,
   href,
 }: {
-  id: string;
   name: string;
   sub?: string | null;
   href?: Route;
 }) {
-  const tint = tintFor(id);
+  const tint = tintFor();
   return (
     <span className="flex items-center gap-3">
       {href && (

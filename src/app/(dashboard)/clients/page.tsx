@@ -88,7 +88,6 @@ export default async function ClientsPage({
                   >
                     <td className="px-5 py-3">
                       <IdentityCell
-                        id={account.id}
                         name={account.name}
                         sub={account.nit ? `NIT ${account.nit}` : "Sin NIT"}
                         href={`/clients/${account.id}` as Route}

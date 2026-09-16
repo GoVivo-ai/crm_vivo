@@ -59,6 +59,16 @@ Los assets de marca ya viven en `public/brand/` (logo-vivo-blue/white.png, logom
 - **Gráficas — paleta categórica validada (orden FIJO, nunca ciclar):**
   `#069B66` → `#1E5FBF` → `#8C7A0A` → `#0790A8`. Una sola serie = verde `#069B66`.
   Ingresos siempre `#069B66`, gastos siempre `#1E5FBF`.
+  El color de una serie sale SIEMPRE de `--chart-1..5`, nunca de un `--module-*`:
+  los tokens de módulo son puntos de navegación, no tintas de dato. Un gráfico de
+  polaridad usa `--chart-1` para el positivo y `--destructive` para el negativo.
+- **Proporción de color (regla de marca).** El gris neutro es el color dominante
+  de la interfaz; navy y verde **acentúan** y el amarillo es apenas un toque. El
+  color solo aparece cuando SIGNIFICA algo (estado, signo, salud). Prohibido el
+  color decorativo: nada de rotar tintas por hash de id ni de dar una tinta
+  distinta a cada tipo de una misma lista — eso se distingue por icono.
+  `--fill` `#EEF1F6`, `--faint` `#8B99B0` y `--line` `#EDF0F5` son tokens reales
+  en `globals.css`; no se vuelven a escribir a mano en los componentes.
 
 ## 3. Tipografía
 
@@ -113,9 +123,9 @@ operations no ve Compensación, Ajustes solo admin.
    Punto verde 8px con onda animada (`box-shadow` 0→7px rgba(4,217,139,.45→0), 2.4s
    infinite). Texto: "Todo sincronizado" 800 11.5px blanco + "QBO · Meta · ClickUp · 6:00 a. m."
    10.5px blanco 50%. Si una sync falla, el punto pasa a `--gold` o `--red` con el error.
-2. Usuario: card `rgba(255,255,255,.06)`, borde 8%, radio 14. Avatar 32px con
-   **gradiente de marca** (`linear-gradient(135deg,#04D98B,#F2E205)`, iniciales navy
-   Nunito 800) + nombre 800 12.5px + correo 10.5px blanco 50% + chip de rol
+2. Usuario: card `rgba(255,255,255,.06)`, borde 8%, radio 14. Avatar 32px
+   **neutro** (`rgba(255,255,255,.12)`, iniciales blancas Nunito 800 — el degradé
+   de marca se retiró de los avatares: era el amarillo repetido en cada pantalla) + nombre 800 12.5px + correo 10.5px blanco 50% + chip de rol
    (fondo `rgba(4,217,139,.16)`, texto `--green` 9.5px 800, uppercase).
 
 **Colapsado (68px)**: isotipo `logomark-white.png` arriba; ítems como círculos de 40px
@@ -154,9 +164,9 @@ círculo activo); abajo pulso y avatar 30px. Ver lámina en `Sistema.dc.html`.
   editable/borrable; lo sincronizado es de solo lectura.
 - **Tabs**: texto 700 13px `--muted`; activo navy 800 con subrayado gradiente de 3px
   (`background:linear-gradient(90deg,#04D98B,#F2E205) bottom/100% 3px no-repeat`).
-- **Avatares**: iniciales; el usuario propio con gradiente de marca; los demás con
-  tinta de estado + inicial (`--blue-tint`/`--blue`, `--green-tint`/`--green-ink`,
-  `--yellow-tint`/`--gold`). Pilas con solape −9px y borde blanco 2px.
+- **Avatares**: iniciales sobre **una sola tinta neutra** (`--fill` + texto navy).
+  No hay rotación de tintas por entidad: el avatar identifica, no clasifica. Pilas
+  con solape −9px y borde blanco 2px.
 - **Deltas**: chip up `--green-tint`/`--green-ink`, down `--red-tint`/`--red`, con
   flecha SVG 45°.
 - **Kanban**: columnas fondo `#EEF1F6` radio 14; tarjetas blancas radio 12 con borde
@@ -379,7 +389,7 @@ blanco centrado.
   verde es acción, no hover), icono a `--ink`. Ítem destructivo: texto `--red`,
   hover `--red-tint`.
 - Separadores 1px `--line` (margen 6px 8px); labels de grupo como eyebrow (§3).
-- Menú de usuario (UserButton): cabecera con avatar gradiente + nombre 800 +
+- Menú de usuario (UserButton): cabecera con avatar neutro (`--fill`/navy) + nombre 800 +
   correo `--muted` + chip de rol verde (idéntica a la tarjeta del sidebar), luego
   ítems; "Cerrar sesión" como destructivo.
 
@@ -588,9 +598,10 @@ abre como PÁGINA con esta anatomía:
    "Editar sección →" abre Lomo); lateral = **panel de relaciones** + metadatos.
 
 **Timeline de actividades (pieza propia del sistema)**: rail vertical de 2px
-`--line` con puntos de 20px (fondo tinta + icono del tipo: nota gris/lápiz,
-llamada azul/teléfono, reunión teal/calendario, correo gold/sobre, **cambio de
-etapa verde/trending** — los hitos de sistema se registran solos); cada entrada:
+`--line` con puntos de 20px (fondo `--fill` + icono del tipo: lápiz, teléfono,
+calendario, sobre, check — **el tipo lo dice el icono, no el color**; la única
+excepción es el **hito de sistema**, verde/trending, porque lo registra el ERP y
+no una persona); cada entrada:
 título 800 12.5px, cuerpo opcional 12px `--muted`, firma "quién · cuándo relativo"
 en `--faint` (absoluto en tooltip). Composer: botón "+ Registrar actividad" (Lomo
 con segmented de tipo) — futuro: input inline. Orden descendente, "Ver más" tras

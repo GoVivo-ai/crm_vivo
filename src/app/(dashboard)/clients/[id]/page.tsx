@@ -132,7 +132,6 @@ export default async function Client360Page({
             .map((c) => (
               <EntityRow
                 key={c.id}
-                id={c.id}
                 name={c.name}
                 meta={[c.jobTitle, c.email].filter(Boolean).join(" · ") || null}
                 href={`/crm/contacts/${c.id}` as Route}
@@ -163,7 +162,6 @@ export default async function Client360Page({
             .map((d) => (
               <EntityRow
                 key={d.id}
-                id={d.id}
                 name={d.title}
                 right={
                   <span className="text-xs font-extrabold tabular-nums">

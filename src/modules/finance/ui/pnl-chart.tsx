@@ -23,13 +23,14 @@ import {
 } from "@/shared/ui/format";
 
 const config = {
-  netIncomeCop: { label: "Resultado neto", color: "var(--health-ok)" },
+  netIncomeCop: { label: "Resultado neto", color: "var(--chart-1)" },
 } satisfies ChartConfig;
 
-// Par de polaridad VIVO validado con dataviz (ALL PASS); el signo también
-// se codifica por posición respecto a la línea de cero.
-const POSITIVE = "#069b66";
-const NEGATIVE = "#b3261e";
+// Par de polaridad VIVO: la serie usa la tinta única de gráfica y la pérdida
+// el rojo del sistema. El signo también se codifica por posición respecto a la
+// línea de cero, así que el color solo refuerza.
+const POSITIVE = "var(--chart-1)";
+const NEGATIVE = "var(--destructive)";
 
 const MONTHS = "ene feb mar abr may jun jul ago sep oct nov dic".split(" ");
 const monthLabel = (m: string) =>

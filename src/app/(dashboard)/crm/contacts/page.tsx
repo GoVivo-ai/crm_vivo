@@ -87,7 +87,6 @@ export default async function ContactsPage({
                 >
                   <td className="px-5 py-3">
                     <IdentityCell
-                      id={contact.id}
                       name={contact.name}
                       sub={contact.email ?? "Sin correo"}
                       href={`/crm/contacts/${contact.id}` as Route}

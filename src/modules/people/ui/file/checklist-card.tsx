@@ -86,9 +86,9 @@ export function ChecklistCard({
       }
     >
       <div className="px-5 pt-2.5">
-        <div className="h-2 overflow-hidden rounded-full bg-[#EEF1F6]">
+        <div className="h-2 overflow-hidden rounded-full bg-fill">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-[#04D98B] to-[#F2E205]"
+            className="h-full rounded-full bg-health-ok"
             style={{ width: `${Math.round((done / total) * 100)}%` }}
           />
         </div>

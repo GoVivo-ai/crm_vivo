@@ -81,7 +81,7 @@ export function Franja({
         <VerdictBadge verdict={verdict} />
         <Link
           href={href}
-          className="ml-auto text-xs font-bold text-health-ok hover:underline"
+          className="ml-auto text-xs font-bold text-primary hover:underline"
         >
           {linkLabel} →
         </Link>

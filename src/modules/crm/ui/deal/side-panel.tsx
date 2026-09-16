@@ -54,7 +54,7 @@ export function DealSidePanel({
   canWrite: boolean;
   openStats: { count: number; sumCop: number; won: number };
 }) {
-  const accountTint = account ? tintFor(account.id) : null;
+  const accountTint = account ? tintFor() : null;
 
   return (
     <div className="flex min-w-0 flex-col gap-4">
@@ -158,7 +158,6 @@ export function DealSidePanel({
             contacts.slice(0, 5).map((c) => (
               <EntityRow
                 key={c.id}
-                id={c.id}
                 name={c.name}
                 meta={[c.jobTitle, c.email].filter(Boolean).join(" · ") || null}
                 href={`/crm/contacts/${c.id}` as Route}

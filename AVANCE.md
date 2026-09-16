@@ -24,6 +24,37 @@ Reglas de equipo: commits solo con rutas explícitas (nunca `git add -A`); revis
 - **Infra**: Neon (neon-aquamarine-pillow) · Clerk (claves dev; renombrar app a "ERP VIVO" pendiente) · dominio erp.govivo.ai verificado · CI verde en GitHub Actions · crons diarios (plan Hobby de Vercel; cada 6h requiere Pro) · Vercel team "GoVivo's projects" (cuenta victor-2806).
 - **Demo**: BD sembrada con 366 registros mock — `npm run db:seed-demo` / `npm run db:unseed-demo` (el unseed borra exacto, respeta usuarios reales y el "ZZ Empleado de Prueba").
 
+## Pasada de marca contra el Vivo Design System (2026-09-15)
+
+Tras la reunión con Felipe, la fuente de marca pasa a ser el repo
+**github.com/fjimenez9169/vivo-design-system** (tokens JSON + logos), no el PDF del
+brand book. Regla nueva que manda sobre lo visual: **el gris neutro es el color
+dominante; navy y verde acentúan y el amarillo es apenas un toque.**
+
+Aplicado en esta pasada (`DESIGN-SPEC.md` actualizado en consecuencia):
+
+- **Favicon**: `src/app/icon.png` era 128×94 sin alfa (se veía aplastado). Ahora
+  512×512 RGBA desde el isotipo oficial + `apple-icon.png` nuevo (180×180, isotipo
+  blanco sobre navy).
+- **Logos**: los 4 de `public/brand/` regenerados a 4× (350→1400px) desde los SVG
+  del design system, conservando lienzo y padding exactos (cero cambio de layout).
+- **Tokens que faltaban**: `--fill`, `--faint`, `--line` estaban en el DESIGN-SPEC
+  pero no en `globals.css`, así que vivían hardcodeados ~90 veces en componentes.
+- **Fin del color decorativo**: los tiles de identidad ya no rotan 4 tintas por
+  hash de id (una tabla de 30 filas eran 30 avatares de colores); el timeline de
+  actividades distingue el tipo por icono y no por 6 tintas; el degradé
+  verde→amarillo sale de avatares y de la barra de progreso del checklist y queda
+  solo donde el spec lo permite (la firma de 1–3px, una vez por pantalla).
+- **Gráficas**: las 6 series únicas usan `--chart-1`; se retiró `#B3261E` (no
+  estaba ni en la paleta ni en los tokens) a favor de `--destructive`. La pantalla
+  de Finanzas pasó de cuatro colores simultáneos a una sola tinta.
+
+Queda pendiente decidir (son focos reales de color que NO se tocaron):
+las dos rampas del Home (4 verdes en Comercial, 5 teales en Marketing), los mapas
+de badge de tinta replicados en ~15 archivos, y si los bloques navy fuera del
+sidebar (backdrop de diálogos, overlay del Spotlight, lomo del capture-dialog)
+pasan a gris — eso último reescribiría el §1 del DESIGN-SPEC.
+
 ## PENDIENTES (todos de Victor, ninguno bloquea al equipo)
 
 1. **Apps OAuth** (activan los botones "Conectar"): Meta (developers.facebook.com, tipo Business, Login for Business) · ClickUp (Settings→Apps→Create App) · Intuit/QuickBooks (developer.intuit.com, QBO, scope accounting). Redirects: `http://localhost:3000/api/oauth/{provider}/callback` y `https://erp.govivo.ai/api/oauth/{provider}/callback` (providers: meta_ads, clickup, quickbooks). Las claves van a `.env.local` y a Vercel (META_APP_ID/SECRET, CLICKUP_CLIENT_ID/SECRET, QBO_CLIENT_ID/SECRET).

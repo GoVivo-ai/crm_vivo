@@ -1,16 +1,17 @@
-/** Tintas de área del §2 — rotación estable para tiles de identidad. */
-export const ENTITY_TINTS = [
-  { bg: "#E6F9F1", fg: "#069B66" }, // verde
-  { bg: "#E8F0FB", fg: "#1E5FBF" }, // azul
-  { bg: "#FBF7D9", fg: "#8C7A0A" }, // gold
-  { bg: "#E7EBF3", fg: "#011640" }, // navy
-] as const;
+/**
+ * Tinta de los tiles de identidad (avatares de iniciales).
+ *
+ * Antes rotaba cuatro tintas de área (verde/azul/oro/navy) por hash del id, así
+ * que una tabla de 30 filas eran 30 avatares en cuatro colores: color decorativo,
+ * sin significado, multiplicado por el número de filas. La regla de marca de VIVO
+ * es que el gris manda y el navy acentúa, así que el tile es uno solo: relleno
+ * neutro con iniciales navy.
+ */
+export const ENTITY_TINT = { bg: "var(--fill)", fg: "var(--primary)" } as const;
 
-/** Tinta determinista por entidad (mismo id → misma tinta siempre). */
-export function tintFor(seed: string) {
-  let h = 0;
-  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) | 0;
-  return ENTITY_TINTS[Math.abs(h) % ENTITY_TINTS.length];
+/** Tinta del tile de identidad. Única — ya no depende de la entidad. */
+export function tintFor() {
+  return ENTITY_TINT;
 }
 
 export function initialsOf(name: string): string {

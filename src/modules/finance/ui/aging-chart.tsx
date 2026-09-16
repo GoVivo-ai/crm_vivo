@@ -12,7 +12,7 @@ import { ChartEmpty } from "@/shared/ui/chart-empty";
 import { formatCompactMoney, formatMoney } from "@/shared/ui/format";
 
 const config = {
-  amountCop: { label: "Cartera", color: "var(--module-finance)" },
+  amountCop: { label: "Cartera", color: "var(--chart-1)" },
 } satisfies ChartConfig;
 
 const BUCKET_LABELS: Record<string, string> = {

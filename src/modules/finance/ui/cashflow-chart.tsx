@@ -23,11 +23,13 @@ import {
 } from "@/shared/ui/format";
 
 const config = {
-  netCop: { label: "Flujo neto", color: "var(--chart-2)" },
+  netCop: { label: "Flujo neto", color: "var(--chart-1)" },
 } satisfies ChartConfig;
 
-const POSITIVE = "#1e5fbf";
-const NEGATIVE = "#b3261e";
+// Mismo par de polaridad que el P&L: una tinta para la serie, el rojo del
+// sistema para el mes negativo.
+const POSITIVE = "var(--chart-1)";
+const NEGATIVE = "var(--destructive)";
 
 const MONTHS = "ene feb mar abr may jun jul ago sep oct nov dic".split(" ");
 const monthLabel = (m: string) =>

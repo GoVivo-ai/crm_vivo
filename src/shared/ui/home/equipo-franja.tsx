@@ -48,7 +48,7 @@ export function EquipoFranja({
 
   return (
     <Franja
-      dot="#011640"
+      dot="var(--primary)"
       label="Equipo"
       verdict={verdict}
       href="/people"
@@ -61,7 +61,7 @@ export function EquipoFranja({
               <span
                 key={m.id}
                 title={m.fullName}
-                className="grid size-8 place-items-center rounded-full border-2 border-card bg-gradient-to-br from-[#04D98B] to-[#F2E205] font-[family-name:var(--font-display)] text-[11px] font-extrabold text-[#011640]"
+                className="grid size-8 place-items-center rounded-full border-2 border-card bg-fill font-[family-name:var(--font-display)] text-[11px] font-extrabold text-primary"
                 style={{ marginLeft: i === 0 ? 0 : -8 }}
               >
                 {m.fullName

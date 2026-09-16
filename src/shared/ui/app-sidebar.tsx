@@ -138,7 +138,7 @@ export function AppSidebar({ allowed, sync, user }: AppSidebarProps) {
             title={`${sync.title} · ${sync.detail}`}
           />
           <span
-            className="grid size-[30px] place-items-center overflow-hidden rounded-full bg-gradient-to-br from-[#04D98B] to-[#F2E205] font-[family-name:var(--font-display)] text-[11px] font-extrabold text-[#011640]"
+            className="grid size-[30px] place-items-center overflow-hidden rounded-full bg-white/12 font-[family-name:var(--font-display)] text-[11px] font-extrabold text-white"
             title={`${user.name} · ${user.roleLabel}`}
           >
             {user.imageUrl ? (
@@ -161,7 +161,7 @@ export function AppSidebar({ allowed, sync, user }: AppSidebarProps) {
           </div>
         </div>
         <div className="flex items-center gap-2.5 rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5 group-data-[collapsible=icon]:hidden">
-          <span className="grid size-8 shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-[#04D98B] to-[#F2E205] font-[family-name:var(--font-display)] text-xs font-extrabold text-[#011640]">
+          <span className="grid size-8 shrink-0 place-items-center overflow-hidden rounded-full bg-white/12 font-[family-name:var(--font-display)] text-xs font-extrabold text-white">
             {user.imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element -- foto remota de Clerk; sin optimizador (dominio externo)
               <img src={user.imageUrl} alt="" className="size-full object-cover" />

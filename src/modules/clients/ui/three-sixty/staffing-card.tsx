@@ -38,7 +38,7 @@ export function StaffingCard({
           </p>
         ) : (
           assignments.map((a) => {
-            const tint = tintFor(a.employeeId);
+            const tint = tintFor();
             return (
               <div key={a.id} className="flex items-center gap-3">
                 <span

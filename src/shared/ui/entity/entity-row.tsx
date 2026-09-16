@@ -8,20 +8,17 @@ import { initialsOf, tintFor } from "./tints";
  * valor/badge a la derecha + chevron. Con href, toda la fila navega.
  */
 export function EntityRow({
-  id,
   name,
   meta,
   right,
   href,
 }: {
-  /** Semilla de la tinta (estable por entidad). */
-  id: string;
   name: string;
   meta?: string | null;
   right?: React.ReactNode;
   href?: Route;
 }) {
-  const tint = tintFor(id);
+  const tint = tintFor();
   const body = (
     <>
       <span

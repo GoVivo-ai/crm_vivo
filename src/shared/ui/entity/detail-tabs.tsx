@@ -6,7 +6,9 @@ import { cn } from "@/lib/utils";
 export type DetailTab = { key: string; label: string; panel: React.ReactNode };
 
 /** Tabs de vista-detalle (§15.1, mismo patrón del expediente §14):
- * subrayado verde de marca; los tabs restringidos llegan filtrados. */
+ * subrayado verde de marca como elemento propio (ver la nota de module-tabs:
+ * el truco del `background` solo funciona con gradientes); los tabs
+ * restringidos llegan filtrados. */
 export function DetailTabs({ tabs }: { tabs: DetailTab[] }) {
   const [active, setActive] = useState(tabs[0]?.key ?? "");
   const current = tabs.find((t) => t.key === active) ?? tabs[0];
@@ -26,12 +28,17 @@ export function DetailTabs({ tabs }: { tabs: DetailTab[] }) {
             aria-selected={tab.key === current?.key}
             onClick={() => setActive(tab.key)}
             className={cn(
-              "shrink-0 pb-2.5 text-[13px] font-bold whitespace-nowrap text-muted-foreground transition-colors",
-              tab.key === current?.key &&
-                "font-extrabold text-[#011640] [background:#04D98B_bottom/100%_3px_no-repeat]",
+              "relative shrink-0 pb-2.5 text-[13px] font-bold whitespace-nowrap text-muted-foreground transition-colors",
+              tab.key === current?.key && "font-extrabold text-foreground",
             )}
           >
             {tab.label}
+            {tab.key === current?.key && (
+              <span
+                aria-hidden
+                className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-[#04D98B]"
+              />
+            )}
           </button>
         ))}
       </div>

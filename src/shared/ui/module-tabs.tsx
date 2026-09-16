@@ -10,6 +10,11 @@ export type ModuleTab = { href: string; label: string };
  * Nivel 2 de navegación (DESIGN-SPEC §6): tabs dentro de la página con
  * subrayado verde de marca en la activa. El sidebar queda como
  * mapa de módulos sin segundo nivel.
+ *
+ * El subrayado es un elemento propio, NO `background:<color> bottom/100% 3px`:
+ * en ese shorthand un color plano se aplica como background-color y rellena el
+ * tab entero (el size solo vale para imágenes). Funcionaba solo mientras fue un
+ * gradiente.
  */
 export function ModuleTabs({ tabs }: { tabs: ModuleTab[] }) {
   const pathname = usePathname();
@@ -32,13 +37,19 @@ export function ModuleTabs({ tabs }: { tabs: ModuleTab[] }) {
             href={tab.href}
             aria-current={isActive ? "page" : undefined}
             className={cn(
-              "pb-2.5 text-[13px] transition-colors",
+              "relative pb-2.5 text-[13px] transition-colors",
               isActive
-                ? "font-extrabold text-[#011640] [background:#04D98B_bottom/100%_3px_no-repeat]"
+                ? "font-extrabold text-foreground"
                 : "font-bold text-muted-foreground hover:text-foreground",
             )}
           >
             {tab.label}
+            {isActive && (
+              <span
+                aria-hidden
+                className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-[#04D98B]"
+              />
+            )}
           </Link>
         );
       })}

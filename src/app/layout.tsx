@@ -16,7 +16,9 @@ const display = Nunito({
 const sans = Nunito_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  // 800 incluido: el §3 pide el dato protagonista de tablas en extrabold y sin
+  // este peso el navegador lo redondeaba a 700 o lo sintetizaba.
+  weight: ["400", "600", "700", "800"],
 });
 
 const mono = IBM_Plex_Mono({

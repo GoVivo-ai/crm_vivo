@@ -33,7 +33,7 @@ export function MetricTile({
       )}
     >
       <p className="text-xs text-muted-foreground">{label}</p>
-      <div className={cn("font-mono leading-tight", emphasis ? "text-2xl" : "text-xl")}>
+      <div className={cn("tabular-nums leading-tight", emphasis ? "text-2xl" : "text-xl")}>
         {value}
       </div>
       {deltaPct !== null && (

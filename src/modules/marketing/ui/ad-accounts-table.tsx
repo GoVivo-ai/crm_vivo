@@ -49,12 +49,12 @@ export function AdAccountsTable({
             <TableRow key={ad.id}>
               <TableCell>
                 <p className="text-sm font-medium">{ad.name}</p>
-                <p className="font-mono text-xs text-muted-foreground">
+                <p className="text-xs tabular-nums text-muted-foreground">
                   {ad.externalAccountId}
                 </p>
               </TableCell>
               <TableCell>{PLATFORM_LABELS[ad.platform]}</TableCell>
-              <TableCell className="font-mono text-xs">
+              <TableCell className="text-xs">
                 {ad.accountCurrency}
               </TableCell>
               <TableCell>

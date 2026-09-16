@@ -36,11 +36,11 @@ export function ProfitabilityTable({
             <TableCell className="max-w-56 truncate text-sm font-medium">
               {account.accountName}
             </TableCell>
-            <TableCell className="text-right font-mono text-xs">
+            <TableCell className="text-right tabular-nums text-xs">
               {formatMoney(account.revenueCop)}
             </TableCell>
             <TableCell className="text-right">
-              <p className="font-mono text-xs">
+              <p className="tabular-nums text-xs">
                 {formatMoney(account.staffingCostCop)}
               </p>
               <p className="text-xs text-muted-foreground">
@@ -50,7 +50,7 @@ export function ProfitabilityTable({
             <TableCell className="text-right">
               <p
                 className={cn(
-                  "font-mono text-sm font-medium",
+                  "tabular-nums text-sm font-medium",
                   account.marginCop < 0 && "text-health-critical",
                 )}
               >
@@ -71,7 +71,7 @@ export function ProfitabilityTable({
                   : `${account.marginPercent.toFixed(1)}%`}
               </p>
             </TableCell>
-            <TableCell className="text-right font-mono text-xs text-muted-foreground">
+            <TableCell className="text-right tabular-nums text-xs text-muted-foreground">
               {account.adSpendCop > 0 ? formatMoney(account.adSpendCop) : "—"}
             </TableCell>
           </TableRow>

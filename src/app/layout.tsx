@@ -1,12 +1,13 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import { vivoLocalization } from "@/shared/ui/clerk-localization";
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Nunito, Nunito_Sans } from "next/font/google";
+import { Nunito, Nunito_Sans } from "next/font/google";
 import "./globals.css";
 
-// Tipografías oficiales de la marca VIVO: Nunito (display) + Nunito Sans
-// (texto). El brand book no define mono; IBM Plex Mono queda como utilidad
-// para cifras por sus numerales tabulares.
+// Tipografías oficiales de la marca VIVO y las únicas dos que carga el ERP:
+// Nunito (display) + Nunito Sans (texto). El design system no define una mono,
+// así que no hay ninguna: las cifras usan los numerales tabulares de Nunito Sans
+// (`tabular-nums`), como pide el §15.2.
 const display = Nunito({
   variable: "--font-display",
   subsets: ["latin"],
@@ -21,12 +22,6 @@ const sans = Nunito_Sans({
   weight: ["400", "600", "700", "800"],
 });
 
-const mono = IBM_Plex_Mono({
-  variable: "--font-mono",
-  subsets: ["latin"],
-  weight: ["400", "500"],
-});
-
 export const metadata: Metadata = {
   title: "ERP VIVO",
   description: "ERP 360 de govivo.ai",
@@ -37,7 +32,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <ClerkProvider localization={vivoLocalization}>
       <html
         lang="es"
-        className={`${display.variable} ${sans.variable} ${mono.variable} h-full antialiased`}
+        className={`${display.variable} ${sans.variable} h-full antialiased`}
       >
         <body className="min-h-full flex flex-col">{children}</body>
       </html>

@@ -19,7 +19,7 @@ export default async function PendingPage() {
   return (
     <main className="grid min-h-screen place-items-center bg-background p-6">
       <section className="flex max-w-md flex-col items-start gap-3 rounded-lg border bg-card p-8">
-        <span className="rounded-sm bg-secondary px-2 py-0.5 font-mono text-xs text-secondary-foreground">
+        <span className="rounded-sm bg-secondary px-2 py-0.5 text-xs text-secondary-foreground">
           Cuenta pendiente
         </span>
         <h1 className="text-2xl font-semibold">Tu acceso está en revisión</h1>

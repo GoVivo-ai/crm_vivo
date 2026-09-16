@@ -43,7 +43,7 @@ export function DealCardContent({
       <p className="text-sm leading-snug font-medium">{deal.title}</p>
       <p className="text-xs text-muted-foreground">{accountName}</p>
       <div className="flex items-center justify-between gap-2">
-        <span className="font-mono text-xs">
+        <span className="tabular-nums text-xs">
           {deal.amount !== null ? formatMoney(deal.amount) : "Sin monto"}
         </span>
         {deal.expectedCloseDate && (

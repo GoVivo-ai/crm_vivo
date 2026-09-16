@@ -35,10 +35,10 @@ export function CostCenterTable({ rows }: { rows: SpendByCostCenter[] }) {
             >
               {row.costCenter ?? "Sin asignar"}
             </TableCell>
-            <TableCell className="text-right font-mono text-xs">
+            <TableCell className="text-right tabular-nums text-xs">
               {row.expenses}
             </TableCell>
-            <TableCell className="text-right font-mono text-xs">
+            <TableCell className="text-right tabular-nums text-xs">
               {formatMoney(row.totalCop)}
             </TableCell>
           </TableRow>
@@ -65,10 +65,10 @@ export function ProviderTable({ rows }: { rows: SpendByProvider[] }) {
             <TableCell className="max-w-72 truncate font-medium">
               {row.providerName ?? "Sin proveedor"}
             </TableCell>
-            <TableCell className="text-right font-mono text-xs">
+            <TableCell className="text-right tabular-nums text-xs">
               {row.expenses}
             </TableCell>
-            <TableCell className="text-right font-mono text-xs">
+            <TableCell className="text-right tabular-nums text-xs">
               {formatMoney(row.totalCop)}
             </TableCell>
           </TableRow>

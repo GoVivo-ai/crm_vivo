@@ -35,7 +35,7 @@ export function IntegrationStatusLine({
           </Badge>
         )}
         {status.hint && (
-          <span className="font-mono text-xs text-muted-foreground">
+          <span className="text-xs text-muted-foreground">
             {status.hint}
           </span>
         )}

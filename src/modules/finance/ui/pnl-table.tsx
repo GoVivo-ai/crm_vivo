@@ -24,7 +24,7 @@ function Row({
       <span className="text-sm">{label}</span>
       <span
         className={cn(
-          "font-mono text-sm",
+          "tabular-nums text-sm",
           amount < 0 && "text-health-critical",
         )}
       >

@@ -84,13 +84,13 @@ export async function SyncRunsPanel() {
                       {badge.label}
                     </Badge>
                   </TableCell>
-                  <TableCell className="font-mono text-xs">
+                  <TableCell className="tabular-nums text-xs">
                     {time.format(run.startedAt)}
                   </TableCell>
-                  <TableCell className="text-right font-mono text-xs">
+                  <TableCell className="text-right tabular-nums text-xs">
                     {duration(run.durationMs)}
                   </TableCell>
-                  <TableCell className="text-right font-mono text-xs">
+                  <TableCell className="text-right tabular-nums text-xs">
                     {run.rowsProcessed ?? "—"}
                   </TableCell>
                   <TableCell className="max-w-72 truncate text-xs text-muted-foreground">

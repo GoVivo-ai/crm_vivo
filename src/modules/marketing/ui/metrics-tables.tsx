@@ -25,25 +25,25 @@ const pct = (v: number) => `${(v * 100).toFixed(2)}%`;
 function RateCells({ m }: { m: MetricRates }) {
   return (
     <>
-      <TableCell className="text-right font-mono text-xs">
+      <TableCell className="text-right tabular-nums text-xs">
         {formatCurrency(m.spend, m.currency)}
       </TableCell>
-      <TableCell className="text-right font-mono text-xs">
+      <TableCell className="text-right tabular-nums text-xs">
         {num.format(m.leads)}
       </TableCell>
-      <TableCell className="text-right font-mono text-xs">
+      <TableCell className="text-right tabular-nums text-xs">
         {m.costPerLead !== null ? formatCurrency(m.costPerLead, m.currency) : "—"}
       </TableCell>
-      <TableCell className="text-right font-mono text-xs">
+      <TableCell className="text-right tabular-nums text-xs">
         {num.format(m.clicks)}
       </TableCell>
-      <TableCell className="text-right font-mono text-xs">
+      <TableCell className="text-right tabular-nums text-xs">
         {m.ctr !== null ? pct(m.ctr) : "—"}
       </TableCell>
-      <TableCell className="text-right font-mono text-xs">
+      <TableCell className="text-right tabular-nums text-xs">
         {m.cpc !== null ? formatCurrency(m.cpc, m.currency) : "—"}
       </TableCell>
-      <TableCell className="text-right font-mono text-xs">
+      <TableCell className="text-right tabular-nums text-xs">
         {m.roas !== null ? `${m.roas.toFixed(2)}×` : "—"}
       </TableCell>
     </>

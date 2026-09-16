@@ -12,7 +12,7 @@ export function ModulePlaceholder({
 }: ModulePlaceholderProps) {
   return (
     <section className="mx-auto flex max-w-lg flex-col items-start gap-3 rounded-lg border bg-card p-8 mt-12">
-      <span className="rounded-sm bg-secondary px-2 py-0.5 font-mono text-xs text-secondary-foreground">
+      <span className="rounded-sm bg-secondary px-2 py-0.5 text-xs text-secondary-foreground">
         {phase}
       </span>
       <h1 className="text-2xl font-semibold">{title}</h1>

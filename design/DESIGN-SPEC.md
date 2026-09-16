@@ -83,6 +83,9 @@ Los assets de marca ya viven en `public/brand/` (logo-vivo-blue/white.png, logom
 
 - **Todos los números en `font-variant-numeric: tabular-nums`** y alineados a la
   derecha en tablas (`text-align:right`).
+- **No hay fuente monoespaciada.** El design system no define una, así que el ERP
+  carga exactamente dos familias: Nunito y Nunito Sans. Las cifras se resuelven
+  con `tabular-nums`, nunca con una mono — ni en tablas, ni en IDs, ni en chips.
 - Moneda formato es-CO: `$14.600.000`, abreviado `$86,4 M`, dólares `US$ 4.660`.
 - Carga: Google Fonts `Nunito:wght@700;800;900` + `Nunito+Sans:opsz,wght@6..12,400..800`.
 

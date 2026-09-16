@@ -8,7 +8,7 @@ export type ModuleTab = { href: string; label: string };
 
 /**
  * Nivel 2 de navegación (DESIGN-SPEC §6): tabs dentro de la página con
- * subrayado gradiente verde→amarillo en la activa. El sidebar queda como
+ * subrayado verde de marca en la activa. El sidebar queda como
  * mapa de módulos sin segundo nivel.
  */
 export function ModuleTabs({ tabs }: { tabs: ModuleTab[] }) {
@@ -34,7 +34,7 @@ export function ModuleTabs({ tabs }: { tabs: ModuleTab[] }) {
             className={cn(
               "pb-2.5 text-[13px] transition-colors",
               isActive
-                ? "font-extrabold text-[#011640] [background:linear-gradient(90deg,#04D98B,#F2E205)_bottom/100%_3px_no-repeat]"
+                ? "font-extrabold text-[#011640] [background:#04D98B_bottom/100%_3px_no-repeat]"
                 : "font-bold text-muted-foreground hover:text-foreground",
             )}
           >

@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 export type DetailTab = { key: string; label: string; panel: React.ReactNode };
 
 /** Tabs de vista-detalle (§15.1, mismo patrón del expediente §14):
- * subrayado gradiente firma; los tabs restringidos llegan filtrados. */
+ * subrayado verde de marca; los tabs restringidos llegan filtrados. */
 export function DetailTabs({ tabs }: { tabs: DetailTab[] }) {
   const [active, setActive] = useState(tabs[0]?.key ?? "");
   const current = tabs.find((t) => t.key === active) ?? tabs[0];
@@ -28,7 +28,7 @@ export function DetailTabs({ tabs }: { tabs: DetailTab[] }) {
             className={cn(
               "shrink-0 pb-2.5 text-[13px] font-bold whitespace-nowrap text-muted-foreground transition-colors",
               tab.key === current?.key &&
-                "font-extrabold text-[#011640] [background:linear-gradient(90deg,#04D98B,#F2E205)_bottom/100%_3px_no-repeat]",
+                "font-extrabold text-[#011640] [background:#04D98B_bottom/100%_3px_no-repeat]",
             )}
           >
             {tab.label}

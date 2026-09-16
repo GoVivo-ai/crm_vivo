@@ -53,7 +53,7 @@ type MoneyFranjaProps = {
   cashflowSeries: CashflowPoint[];
 };
 
-/** Franja dominante Finanzas · Tesorería (única con gradiente firma). */
+/** Franja dominante Finanzas · Tesorería (única con la franja verde). */
 export function MoneyFranja({
   finance,
   treasury,

@@ -32,7 +32,7 @@ export type LomoContext = {
 };
 
 /**
- * Dialog "Lomo navy" (§12.1): franja estructural navy + costura gradiente
+ * Dialog "Lomo navy" (§12.1): franja estructural navy + costura verde
  * + cuerpo blanco. Ningún dialog vuelve a ser un rectángulo blanco.
  * Estructura: <CaptureDialogContent><CaptureLomo/><div body…></div>
  */
@@ -166,13 +166,13 @@ export function CaptureLomo({
           )}
         </div>
       </div>
-      {/* Costura: gradiente firma; ROJA sólida en destructivo. */}
+      {/* Costura: verde de marca; ROJA en destructivo. */}
       <span
         aria-hidden
         className={cn(
           red
             ? "bg-[#C93A3A]"
-            : "bg-gradient-to-b from-[#04D98B] to-[#F2E205] max-[1099px]:bg-gradient-to-r",
+            : "bg-[#04D98B]",
         )}
       />
     </>

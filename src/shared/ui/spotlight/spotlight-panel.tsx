@@ -167,7 +167,7 @@ export function SpotlightPanel({
         save();
       }}
     >
-      <div className="h-[3px] bg-gradient-to-r from-[#04D98B] to-[#F2E205]" />
+      <div className="h-[3px] bg-[#04D98B]" />
       <div className="px-7 pt-5 pb-1 text-center">
         <p className="text-[10.5px] font-bold tracking-[0.12em] uppercase text-[#8B99B0]">
           {TYPE_LABELS[type].title}

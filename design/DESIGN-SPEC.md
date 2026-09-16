@@ -18,9 +18,13 @@ Los assets de marca ya viven en `public/brand/` (logo-vivo-blue/white.png, logom
   El contenido es claro, denso, de ERP real: tablas y cifras protagonistas.
 - **Redondez de píldora**: botones, chips, badges e ítems de navegación usan radio 999
   — eco de la geometría redonda del logo.
-- **Gradiente firma** `linear-gradient(90deg,#04D98B,#F2E205)`: aparece **una sola vez
-  por pantalla** (barra superior de 3–4px en la tarjeta héroe, o el subrayado del tab
-  activo). Nunca como fondo grande. En el sidebar vive solo en el anillo "o" (§4).
+- **NO hay gradientes de marca.** El Vivo Design System declara cuatro colores
+  planos y ninguna mezcla: no existe "gradiente firma". Lo que antes era un
+  degradé verde→amarillo (franja héroe, subrayado de tab activo, costura del
+  Lomo, anillo "o", guion de grupo) es hoy **verde `#04D98B` sólido**, que sigue
+  apareciendo una sola vez por pantalla como marcador de jerarquía. El único
+  degradé legítimo de la marca es el que vive DENTRO del isotipo, y ese no se
+  extrae ni se replica en la interfaz.
 - Nada de emoji en la UI. Iconos siempre SVG de trazo (§8).
 - Prohibido el look genérico "SaaS de IA" (Inter + azul + grilla de cards iguales).
 
@@ -96,8 +100,7 @@ Ancho **236px**, colapsado **68px**. Padding 22px 14px 16px.
 **Fondo con aura**: navy + dos radiales sutiles, borde derecho blanco al 6%:
 ```css
 background:
-  radial-gradient(420px 300px at -60px -60px, rgba(4,217,139,.18), transparent 70%),
-  radial-gradient(420px 340px at 120% 108%, rgba(30,95,191,.22), transparent 72%),
+  radial-gradient(420px 300px at -60px -60px, rgba(4,217,139,.12), transparent 70%),
   #011640;
 border-right: 1px solid rgba(255,255,255,.06);
 ```
@@ -105,7 +108,7 @@ border-right: 1px solid rgba(255,255,255,.06);
 **Logo**: `logo-vivo-white.png` alto 28px + tag "ERP" (píldora borde `rgba(4,217,139,.5)`,
 texto `--green` 9.5px 800, tracking .14em).
 
-**Grupos**: guion gradiente 12×2px (radio 2) + label Nunito Sans 800 9.5px, uppercase,
+**Grupos**: guion verde 12×2px (radio 2) + label Nunito Sans 800 9.5px, uppercase,
 tracking .16em, `rgba(255,255,255,.48)`. Grupos: Panorama / Comercial / Dinero / Personas
 (+ Ajustes suelto abajo). El menú se filtra por rol (RBAC): sales no ve Dinero,
 operations no ve Compensación, Ajustes solo admin.
@@ -115,9 +118,9 @@ operations no ve Compensación, Ajustes solo admin.
 - **Hover**: fondo blanco al 8%, texto al 100%, icono opacidad 1, 120ms. Sin rieles ni subrayados.
 - **Activo — "la píldora encendida"**: se INVIERTE: fondo `#fff`, texto navy 800,
   icono verde `#069B66`, glow `box-shadow: 0 10px 24px -10px rgba(4,217,139,.65)`.
-- **El anillo "o"**: indicador de posición al final del ítem activo — anillo gradiente
-  de 12px (fondo `linear-gradient(135deg,#04D98B,#F2E205)` con hueco blanco de 5px).
-  Es el "o" del logo convertido en marcador, y el único gradiente del sidebar.
+- **El anillo "o"**: indicador de posición al final del ítem activo — anillo verde
+  de 12px (fondo `#04D98B` con hueco blanco de 5px). Es el "o" del logo convertido
+  en marcador.
 - **Transición de módulo**: la píldora blanca se desliza al nuevo ítem
   (`transform` 220ms ease-out); el anillo entra con `scale` 0→1.
 
@@ -165,8 +168,8 @@ círculo activo); abajo pulso y avatar 30px. Ver lámina en `Sistema.dc.html`.
   mut `#EEF1F6`/`--muted` (chips de fuente: QuickBooks, Manual, Meta, ClickUp…).
 - **Chip de fuente obligatorio** en todo dato sincronizado. `source='manual'` es
   editable/borrable; lo sincronizado es de solo lectura.
-- **Tabs**: texto 700 13px `--muted`; activo navy 800 con subrayado gradiente de 3px
-  (`background:linear-gradient(90deg,#04D98B,#F2E205) bottom/100% 3px no-repeat`).
+- **Tabs**: texto 700 13px `--muted`; activo navy 800 con subrayado verde de 3px
+  (`background:#04D98B bottom/100% 3px no-repeat`).
 - **Avatares**: iniciales sobre **una sola tinta neutra** (`--fill` + texto navy).
   No hay rotación de tintas por entidad: el avatar identifica, no clasifica. Pilas
   con solape −9px y borde blanco 2px.
@@ -217,7 +220,7 @@ Orden de lectura fijo:
    está *sana*." (fecha + veredicto coloreado) y debajo la frase de contexto del día
    (qué entró, qué venció, qué espera aprobación). A la derecha, badge de sync.
    El veredicto y la frase se calculan de los datos (caja/margen/alertas).
-2. **Franja FINANZAS · TESORERÍA** (ancho completo — domina; lleva el único gradiente
+2. **Franja FINANZAS · TESORERÍA** (ancho completo — domina; lleva la única franja verde
    firma de la página): grid `1.5fr 1fr 1.2fr` con divisores `--line`:
    caja disponible (42px + sparkline de saldo mensual, §nota-datos + cobertura en
    meses + proyección 30d) ·
@@ -271,7 +274,7 @@ Regla editorial: **ningún dato sin verbo** — todo problema trae su acción.
 
 ## 11. Notas por pantalla
 
-- **Sign-in**: split 640/800. Panel navy con hairline gradiente arriba, isotipo
+- **Sign-in**: split 640/800. Panel navy con hairline verde arriba, isotipo
   gigante al 7% rotado −12° como marca de agua, claim Nunito 800 40px
   ("Toda la agencia, en una sola pantalla."), 3 bullets con check verde. Panel claro
   con card 400px (radio 18, sombra profunda): isotipo azul, correo/contraseña
@@ -305,7 +308,7 @@ Regla editorial: **ningún dato sin verbo** — todo problema trae su acción.
   tabs Resumen/Servicios/Proyectos/Facturación/Documentos; col 2fr (servicios activos,
   proyectos ClickUp con barras de progreso, facturación) + col 1fr (equipo asignado
   con % dedicación, pauta del mes, actividad con puntos de color).
-- **Finanzas**: tabs; KPIs asimétricos `1.5fr 1fr 1fr 1fr` (héroe 36px con gradiente);
+- **Finanzas**: tabs; KPIs asimétricos `1.5fr 1fr 1fr 1fr` (héroe 36px);
   facturas (tabla con fuente+estado, vencidas con fecha en rojo) + gastos por centro
   de costo (barras azules) + P&L trimestral calculado.
 - **Tesorería**: KPIs asimétricos; línea de saldo 45d + proyección punteada con
@@ -355,7 +358,7 @@ Los overlays son parte del sistema, no shadcn crudo. El sistema de dialogs es el
   cambios sin guardar pregunta antes ("¿Descartar cambios?" — patrón destructivo).
 
 **12.1 Dialog "Lomo navy" (captura y edición)**
-La ventana es asimétrica: una franja estructural navy (el LOMO) + costura gradiente
+La ventana es asimétrica: una franja estructural navy (el LOMO) + costura verde
 + cuerpo blanco. Es la firma del sistema — ningún dialog vuelve a ser un rectángulo
 blanco centrado.
 - Contenedor: 680px (formularios a 2 columnas) o 560px (1 columna); radio 16,
@@ -373,7 +376,7 @@ blanco centrado.
   tabular + entidad (blanco 72%) + un hecho útil del módulo si existe (MRR actual,
   saldo de la cuenta, últimos días de saldo; blanco 45%). Vacío: "—" en blanco 35%.
   Se actualiza con transición de 150ms; nunca parpadea por tecla (debounce ~150ms).
-- **Costura**: 3px verticales `linear-gradient(180deg,#04D98B,#F2E205)` entre lomo
+- **Costura**: 3px verticales `#04D98B` entre lomo
   y cuerpo — la única firma visible con el overlay abierto.
 - **Cuerpo**: fila superior con chip de fuente ("Manual") y X ghost 32px; campos
   del §5 (inputs r10, foco verde con halo), gap 15–16px; footer con separador
@@ -416,7 +419,7 @@ Misma anatomía del 12.1 — identidad constante, severidad evidente:
   70%)`, isotipo al .08; tile 36px `rgba(201,58,58,.30)` con icono alerta
   `#F08A8A`; abajo, eyebrow "Irreversible" (blanco 55%) y el **objeto en peligro
   nombrado** en `#F08A8A` 800 13px ("FV-2041"). **Costura roja sólida `#C93A3A`**
-  (el gradiente firma jamás aparece en destructivo).
+  (el verde de marca jamás aparece en destructivo).
 - Cuerpo: título Nunito 800 16px navy con el objeto concreto ("¿Eliminar la factura
   FV-2041?"); consecuencia real en 13px `--muted` y qué no se puede deshacer.
 - Acciones: ghost "Cancelar" (**foco inicial aquí**) + botón sólido rojo píldora
@@ -452,7 +455,7 @@ Lomo, no su reemplazo: crea registros, nunca edita.
   20%, radio 16, texto Nunito 800 17px blanco, caret verde de 2px, chips kbd de
   tipo a la derecha, clicables y filtrados por permisos del rol (`F factura ·
   G gasto · N nómina · M movimiento`; "s" parsea como alias de movimiento). Debajo, el panel
-  resultado: card blanca radio 20 con hairline gradiente, **monto protagonista a
+  resultado: card blanca radio 20 con hairline verde, **monto protagonista a
   44px** con la entidad interpretada como eyebrow, campos restantes en grid, pie
   con hints ("Enter guarda · Tab siguiente campo · Esc cierra") y acciones.
 - **Gramática de parseo**: `{tipo} {entidad} {monto} [fecha]` — tipo por palabra
@@ -537,7 +540,7 @@ Lomo del área Equipo con solo esos campos) — nunca un formulario plano de 30 
 
 **Columna lateral (2fr)**:
 4. *Completitud del expediente* (card con borde warn si incompleta): barra de
-   progreso con el gradiente firma + checklist — ítems completos con check verde y
+   progreso verde + checklist — ítems completos con check verde y
    fecha, faltantes con círculo punteado `#C6CFDD`, label en `--gold` y acción
    "Subir →". Lista canónica: hoja de vida, cédula, certificados de afiliación,
    acuerdo de confidencialidad, contrato firmado, examen médico de ingreso

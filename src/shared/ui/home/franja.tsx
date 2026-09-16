@@ -66,7 +66,7 @@ export function Franja({
       {signature && (
         <span
           aria-hidden
-          className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#04D98B] to-[#F2E205]"
+          className="absolute inset-x-0 top-0 h-1 bg-[#04D98B]"
         />
       )}
       <div className="mb-3.5 flex items-center gap-2.5">

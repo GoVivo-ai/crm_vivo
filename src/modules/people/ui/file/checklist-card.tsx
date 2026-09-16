@@ -58,7 +58,7 @@ function UploadDoc({
   );
 }
 
-/** Completitud del expediente (§14): barra gradiente firma + checklist
+/** Completitud del expediente (§14): barra verde + checklist
  * canónica. El "N de M" alimenta el stat de cabecera. */
 export function ChecklistCard({
   detail,

@@ -14,7 +14,7 @@ export default function SignInPage() {
   return (
     <div className="flex min-h-screen bg-white">
       <div className="relative hidden shrink-0 flex-col overflow-hidden bg-[#011640] p-14 text-white lg:flex lg:w-[44%]">
-        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#04D98B] to-[#F2E205]" />
+        <div className="absolute inset-x-0 top-0 h-1 bg-[#04D98B]" />
         <Image
           src="/brand/logomark-white.png"
           alt=""
